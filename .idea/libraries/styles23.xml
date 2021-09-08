@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="styles2">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/platforms/android/app/build/intermediates/compressed_assets/debug/out/assets/www/plugins/sample/H5PEditor.ColorSelector-1.2/styles/spectrum.css.jar!/" />
+      <root url="jar://$PROJECT_DIR$/platforms/android/app/build/intermediates/compressed_assets/debug/out/assets/www/plugins/sample/H5PEditor.ColorSelector-1.2/styles/color-selector.css.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

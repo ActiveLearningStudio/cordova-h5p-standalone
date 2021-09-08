@@ -1,0 +1,16 @@
+<component name="libraryTable">
+  <library name="FontAwesome-4.5">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/platforms/android/app/build/intermediates/compressed_assets/debug/out/assets/www/plugins/quiz/FontAwesome-4.5/FontAwesome.otf.jar!/" />
+      <root url="jar://$PROJECT_DIR$/platforms/android/app/build/intermediates/compressed_assets/debug/out/assets/www/plugins/quiz/FontAwesome-4.5/h5p-font-awesome.min.css.jar!/" />
+      <root url="jar://$PROJECT_DIR$/platforms/android/app/build/intermediates/compressed_assets/debug/out/assets/www/plugins/quiz/FontAwesome-4.5/fontawesome-webfont.ttf.jar!/" />
+      <root url="jar://$PROJECT_DIR$/platforms/android/app/build/intermediates/compressed_assets/debug/out/assets/www/plugins/quiz/FontAwesome-4.5/library.json.jar!/" />
+      <root url="jar://$PROJECT_DIR$/platforms/android/app/build/intermediates/compressed_assets/debug/out/assets/www/plugins/quiz/FontAwesome-4.5/fontawesome-webfont.eot.jar!/" />
+      <root url="jar://$PROJECT_DIR$/platforms/android/app/build/intermediates/compressed_assets/debug/out/assets/www/plugins/quiz/FontAwesome-4.5/fontawesome-webfont.svg.jar!/" />
+      <root url="jar://$PROJECT_DIR$/platforms/android/app/build/intermediates/compressed_assets/debug/out/assets/www/plugins/quiz/FontAwesome-4.5/fontawesome-webfont.woff2.jar!/" />
+      <root url="jar://$PROJECT_DIR$/platforms/android/app/build/intermediates/compressed_assets/debug/out/assets/www/plugins/quiz/FontAwesome-4.5/fontawesome-webfont.woff.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

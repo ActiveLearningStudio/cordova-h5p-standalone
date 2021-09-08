@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="library.json4">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/platforms/android/app/build/intermediates/compressed_assets/debug/out/assets/www/plugins/sample/H5PEditor.AudioRecorder-1.0/library.json.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

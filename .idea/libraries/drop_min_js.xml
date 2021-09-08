@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="drop.min.js">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/platforms/android/app/build/intermediates/compressed_assets/debug/out/assets/www/plugins/quiz/Drop-1.0/js/drop.min.js.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="scripts2">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/platforms/android/app/build/intermediates/compressed_assets/debug/out/assets/www/plugins/quiz/H5P.TrueFalse-1.6/scripts/h5p-true-false-answer-group.js.jar!/" />
+      <root url="jar://$PROJECT_DIR$/platforms/android/app/build/intermediates/compressed_assets/debug/out/assets/www/plugins/quiz/H5P.TrueFalse-1.6/scripts/h5p-true-false-answer.js.jar!/" />
+      <root url="jar://$PROJECT_DIR$/platforms/android/app/build/intermediates/compressed_assets/debug/out/assets/www/plugins/quiz/H5P.TrueFalse-1.6/scripts/h5p-true-false.js.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

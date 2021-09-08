@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/platforms/android/CordovaLib/CordovaLib.iml" filepath="$PROJECT_DIR$/platforms/android/CordovaLib/CordovaLib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platforms/android/app/src/app.iml" filepath="$PROJECT_DIR$/platforms/android/app/src/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platforms/android/app/build/build.iml" filepath="$PROJECT_DIR$/platforms/android/app/build/build.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platforms/android/CordovaLib/build/build1.iml" filepath="$PROJECT_DIR$/platforms/android/CordovaLib/build/build1.iml" />
+      <module fileurl="file://$PROJECT_DIR$/plugins/cordova-plugin-device/cordova-plugin-device.iml" filepath="$PROJECT_DIR$/plugins/cordova-plugin-device/cordova-plugin-device.iml" />
+      <module fileurl="file://$PROJECT_DIR$/plugins/cordova-plugin-whitelist/cordova-plugin-whitelist.iml" filepath="$PROJECT_DIR$/plugins/cordova-plugin-whitelist/cordova-plugin-whitelist.iml" />
+      <module fileurl="file://$PROJECT_DIR$/platforms/android/app/build/intermediates/packaged_manifests/debug/debug.iml" filepath="$PROJECT_DIR$/platforms/android/app/build/intermediates/packaged_manifests/debug/debug.iml" />
+    </modules>
+  </component>
+</project>

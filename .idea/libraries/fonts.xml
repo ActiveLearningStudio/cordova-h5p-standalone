@@ -1,0 +1,16 @@
+<component name="libraryTable">
+  <library name="fonts">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/platforms/android/app/build/intermediates/compressed_assets/debug/out/assets/www/plugins/h5p-standalone/vendor/h5p/fonts/h5p-core-27.ttf.jar!/" />
+      <root url="jar://$PROJECT_DIR$/platforms/android/app/build/intermediates/compressed_assets/debug/out/assets/www/plugins/h5p-standalone/vendor/h5p/fonts/h5p-core-27.svg.jar!/" />
+      <root url="jar://$PROJECT_DIR$/platforms/android/app/build/intermediates/compressed_assets/debug/out/assets/www/plugins/h5p-standalone/vendor/h5p/fonts/h5p-hub-publish.eot.jar!/" />
+      <root url="jar://$PROJECT_DIR$/platforms/android/app/build/intermediates/compressed_assets/debug/out/assets/www/plugins/h5p-standalone/vendor/h5p/fonts/h5p-core-27.woff.jar!/" />
+      <root url="jar://$PROJECT_DIR$/platforms/android/app/build/intermediates/compressed_assets/debug/out/assets/www/plugins/h5p-standalone/vendor/h5p/fonts/h5p-hub-publish.svg.jar!/" />
+      <root url="jar://$PROJECT_DIR$/platforms/android/app/build/intermediates/compressed_assets/debug/out/assets/www/plugins/h5p-standalone/vendor/h5p/fonts/h5p-hub-publish.ttf.jar!/" />
+      <root url="jar://$PROJECT_DIR$/platforms/android/app/build/intermediates/compressed_assets/debug/out/assets/www/plugins/h5p-standalone/vendor/h5p/fonts/h5p-core-27.eot.jar!/" />
+      <root url="jar://$PROJECT_DIR$/platforms/android/app/build/intermediates/compressed_assets/debug/out/assets/www/plugins/h5p-standalone/vendor/h5p/fonts/h5p-hub-publish.woff.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
