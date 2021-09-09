@@ -26,7 +26,6 @@ function onDeviceReady() {
               o = i.iterator || "@@iterator",
               a = i.asyncIterator || "@@asyncIterator",
               s = i.toStringTag || "@@toStringTag";
-              console.log(t, "--", n)
             function c(e, t, n) {
               return (
                 Object.defineProperty(e, t, {
@@ -7456,13 +7455,39 @@ function onDeviceReady() {
                   t += '<script src="' + e[n] + '"></script>';
                 return t;
               };
+              var tm
+              var newScript = function (e) {
+                var t = "<script>";
+                e.forEach(function(script, index) {
+                  console.log(index)
+                  // if(indexOf("https://localhost/../plugins/h5p-standalone/dist/frame.bundle.js") )
+                  if(index != 0) {
+                  window.resolveLocalFileSystemURL(script, function success(fileEntry) {
+                    fileEntry.file(function (file) {
+                        var reader = new FileReader();
+                        reader.onloadend = function(evt) {
+                          t +=  evt.target.result;
+                        };
+                        reader.readAsText(file);
+                    }, onErrorReadFile = (err) => {console.log(err)});
+                  })
+                }
+                })
+                setTimeout(function () {
+                  t += "</script>";
+                  console.log("hello"+ t)
+                  return t
+                }, 3000)
+                
+              }
             return (
               '<base target="_parent">' +
               t(H5PIntegration.core.styles) +
               t(H5PIntegration.contents["cid-" + e].styles) +
               n(H5PIntegration.core.scripts) +
               n(H5PIntegration.contents["cid-" + e].scripts) +
-              "<script>H5PIntegration = window.parent.H5PIntegration; var H5P = H5P || {}; H5P.externalEmbed = false;</script>"
+              "<script>H5PIntegration = window.parent.H5PIntegration; var H5P = H5P || {}; H5P.externalEmbed = false;</script>" +
+              newScript(H5PIntegration.contents["cid-" + e].scripts)
             );
           }),
           (g.communicator =
@@ -8905,7 +8930,7 @@ function onDeviceReady() {
                       var r, i, o, a, s, c;
                       return u().wrap(
                         function (e) {
-                          // console.log(e)
+                          console.log(e)
                           for (;;)
                             switch ((e.prev = e.next)) {
                               case 0:
@@ -8997,59 +9022,26 @@ function onDeviceReady() {
               {
                 key: "getJSON",
                 value: function (e) {
-                  return fetch(e).then(function (e) {
-                    // console.log(e)
-                    return e.json();
-                  });
-                  window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory + "h5p-libraries/", function success(directoryEntry) {
-                    //read file
-                    var directoryReader = directoryEntry.createReader();
-            
-                    directoryReader.readEntries(
-                        entryHandler,
-                        errorHandler
-                    );
-                    function entryHandler(entries) {
-                        entries.forEach(function (entry) {
-                          if (entry.isDirectory) {
-                            window.resolveLocalFileSystemURL(entry.nativeURL, function success(subDirectoryEntry) {
-                              // function readFile(fileEntry) {
-                                var subDirectoryReader = subDirectoryEntry.createReader();
-                                subDirectoryReader.readEntries(function getSubDirectory (subEntries) {
-                                  subEntries.forEach((subEntry) => {
-                                    if(subEntry.isDirectory) {
-                                      // console.log(subEntry.nativeURL, " -- ", cordova.file.externalDataDirectory)
-                                      window.resolveLocalFileSystemURL(subEntry.nativeURL, function success(fileEntry) {
-                                        var fileEntry = fileEntry.createReader();
-                                        fileEntry.readEntries(function getFiles (files) {
-                                          files.forEach((file) => {
-                                            if(file.isDirectory) {
-                                              // console.log(file)
-                                            } else {
-                                              return file;
-                                            } 
-                                          }) 
-                                        })
-                                      })
-                                    } else {
-                                      return subEntry
-                                    }
-                                  })
-                                }, onErrorReadFile = (err) => {console.log(err)});
-                              })
-                          } else {
-                          }
-                    
-                        });
-                    
-                      }
-                      function errorHandler(error) {
-                    
-                        console.log("ERROR", error);
-                    
-                      }
-                    
-                }, function error(e) { console.log('resolving directory error'); console.log(e);  });
+                  // return fetch(e).then(function (e) {
+                  //   // console.log(e.json())
+                  //   return e.json();
+                  // });
+                  let em = new Promise(function(resolve, reject) {
+                    window.resolveLocalFileSystemURL(e, function success(fileEntry) {
+                      fileEntry.file(function (file) {
+                          var reader = new FileReader();
+                          reader.onloadend = function(evt) {
+                            let jsonData = JSON.parse(evt.target.result);
+                            resolve(jsonData)
+                          };
+                          reader.readAsText(file);
+                      }, function onErrorReadFile (err) {console.log(err)});
+                    })
+                  }).then(function (e) {
+                    return e;
+                  })
+                  // console.log("e", e)
+                  return em;
                 },
               },
               {
@@ -9060,10 +9052,10 @@ function onDeviceReady() {
                       var t, n, r;
                       return u().wrap(
                         function (e) {
-                          console.log(e)
                           for (;;)
                             switch ((e.prev = e.next)) {
                               case 0:
+                                console.log("this", this.h5p)
                                 return (
                                   (t = this.h5p.preloadedDependencies[0]),
                                   (n =

@@ -32,7 +32,7 @@ function onDeviceReady() {
                             })
                           })
                         } else {
-                          console.log("file", subEntry)
+                          // console.log("file", subEntry)
                         }
                       })
                     }, onErrorReadFile = (err) => {console.log(err)});
@@ -73,8 +73,8 @@ function onDeviceReady() {
   // })
         const offlineElement = document.getElementById('h5p-container');
         const options = {
-            h5pJsonPath:  "../activities/sample",
-            // h5pJsonPath:  cordova.file.externalDataDirectory + "h5p-libraries/quiz",
+            // h5pJsonPath:  "../activities/sample",
+            h5pJsonPath:  cordova.file.externalDataDirectory + "h5p-libraries/quiz",
             frameJs: '../plugins/h5p-standalone/dist/frame.bundle.js',
             frameCss: '../plugins/h5p-standalone/dist/styles/h5p.css',
         }

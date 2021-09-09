@@ -23,6 +23,10 @@ document.addEventListener('deviceready', onDeviceReady, false);
 
 function onDeviceReady() {
     // Cordova is now initialized. Have fun!
+    url = "file:///storage/emulated/0/Android/data/com.example.leo/files/h5p-libraries/quiz/EmbeddedJS-1.0/js/ejs_production.js"
+    resolveLocalFileSystemURL(url, success = (entry) => {
+        console.log('cdvfile URI: ' + entry.toInternalURL());
+    }, fail = (err) => {console.log(err)})
 
     const el = document.getElementById('h5p-container');
     const options = {

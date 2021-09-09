@@ -10,3 +10,78 @@
     <h1>Helo</h1>
 </body>
 </html>
+
+
+//   window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory + "h5p-libraries/", function success(directoryEntry) {
+    //     //read file
+    //     var directoryReader = directoryEntry.createReader();
+
+    //     directoryReader.readEntries(
+    //         entryHandler,
+    //         errorHandler
+    //     );
+    //     function entryHandler(entries) {
+    //         entries.forEach(function (entry) {
+    //           if (entry.isDirectory) {
+    //             // console.log(entry)
+    //             window.resolveLocalFileSystemURL(entry.nativeURL, function success(subDirectoryEntry) {
+    //               // function readFile(fileEntry) {
+    //                 var subDirectoryReader = subDirectoryEntry.createReader();
+    //                 subDirectoryReader.readEntries(function getSubDirectory (subEntries) {
+    //                   subEntries.forEach((subEntry) => {
+    //                     if(subEntry.isDirectory) {
+    //                       window.resolveLocalFileSystemURL(subEntry.nativeURL + "library.json", function success(fileEntry) {
+    //                         fileEntry.file(function (file) {
+    //                             var reader = new FileReader();
+    //                             reader.onloadend = function(evt) {
+    //                               let jsonData = JSON.parse(evt.target.result);
+    //                               let promise = new Promise(function(resolve, reject) {
+    //                                 resolve(jsonData)
+    //                               })
+    //                               promise.then(function (value) {
+    //                                 let jsonData = JSON.parse(value);
+    //                                 console.log(jsonData)
+    //                                 return jsonData
+    //                               })
+    //                               console.log("promise2", promise)
+    //                             };
+    //                             reader.readAsText(file);
+    //                         }, function onErrorReadFile (err) {console.log(err)});
+    //                       })
+    //                     } else {
+    //                       // return subEntry
+    //                       window.resolveLocalFileSystemURL(subEntry.nativeURL, function success(fileEntry) {
+    //                         fileEntry.file(function (file) {
+    //                             var reader = new FileReader();
+    //                             reader.onloadend = function(evt) {
+    //                               let jsonData = JSON.parse(evt.target.result);
+    //                               let promise = new Promise(function(resolve, reject) {
+    //                                 resolve(jsonData)
+    //                               })
+    //                               promise.then(function (value) {
+    //                                 let jsonData = JSON.parse(value);
+    //                                 console.log(jsonData)
+    //                                 return jsonData
+    //                               })
+    //                               console.log("promise", promise)
+    //                             };
+    //                             reader.readAsText(file);
+    //                         }, function onErrorReadFile (err) {console.log(err)});
+    //                       })
+    //                     }
+    //                   })
+    //                 }, function onErrorReadFile (err) {console.log(err)});
+    //               })
+    //           } else {
+    //           }
+        
+    //         });
+        
+    //       }
+    //       function errorHandler(error) {
+        
+    //         console.log("ERROR", error);
+        
+    //       }
+        
+    // }, function error(e) { console.log('resolving directory error'); console.log(e);  });
