@@ -1,7 +1,4 @@
 /*! For license information please see main.bundle.js.LICENSE.txt */
-document.addEventListener('deviceready', onDeviceReady, false);
-
-function onDeviceReady() {
 !(function (e, t) {
   "object" == typeof exports && "object" == typeof module
     ? (module.exports = t())
@@ -7455,39 +7452,13 @@ function onDeviceReady() {
                   t += '<script src="' + e[n] + '"></script>';
                 return t;
               };
-              var tm
-              var newScript = function (e) {
-                var t = "<script>";
-                e.forEach(function(script, index) {
-                  console.log(index)
-                  // if(indexOf("https://localhost/../plugins/h5p-standalone/dist/frame.bundle.js") )
-                  if(index != 0) {
-                  window.resolveLocalFileSystemURL(script, function success(fileEntry) {
-                    fileEntry.file(function (file) {
-                        var reader = new FileReader();
-                        reader.onloadend = function(evt) {
-                          t +=  evt.target.result;
-                        };
-                        reader.readAsText(file);
-                    }, onErrorReadFile = (err) => {console.log(err)});
-                  })
-                }
-                })
-                setTimeout(function () {
-                  t += "</script>";
-                  console.log("hello"+ t)
-                  return t
-                }, 3000)
-                
-              }
             return (
               '<base target="_parent">' +
               t(H5PIntegration.core.styles) +
               t(H5PIntegration.contents["cid-" + e].styles) +
               n(H5PIntegration.core.scripts) +
               n(H5PIntegration.contents["cid-" + e].scripts) +
-              "<script>H5PIntegration = window.parent.H5PIntegration; var H5P = H5P || {}; H5P.externalEmbed = false;</script>" +
-              newScript(H5PIntegration.contents["cid-" + e].scripts)
+              "<script>H5PIntegration = window.parent.H5PIntegration; var H5P = H5P || {}; H5P.externalEmbed = false;</script>"
             );
           }),
           (g.communicator =
@@ -8930,7 +8901,6 @@ function onDeviceReady() {
                       var r, i, o, a, s, c;
                       return u().wrap(
                         function (e) {
-                          console.log(e)
                           for (;;)
                             switch ((e.prev = e.next)) {
                               case 0:
@@ -9022,26 +8992,9 @@ function onDeviceReady() {
               {
                 key: "getJSON",
                 value: function (e) {
-                  // return fetch(e).then(function (e) {
-                  //   // console.log(e.json())
-                  //   return e.json();
-                  // });
-                  let em = new Promise(function(resolve, reject) {
-                    window.resolveLocalFileSystemURL(e, function success(fileEntry) {
-                      fileEntry.file(function (file) {
-                          var reader = new FileReader();
-                          reader.onloadend = function(evt) {
-                            let jsonData = JSON.parse(evt.target.result);
-                            resolve(jsonData)
-                          };
-                          reader.readAsText(file);
-                      }, function onErrorReadFile (err) {console.log(err)});
-                    })
-                  }).then(function (e) {
-                    return e;
+                  return fetch(e).then(function (e) {
+                    return e.json();
                   })
-                  // console.log("e", e)
-                  return em;
                 },
               },
               {
@@ -9055,7 +9008,6 @@ function onDeviceReady() {
                           for (;;)
                             switch ((e.prev = e.next)) {
                               case 0:
-                                console.log("this", this.h5p)
                                 return (
                                   (t = this.h5p.preloadedDependencies[0]),
                                   (n =
@@ -9332,4 +9284,3 @@ function onDeviceReady() {
     );
   })();
 });
-}

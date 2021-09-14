@@ -204,14 +204,6 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
       "clobbers": [
         "download"
       ]
-    },
-    {
-      "id": "cordova-plugin-fetch.FetchPlugin",
-      "file": "plugins/cordova-plugin-fetch/www/fetch.js",
-      "pluginId": "cordova-plugin-fetch",
-      "clobbers": [
-        "cordovaFetch"
-      ]
     }
   ];
   module.exports.metadata = {
@@ -219,7 +211,6 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
     "cordova-plugin-pdialog": "2.0.1",
     "cordova-plugin-file": "6.0.2",
     "cordova-plugin-zip": "3.1.0",
-    "cordova-plugin-downloader": "0.0.4",
-    "cordova-plugin-fetch": "0.1.0"
+    "cordova-plugin-downloader": "0.0.4"
   };
 });

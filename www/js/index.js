@@ -23,11 +23,6 @@ document.addEventListener('deviceready', onDeviceReady, false);
 
 function onDeviceReady() {
     // Cordova is now initialized. Have fun!
-    url = "file:///storage/emulated/0/Android/data/com.example.leo/files/h5p-libraries/quiz/EmbeddedJS-1.0/js/ejs_production.js"
-    resolveLocalFileSystemURL(url, success = (entry) => {
-        console.log('cdvfile URI: ' + entry.toInternalURL());
-    }, fail = (err) => {console.log(err)})
-
     const el = document.getElementById('h5p-container');
     const options = {
     h5pJsonPath:  'https://lnwebworks.com/work/quiz',
@@ -41,8 +36,8 @@ function onDeviceReady() {
         dl.Initialize({
             fileSystem : cordova.file.externalDataDirectory,
             folder: "h5p-libraries",
-            unzip: true,
-            remove: true,
+            unzip: false,
+            remove: false,
             timeout: 0,
             success: DownloaderSuccess,
             error: DownloaderError,
@@ -53,7 +48,37 @@ function onDeviceReady() {
             alert("download error: " + err);
         }
         function DownloaderSuccess() {
-            console.log(cordova.file.dataDirectory);
+            console.log(cordova.file.externalDataDirectory);
+            processZip(cordova.file.externalDataDirectory + "h5p-libraries/quiz.zip", cordova.file.externalDataDirectory + "h5p-libraries")
+        }
+        function processZip(zipSource, destination){
+            // Handle the progress event
+            var progressHandler = function(progressEvent){
+                var percent =  Math.round((progressEvent.loaded / progressEvent.total) * 100);
+                // Display progress in the console : 8% ...
+                console.log(percent + "%");
+            };
+            // Proceed to unzip the file
+            window.zip.unzip(zipSource, destination, (status) => {
+                if(status == 0){
+                    console.log("Files succesfully decompressed");
+                    window.resolveLocalFileSystemURL (cordova.file.externalDataDirectory + "h5p-libraries/quiz.zip", 
+                        function (fileEntry) { 
+                            fileEntry.remove(
+                                function () { 
+                                    console.log('File is removed.'); 
+                                }, 
+                                function (error) {
+                                    alert('Unable to remove file.');
+                                }
+                            ); 
+                        }, function (error) {console.log(error)}
+                     );
+                }
+                if(status == -1){
+                    console.error("Oops, cannot decompress files");
+                }
+            }, progressHandler);
         }
     })
 }

@@ -40,4 +40,3 @@ Some of requirements check failed
 Open platform/android folder in 'Android Studio'
 Click on Run the app.
 ```
-Note: Currently we placed offline activity manually and download functionality is under process.
