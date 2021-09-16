@@ -31,7 +31,26 @@ function onDeviceReady() {
     }
     new H5PStandalone.H5P(el, options);
 
+    H5P.externalDispatcher.on('xAPI', function (event) {
+        switch (event.getVerb()) {
+            case 'completed':
+                var obtainedScores = event.getScore(),
+                maxScores = event.getMaxScore(),
+                uuid = device.uuid;
+                $.ajax({
+                    url: "https://seminary-tools.000webhostapp.com/api/save_data.php",
+                    data: {'obtainedScore' : obtainedScores, 'maxScores' : maxScores, 'uuid' : uuid},
+                    success: function(result) {
+                        console.log(result)
+                    }
+                });
+            break;
+        }
+    });
+
     document.getElementById("downloadActivity").addEventListener("click", () => {
+        var options = { dimBackground: true };
+        SpinnerPlugin.activityStart("Loading...", options);
         var dl = new download();
         dl.Initialize({
             fileSystem : cordova.file.externalDataDirectory,
@@ -50,6 +69,7 @@ function onDeviceReady() {
         function DownloaderSuccess() {
             console.log(cordova.file.externalDataDirectory);
             processZip(cordova.file.externalDataDirectory + "h5p-libraries/quiz.zip", cordova.file.externalDataDirectory + "h5p-libraries")
+            SpinnerPlugin.activityStop();
         }
         function processZip(zipSource, destination){
             // Handle the progress event
