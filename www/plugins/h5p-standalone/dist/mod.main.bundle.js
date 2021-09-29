@@ -1,6 +1,5 @@
 /*! For license information please see main.bundle.js.LICENSE.txt */
 document.addEventListener('deviceready', onDeviceReady, false);
-
 function onDeviceReady() {
 !(function (e, t) {
   "object" == typeof exports && "object" == typeof module
@@ -7439,7 +7438,7 @@ function onDeviceReady() {
                         g.getHeadTags(e) +
                         '</head><body><div class="h5p-content" data-content-id="' +
                         e +
-                        '"/></script></body></html>'
+                        '"/></body></html>'
                     ),
                     this.contentDocument.close();
                 });
@@ -7448,8 +7447,8 @@ function onDeviceReady() {
             var t = function (e) {
               var fileNames = [];
                 for (var t = "", n = 0; n < e.length; n++) {
-                  fileNames = e[n].split("/")
-                  t += '<link rel="stylesheet" href="activities/css/' + fileNames[fileNames.length - 1] + '">';
+                  fileNames = e[n].split("www")
+                  t += '<link rel="stylesheet" href="' + fileNames[1] + '">';
                 }
                 return t;
               },
@@ -7459,14 +7458,15 @@ function onDeviceReady() {
                   if (e[n].includes("frame.bundle.js")) {
                     t += '<script src="' + e[n] + '"></script>';
                   } else {
-                    fileNames = e[n].split("/")
-                    t += '<script src="activities/js/' + fileNames[fileNames.length - 1] + '"></script>';
+                    fileNames = e[n].split("www")
+                    t += '<script src="' + fileNames[1] + '"></script>';
                   }
                 }
                 return t;
               };
             return (
               '<base target="_parent">' +
+              // '<script type="text/javascript" charset="utf-8" src="cordova.js"></script>' +
               t(H5PIntegration.core.styles) +
               t(H5PIntegration.contents["cid-" + e].styles) +
               n(H5PIntegration.core.scripts) +
@@ -7891,6 +7891,7 @@ function onDeviceReady() {
                     )
                       g.findCopyrights(e, a, n);
                     else {
+                      // console.log(a)
                       var s = new g.MediaCopyright(a.copyright);
                       void 0 !== a.width &&
                         void 0 !== a.height &&
@@ -8844,9 +8845,10 @@ function onDeviceReady() {
               n.h5pJsonPath
                 ? (this.h5pJsonPath = y(n.h5pJsonPath))
                 : (this.h5pJsonPath = y("workspace")),
+                // console.log(this.h5pJsonPath),
               n.librariesPath
                 ? (this.librariesPath = y(n.librariesPath))
-                : (this.librariesPath = this.h5pJsonPath),
+                : (this.librariesPath = cordova.file.applicationDirectory + "www/activities"),
               n.contentJsonPath
                 ? (this.contentUrl = y(n.contentJsonPath))
                 : (this.contentUrl = y(
@@ -8932,6 +8934,7 @@ function onDeviceReady() {
                                   )
                                 );
                               case 5:
+                                // console.log(e.sent)
                                 return (
                                   (r = e.sent),
                                   (e.next = 8),
@@ -9037,6 +9040,7 @@ function onDeviceReady() {
                           for (;;)
                             switch ((e.prev = e.next)) {
                               case 0:
+                                // console.log("ths", this.contentUrl)
                                 return (
                                   (t = this.h5p.preloadedDependencies[0]),
                                   (n =

@@ -228,6 +228,14 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
       "clobbers": [
         "Connection"
       ]
+    },
+    {
+      "id": "cordova-sqlite-storage.SQLitePlugin",
+      "file": "plugins/cordova-sqlite-storage/www/SQLitePlugin.js",
+      "pluginId": "cordova-sqlite-storage",
+      "clobbers": [
+        "SQLitePlugin"
+      ]
     }
   ];
   module.exports.metadata = {
@@ -237,6 +245,7 @@ cordova.define('cordova/plugin_list', function(require, exports, module) {
     "cordova-plugin-zip": "3.1.0",
     "cordova-plugin-downloader": "0.0.4",
     "cordova-plugin-spinner": "1.1.0",
-    "cordova-plugin-network-information": "3.0.0"
+    "cordova-plugin-network-information": "3.0.0",
+    "cordova-sqlite-storage": "6.0.0"
   };
 });

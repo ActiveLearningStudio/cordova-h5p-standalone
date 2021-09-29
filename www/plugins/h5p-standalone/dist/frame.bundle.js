@@ -9,6 +9,7 @@
     : (e.H5PStandalone = t());
 })(self, function () {
   return (() => {
+    // console.log(onDeviceReady())
     var e = {
         41: () => {
           H5P.ActionBar = (function (e, t) {
@@ -7373,6 +7374,7 @@
                       )))
                   : e.removeAttribute("crossorigin"),
                   (e.src = i.getPath(r, n));
+                  // console.log(onDeviceReadyGo('', e.src))
               });
             var e = function (e) {
               return e.match(/^[a-z0-9]+:\/\//i);

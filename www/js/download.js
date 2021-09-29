@@ -1,59 +1,8 @@
 document.addEventListener('deviceready', onDeviceReady, false);
-
 function onDeviceReady() {
-    // window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory + "h5p-libraries/", function success(directoryEntry) {
-    //     //read file
-    //     var directoryReader = directoryEntry.createReader();
-
-    //     directoryReader.readEntries(
-    //         entryHandler,
-    //         errorHandler
-    //     );
-    //     function entryHandler(entries) {
-    //         entries.forEach(function (entry) {
-    //           if (entry.isDirectory) {
-    //             window.resolveLocalFileSystemURL(entry.nativeURL, function success(subDirectoryEntry) {
-    //               // function readFile(fileEntry) {
-    //                 var subDirectoryReader = subDirectoryEntry.createReader();
-    //                 subDirectoryReader.readEntries(getSubDirectory = (subEntries) => {
-    //                   subEntries.forEach((subEntry) => {
-    //                     if(subEntry.isDirectory) {
-    //                       // console.log(subEntry.nativeURL, " -- ", cordova.file.externalDataDirectory)
-    //                       window.resolveLocalFileSystemURL(subEntry.nativeURL, function success(fileEntry) {
-    //                         var fileEntry = fileEntry.createReader();
-    //                         fileEntry.readEntries(getSubDirectory = (files) => {
-    //                           files.forEach((file) => {
-    //                             if(file.isDirectory) {
-    //                               // console.log(file)
-    //                             } else {
-    //                               // console.log("file", file)
-    //                             } 
-    //                           }) 
-    //                         })
-    //                       })
-    //                     } else {
-    //                       // console.log("file", subEntry)
-    //                     }
-    //                   })
-    //                 }, onErrorReadFile = (err) => {console.log(err)});
-    //               })
-    //           } else {
-    //           }
-        
-    //         });
-        
-    //       }
-    //       function errorHandler(error) {
-        
-    //         console.log("ERROR", error);
-        
-    //       }
-        
-    // }, function error(e) { console.log('resolving directory error'); console.log(e);  });
-    
     // if (externalDirectory) {
   //     let json = '';
-  //     window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory + "h5p-libraries/quiz/h5p.json/", function success(fileEntry) {
+  //     window.resolveLocalFileSystemURL(cordova.file.dataDirectory + "h5p-libraries/quiz/h5p.json/", function success(fileEntry) {
   //     // function readFile(fileEntry) {
 
   //       fileEntry.file(function (file) {
@@ -71,6 +20,216 @@ function onDeviceReady() {
   //       }, onErrorReadFile = (err) => {console.log(err)});
   //   // }
   // })
+  
+    window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory + "projects/", function success(directoryEntry) {
+        //read Projects Folder
+        var directoryReader = directoryEntry.createReader();
+        directoryReader.readEntries(
+            entryHandler,
+            errorHandler
+        );
+        function entryHandler(entries) {
+            var offlineProjectHTML = '';
+            entries.forEach(function (entry) {
+              if (entry.isDirectory) {
+                //   -------- Sub Directory of Projects Folder ---------
+                window.resolveLocalFileSystemURL(entry.nativeURL, function success(subDirectoryEntry) {
+                    var subDirectoryReader = subDirectoryEntry.createReader();
+                    subDirectoryReader.readEntries(getSubDirectory = (subEntries) => {
+                      subEntries.forEach((subEntry) => {
+                        if(subEntry.isDirectory) {
+                            // ------- Main Project Folder --------
+                          window.resolveLocalFileSystemURL(subEntry.nativeURL, function success(projects) {
+                            var projectReader = projects.createReader();
+                            projectReader.readEntries(getProjects = (projectFolderNFiles) => {
+                                projectFolderNFiles.forEach((projectFolderNFile) => {
+                                if(projectFolderNFile.isDirectory) {
+                                    // ------ Playlist Folder -------
+                                    window.resolveLocalFileSystemURL(projectFolderNFile.nativeURL, function success(playlist) {
+                                        var playlistReader = playlist.createReader();
+                                        playlistReader.readEntries(getPlaylists = (playlistFolders) => {
+                                            playlistFolders.forEach((playlistFolder) => {
+                                                if(playlistFolder.isDirectory) {
+                                                    // ----- Activities Main Folder -----
+                                                    window.resolveLocalFileSystemURL(playlistFolder.nativeURL, function success(activitiesContainer) {
+                                                        var activitiesContainerReader = activitiesContainer.createReader();
+                                                        activitiesContainerReader.readEntries(getActivitiesContainer = (activitiesFolderNPlaylistJson) => {
+                                                            activitiesFolderNPlaylistJson.forEach((activitiesNPlaylistJson) => {
+                                                                if(activitiesNPlaylistJson.isDirectory) {
+                                                                    // --------- Activities ---------
+                                                                    window.resolveLocalFileSystemURL(activitiesNPlaylistJson.nativeURL, function success(activities) {
+                                                                        var activitiesReader = activities.createReader();
+                                                                        activitiesReader.readEntries(getActivities = (activitiesFolders) => {
+                                                                            activitiesFolders.forEach((activitiesFolder) => {
+                                                                                if(activitiesFolder.isDirectory) {
+                                                                                    // --------- Activities .h5p file ----------
+                                                                                    window.resolveLocalFileSystemURL(activitiesFolder.nativeURL, function success(activitiesFiles) {
+                                                                                        var activitiesFilesReader = activitiesFiles.createReader();
+                                                                                        activitiesFilesReader.readEntries(getActivitiesFiles = (activitiesH5pFiles) => {
+                                                                                            activitiesH5pFiles.forEach((activitiesH5pFile) => {
+                                                                                                if(activitiesH5pFile.isFile) {
+                                                                                                    if(activitiesH5pFile.name.includes(".h5p")) {
+                                                                                                        var activityName = activitiesH5pFile.name.split(".")
+                                                                                                        moveFile(activitiesH5pFile.nativeURL, activityName[0]);
+                                                                                                    }
+                                                                                                } else {
+                                                                                                    // -------- If any folder inside activity folder will listed here ------
+                                                                                                    // varible = activitiesH5pFile
+                                                                                                } 
+                                                                                            }) 
+                                                                                        })
+                                                                                    })
+                                                                                } else {
+                                                                                    // --------- If any file inside activities folder Address Here ---------
+                                                                                    // variable = activitiesFolder
+                                                                                } 
+                                                                            }) 
+                                                                        })
+                                                                    })
+                                                                } else {
+                                                                    // --------- Playlist.json file Address Here ---------
+                                                                    // variable = activitiesNPlaylistJson
+                                                                    console.log(activitiesNPlaylistJson)
+                                                                } 
+                                                            }) 
+                                                        })
+                                                    })
+                                                } else {
+                                                    // ------ If any file inside playlist folder address here. -----
+                                                    // variable = playlistFolder
+                                                } 
+                                            }) 
+                                        })
+                                    })
+                                } else {
+                                    // -------- project.json file address Here -------
+                                    // variable = projectFolderNFile
+                                        window.resolveLocalFileSystemURL(projectFolderNFile.nativeURL, function success(fileEntry) {
+                                            fileEntry.file(function (file) {
+                                                var reader = new FileReader();
+                                                reader.onloadend = function(evt) {
+                                                    // console.log("Successful file read: " + this.result);
+                                                    console.log(JSON.parse(evt.target.result));
+                                                    var projectJSON = JSON.parse(evt.target.result);
+                                                    offlineProjectHTML += `
+                                                    <div class= "row">
+                                                        <div class="col-12">
+                                                            <h4 class="text-center">${projectJSON.name}</h4>
+                                                        </div>
+                                                    </div>`;
+                                                    $("#offlineProjectContainer").html(offlineProjectHTML);
+                                                };
+                                                reader.readAsText(file);
+                                            }, onErrorReadFile = (err) => {console.log(err)});
+                                        // }
+                                    })
+                                } 
+                              }) 
+                            })
+                          })
+                        } else {
+                            // ------- Sub directory's file listing ---------
+                            // variable = subEntry
+                        }
+                      })
+                    }, onErrorReadFile = (err) => {console.log(err)});
+                  })
+              } else {}
+            });
+        }
+        function errorHandler(error) {
+            console.log("ERROR", error);
+        }
+    }, function error(e) { console.log('resolving directory error'); console.log(e);  });
+
+
+    function moveFile(fileUri, name) {
+        window.resolveLocalFileSystemURL(fileUri,
+            function(fileEntry){
+                newFileUri  = cordova.file.externalDataDirectory + "downloaded-activities/";
+                oldFileUri  = fileUri;
+                fileExt     = "." + "zip";
+
+                newFileName = name + fileExt;
+                window.resolveLocalFileSystemURL(newFileUri,
+                    function(dirEntry) {
+                        // move the file to a new directory and rename it
+                        fileEntry.moveTo(dirEntry, newFileName, successCallback = (evt) => {
+                            processZip(evt.nativeURL, cordova.file.externalDataDirectory + "h5p-libraries/" + name);
+                            setTimeout(() => {
+                                removeDependencies(cordova.file.externalDataDirectory + "h5p-libraries/" + name);
+                            }, 3000);
+                        }, errorCallback);
+                    },
+                    errorCallback = (err) => {console.log(err)}
+                );
+            },
+            errorCallback = (err) => {console.log(err)}
+        );
+    }
+
+    function processZip(zipSource, destination) {
+        // Handle the progress event
+        var progressHandler = function(progressEvent){
+            var percent =  Math.round((progressEvent.loaded / progressEvent.total) * 100);
+            console.log(percent + "%");
+        };
+        // Proceed to unzip the file
+        window.zip.unzip(zipSource, destination, (status) => {
+            if(status == 0){
+                console.log("Files succesfully decompressed");
+                window.resolveLocalFileSystemURL (zipSource, 
+                    function (fileEntry) { 
+                        fileEntry.remove(
+                            function () { 
+                                console.log('File is removed.'); 
+                            }, 
+                            function (error) {
+                                console.log('Unable to remove file. ' + error );
+                            }
+                        ); 
+                    }, function (error) {console.log(error)}
+                 );
+            }
+            if(status == -1){
+                console.error("Oops, cannot decompress files");
+            }
+        }, progressHandler);
+    }
+
+    function removeDependencies(path) {
+        window.resolveLocalFileSystemURL(path, (dir) => {
+            var dirReader = dir.createReader();
+            dirReader.readEntries(getAllDependencies = (allDirectories) => {
+                allDirectories.forEach((allDirectory) => {
+                    if(allDirectory.isDirectory) {
+                        if(allDirectory.name != "content") {
+                            allDirectory.removeRecursively(() => {
+                                console.log("directory deleted");
+                            }, (err) => {
+                                console.log("error", err);
+                            })
+                        }
+                    } else {
+                        // console.log("folder", activitiesH5pFile)
+                    } 
+                }) 
+            })
+        })
+    }
+
+    function readJsonFile(filePath) {
+        window.resolveLocalFileSystemURL(filePath, function success(fileEntry) {
+            fileEntry.file(function (file) {
+                var reader = new FileReader();
+                reader.onloadend = function() {
+                    return JSON.parse(this.result);
+                };
+                reader.readAsText(file);
+            }, onErrorReadFile = (err) => {console.log(err)});
+        })
+    }
+  
     document.addEventListener("offline", onOffline, false);
     document.addEventListener("online", onOnline, false);
     var dataFileEntry;
@@ -83,12 +242,6 @@ function onDeviceReady() {
                 readFile(fileEntry);
             }, onErrorCreateFile = (err) => {console.log(err)});
         }, onErrorLoadFs = (err) => {console.log(err)})
-        // if (networkState !== Connection.NONE) {
-        //     if (dataFileEntry) {
-        //         tryToUploadFile();
-        //     }
-        // }
-        // display('Connection type: ' + networkState);
     }
 
     function onOffline() {
@@ -162,80 +315,11 @@ function onDeviceReady() {
     
         }, onErrorReadFile = (err) => {console.log(err)});
     }
-    // function tryToUploadFile() {
-    //     // !! Assumes variable fileURL contains a valid URL to a text file on the device,
-    //     var fileURL = getDataFileEntry().toURL();
-    //     getFileBlobSomehow(fileURL, function(fileBlob) {
-    //         var success = function (r) {
-    //             console.log("Response = " + r.response);
-    //             display("Uploaded. Response: " + r.response);
-    //         };
-    
-    //         var fail = function (error) {
-    //             console.log("An error has occurred: Code = " + error.code || error.status);
-    //             offlineWrite("Failed to upload: some offline data");
-    //         }
-    
-    //         var xhr = new XMLHttpRequest();
-    
-    //         xhr.onerror = fail;
-    //         xhr.ontimeout = fail;
-    //         xhr.onload = function() {
-    //             // If the response code was successful...
-    //             if (xhr.status >= 200 && xhr.status < 400) {
-    //                 success(xhr);
-    //             }
-    //             else {
-    //                 fail(xhr)
-    //             }
-    //         }
-    
-    //         // Make sure you add the domain of your server URL to the
-    //         // Content-Security-Policy <meta> element in index.html.
-    //         xhr.open("POST", encodeURI(SERVER));
-    
-    //         xhr.setRequestHeader("Content-Type", "text/plain");
-    
-    //         // The server request handler could read this header to
-    //         // set the filename.
-    //         xhr.setRequestHeader("X-Filename", fileURL.substr(fileURL.lastIndexOf("/") + 1));
-    
-    //         xhr.send(fileBlob);
-    //     });
-    // };
 
-    // function offlineWrite(offlineData) {
-    //     // Create a FileWriter object for our FileEntry.
-    //     dataFileEntry.createWriter(function (fileWriter) {
-    
-    //         fileWriter.onwriteend = function () {
-    //             console.log("Successful file write...");
-    //             display(offlineData);
-    //         };
-    
-    //         fileWriter.onerror = function (e) {
-    //             console.log("Failed file write: " + e.toString());
-    //         };
-    
-    //         fileWriter.write(offlineData);
-    //     });
-    // }
-
-    // var dataFileEntry;
-    // function createSomeData() {
-    //     window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function (fs) {
-    //         console.log('file system open: ' + fs.name);
-    //         // Creates a new file or returns an existing file.
-    //         fs.root.getFile("data.txt", { create: true, exclusive: false }, function (fileEntry) {
-    //             dataFileEntry = fileEntry;
-    //         }, onErrorCreateFile);
-    //     }, onErrorLoadFs);
-    // }
     const offlineElement = document.getElementById('h5p-container');
     const options = {
-        // h5pJsonPath:  "../activities/sample",
-        h5pJsonPath:  cordova.file.externalDataDirectory + "h5p-libraries/quiz",
-        frameJs: '../plugins/h5p-standalone/dist/frame.bundle.js',
+        h5pJsonPath:  cordova.file.externalDataDirectory + "h5p-libraries/35382",
+        frameJs: '../plugins/h5p-standalone/dist/mod.frame.bundle.js',
         frameCss: '../plugins/h5p-standalone/dist/styles/h5p.css',
     }
     new H5PStandalone.H5P(offlineElement, options);

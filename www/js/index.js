@@ -23,11 +23,25 @@ document.addEventListener('deviceready', onDeviceReady, false);
 
 function onDeviceReady() {
     // Cordova is now initialized. Have fun!
+    console.log(window.localStorage)
+    window.sqlitePlugin.echoTest(function() {
+        console.log('ECHO test OK');
+    });
+
+    $.ajax({
+        url: "https://seminary-tools.000webhostapp.com/api/contentjson.php",
+        success: (res) => {
+            var data = JSON.parse(res);
+            var filtered = data.filtered.toString();
+            console.log(data)
+        }
+    })
+
     const el = document.getElementById('h5p-container');
     const options = {
-    h5pJsonPath:  'https://lnwebworks.com/work/quiz',
-    frameJs: '../plugins/h5p-standalone/dist/frame.bundle.js',
-    frameCss: '../plugins/h5p-standalone/dist/styles/h5p.css',
+        h5pJsonPath:  'https://lnwebworks.com/work/quiz',
+        frameJs: '../plugins/h5p-standalone/dist/frame.bundle.js',
+        frameCss: '../plugins/h5p-standalone/dist/styles/h5p.css',
     }
     new H5PStandalone.H5P(el, options);
 
@@ -54,24 +68,47 @@ function onDeviceReady() {
         var dl = new download();
         dl.Initialize({
             fileSystem : cordova.file.externalDataDirectory,
-            folder: "h5p-libraries",
+            folder: "downloaded-activities",
             unzip: false,
             remove: false,
             timeout: 0,
             success: DownloaderSuccess,
             error: DownloaderError,
         });
-        dl.Get("https://lnwebworks.com/work/quiz.zip");
+        dl.Get("https://lite.curriki.org/api/api/v1/h5p/export/35382");
         function DownloaderError(err) {
             console.log("download error: " + err);
             alert("download error: " + err);
         }
-        function DownloaderSuccess() {
+        function DownloaderSuccess(evt) {
+            console.log(evt)
+            function moveFile(fileUri) {
+                window.resolveLocalFileSystemURL(fileUri,
+                    function(fileEntry){
+                        newFileUri  = cordova.file.externalDataDirectory + "downloaded-activities/";
+                        oldFileUri  = fileUri;
+                        fileExt     = "." + "zip";
+        
+                        newFileName = "35382" + fileExt;
+                        window.resolveLocalFileSystemURL(newFileUri,
+                            function(dirEntry) {
+                                // move the file to a new directory and rename it
+                                fileEntry.moveTo(dirEntry, newFileName, successCallback = (evt) => {
+                                    console.log(evt.nativeURL)
+                                    processZip(evt.nativeURL, cordova.file.externalDataDirectory + "h5p-libraries/35382")
+                                    SpinnerPlugin.activityStop();
+                                }, errorCallback);
+                            },
+                            errorCallback = (err) => {console.log(err)}
+                        );
+                    },
+                    errorCallback = (err) => {console.log(err)}
+                );
+            }
+            moveFile(cordova.file.externalDataDirectory + "downloaded-activities/35382")
             console.log(cordova.file.externalDataDirectory);
-            processZip(cordova.file.externalDataDirectory + "h5p-libraries/quiz.zip", cordova.file.externalDataDirectory + "h5p-libraries")
-            SpinnerPlugin.activityStop();
         }
-        function processZip(zipSource, destination){
+        function processZip(zipSource, destination) {
             // Handle the progress event
             var progressHandler = function(progressEvent){
                 var percent =  Math.round((progressEvent.loaded / progressEvent.total) * 100);
@@ -82,7 +119,7 @@ function onDeviceReady() {
             window.zip.unzip(zipSource, destination, (status) => {
                 if(status == 0){
                     console.log("Files succesfully decompressed");
-                    window.resolveLocalFileSystemURL (cordova.file.externalDataDirectory + "h5p-libraries/quiz.zip", 
+                    window.resolveLocalFileSystemURL (zipSource, 
                         function (fileEntry) { 
                             fileEntry.remove(
                                 function () { 

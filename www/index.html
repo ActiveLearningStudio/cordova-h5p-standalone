@@ -29,8 +29,8 @@
             * Disables use of inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
                 * Enable inline JS: add 'unsafe-inline' to default-src
         -->
-        <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; 
-            style-src 'self'; default-src 'unsafe-inline'; media-src *; img-src 'self' data: content:;"> -->
+        <meta http-equiv="Content-Security-Policy" content="default-src 'unsafe-inline' 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval' https: cdvfile:; 
+            style-src 'self' https:; media-src *; img-src 'self' data: content: cdvfile:;">
         <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' cdvfile: file: https:"> -->
         <!-- <meta http-equiv="Content-Security-Policy" content="* * 'self' default-src 'unsafe-inline' 'unsafe-eval' http://* https://* data: cdvfile://* file:///* content://*;"> -->
 
@@ -38,16 +38,45 @@
         <meta name="msapplication-tap-highlight" content="no">
         <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
         <meta name="color-scheme" content="light dark">
+        <link rel="stylesheet" href="css/bootstrap.min.css">
         <link rel="stylesheet" href="css/index.css">
-        <title>Hello World</title>
+        <title>Login Page</title>
+        <script>
+            var localStorage = window.localStorage,
+            token = localStorage.getItem("token");
+            if(token) {
+                window.location.href = 'dashboard.html';
+            }
+        </script>
     </head>
     <body>
-        <div id='h5p-container'></div>
-        <button id="downloadActivity">Download</button>
-        <a href="download.html">Downloaded Activities</a>
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-        <script src="plugins/h5p-standalone/dist/main.bundle.js"></script>
+        <div class="container">
+            <div class="row mt-3 mb-3">
+                <div class="col-12 text-center">
+                    <h1>Enter Your Login Details</h1>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-10 m-auto">
+                    <form action="">
+                        <div class="form-group">
+                            <label for="userName">Username</label>
+                            <input type="text" name="userName" id="userName" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" name="password" id="password" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <button type="button" class="btn btn-primary" id="loginButton">Login</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
         <script src="cordova.js"></script>
-        <script src="js/index.js"></script>
+        <script src="js/jquery.min.js"></script>
+        <script src="js/bootstrap/bootstrap.min.js"></script>
+        <script src="js/login.js"></script>
     </body>
 </html>
