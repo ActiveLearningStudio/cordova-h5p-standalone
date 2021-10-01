@@ -2,6 +2,11 @@
 
 The H5P Mobile App runs the h5p activity on Mobile and also offline feature is available
 
+# Required Softwares
+
+1. Android Studio to create a build (https://developer.android.com/studio).
+2. Node npm to manage the package (https://nodejs.org/en/download/).
+
 ## Installation
 
 To Install this App first you need to set up Cordova in your system
