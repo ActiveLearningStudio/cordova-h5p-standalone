@@ -26,7 +26,5 @@
     <preference name="AndroidPersistentFileLocation" value="Internal" />
     <preference name="AndroidPersistentFileLocation" value="Compatibility" />
     <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application">
-  <application android:usesCleartextTraffic="true" />
-  <application android:requestLegacyExternalStorage="true" />
 </edit-config>
 </widget>
