@@ -8,7 +8,8 @@ function onDeviceReady() {
             errorHandler
         );
         function entryHandler(entries) {
-            var offlineProjectHTML = '';
+            var offlineProjectHTML = '',
+            playlistPath = '';
             entries.forEach(function (entry) {
               if (entry.isDirectory) {
                 //   -------- Sub Directory of Projects Folder ---------
@@ -17,42 +18,26 @@ function onDeviceReady() {
                     subDirectoryReader.readEntries(getSubDirectory = (subEntries) => {
                       subEntries.forEach((subEntry) => {
                         if(subEntry.isDirectory) {
-                            // ------- Main Project Folder --------
-                            window.resolveLocalFileSystemURL(subEntry.nativeURL, function success(projects) {
-                                var projectReader = projects.createReader();
-                                projectReader.readEntries(getProjects = (projectFolderNFiles) => {
-                                    console.log("projectFolderNFiles", projectFolderNFiles)
-                                    projectFolderNFiles.forEach((projectFolderNFile) => {
-                                    if(projectFolderNFile.isDirectory) {
-                                        // ------ Playlist Folder -------
-                                    } else {
-                                        // -------- project.json file address Here -------
-                                        // variable = projectFolderNFile
-                                            window.resolveLocalFileSystemURL(projectFolderNFile.nativeURL, function success(fileEntry) {
-                                                fileEntry.file(function (file) {
-                                                    var reader = new FileReader();
-                                                    reader.onloadend = function(evt) {
-                                                        // console.log("Successful file read: " + this.result);
-                                                        console.log(JSON.parse(evt.target.result));
-                                                        var projectJSON = JSON.parse(evt.target.result);
-                                                        offlineProjectHTML += `
-                                                        <div class= "row">
-                                                            <div class="col-12">
-                                                                <a href="offline-playlist.html?playlistPath=${subEntry.nativeURL}"><h4 class="text-center">${projectJSON.name}</h4></a>
-                                                            </div>
-                                                        </div>`;
-                                                        $("#offlineProjectContainer").html(offlineProjectHTML);
-                                                    };
-                                                    reader.readAsText(file);
-                                                }, onErrorReadFile = (err) => {console.log(err)});
-                                            });
-                                        } 
-                                    });
-                                });
-                            });
+                            playlistPath = subEntry;
                         } else {
                             // ------- Sub directory's file listing ---------
                             // variable = subEntry
+                            window.resolveLocalFileSystemURL(subEntry.nativeURL, function success(fileEntry) {
+                                fileEntry.file(function (file) {
+                                    var reader = new FileReader();
+                                    reader.onloadend = function(evt) {
+                                        var projectJSON = JSON.parse(evt.target.result);
+                                        offlineProjectHTML += `
+                                        <div class= "row">
+                                            <div class="col-12">
+                                                <a href="offline-playlist.html?playlistPath=${playlistPath.nativeURL}"><h4 class="text-center">${projectJSON.name}</h4></a>
+                                            </div>
+                                        </div>`;
+                                        $("#offlineProjectContainer").html(offlineProjectHTML);
+                                    };
+                                    reader.readAsText(file);
+                                }, onErrorReadFile = (err) => {console.log(err)});
+                            });
                         }
                       })
                     }, onErrorReadFile = (err) => {console.log(err)});

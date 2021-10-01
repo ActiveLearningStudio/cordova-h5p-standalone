@@ -7447,8 +7447,12 @@ function onDeviceReady() {
             var t = function (e) {
               var fileNames = [];
                 for (var t = "", n = 0; n < e.length; n++) {
+                  if (e[n].includes("h5p.css")) {
+                    t += '<link rel="stylesheet" href="' + e[n] + '">';
+                  } else {
                   fileNames = e[n].split("www")
-                  t += '<link rel="stylesheet" href="' + fileNames[1] + '">';
+                    t += '<link rel="stylesheet" href="' + fileNames[1] + '">';
+                  }
                 }
                 return t;
               },
@@ -9025,7 +9029,7 @@ function onDeviceReady() {
                     })
                   }).then(function (e) {
                     return e;
-                  })
+                  });
                   return em;
                 },
               },
