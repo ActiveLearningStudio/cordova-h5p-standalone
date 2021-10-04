@@ -21,7 +21,7 @@ function onDeviceReady() {
                     <div class="col-12">
                     <a href="playlist.html?courseId=${course.id}"><h4>${course.fullname}</h4></a>
                     <img src="${course.courseimage}" class="img-fluid">
-                    <button type="button" id="download">Download</button>
+                    <button type="button" id="downloadProject" class="btn btn-primary">Download</button>
                     </div>`;
                 });
                 courseWraper += '</div>';
@@ -32,7 +32,7 @@ function onDeviceReady() {
         window.location.href = 'index.html';
     }
 
-    $(document).on('click', "#download", (e) => {
+    $(document).on('click', "#downloadProject", (e) => {
        var spinnerOptions = { dimBackground: true };
         SpinnerPlugin.activityStart("Downloading...", spinnerOptions);
         console.log("in download")
