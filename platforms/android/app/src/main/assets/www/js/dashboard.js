@@ -33,30 +33,30 @@ function onDeviceReady() {
     }
 
     $(document).on('click', "#download", (e) => {
-//        var spinnerOptions = { dimBackground: true };
-//                        SpinnerPlugin.activityStart("Downloading...", spinnerOptions);
-                        console.log("in download")
-                        var dl = new download();
-                        dl.Initialize({
-                            fileSystem : cordova.file.externalDataDirectory,
-                            folder: "projects",
-                            unzip: false,
-                            remove: false,
-                            timeout: 0,
-                            success: DownloaderSuccess,
-                            error: DownloaderError,
-                        });
-                        dl.Get("https://lnwebworks.com/sample-project.zip");
-                        function DownloaderError(err) {
-                            console.log("download error: " + err);
-                            alert("download error: " + err);
-                        }
-                        function DownloaderSuccess(evt) {
-                            alert(cordova.file.externalDataDirectory);
-                            console.log("yej");
-                            processZip(cordova.file.externalDataDirectory+ "projects/sample-project.zip", cordova.file.externalDataDirectory+ "projects")
-//                            SpinnerPlugin.activityStop();
-                        }
+       var spinnerOptions = { dimBackground: true };
+        SpinnerPlugin.activityStart("Downloading...", spinnerOptions);
+        console.log("in download")
+        var dl = new download();
+        dl.Initialize({
+            fileSystem : cordova.file.externalDataDirectory,
+            folder: "projects",
+            unzip: false,
+            remove: false,
+            timeout: 0,
+            success: DownloaderSuccess,
+            error: DownloaderError,
+        });
+        dl.Get("https://lnwebworks.com/sample-project.zip");
+        function DownloaderError(err) {
+            console.log("download error: " + err);
+            alert("download error: " + err);
+        }
+        function DownloaderSuccess(evt) {
+            // alert(cordova.file.externalDataDirectory);
+            console.log("yej");
+            processZip(cordova.file.externalDataDirectory+ "projects/sample-project.zip", cordova.file.externalDataDirectory+ "projects")
+            SpinnerPlugin.activityStop();
+        }
     });
 
     $("#logout").on("click", () => {
