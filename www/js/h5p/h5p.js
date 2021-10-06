@@ -423,12 +423,12 @@ H5P.getHeadTags = function (contentId) {
     var tags = '';
     var tagUrl = [];
     for (var i = 0; i < scripts.length; i++) {
-      if (scripts[i].includes("libraries")) {
-        tagUrl = scripts[i].split("libraries");
-        tags += '<script src="activities' + tagUrl[1] + '"></script>';
-      } else {
+      // if (scripts[i].includes("libraries")) {
+      //   tagUrl = scripts[i].split("libraries");
+      //   tags += '<script src="activities' + tagUrl[1] + '"></script>';
+      // } else {
         tags += '<script src="' + scripts[i] + '"></script>';
-      }
+      // }
     }
     return tags;
   };
