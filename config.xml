@@ -25,6 +25,7 @@
     </platform>
     <preference name="AndroidPersistentFileLocation" value="Internal" />
     <preference name="AndroidPersistentFileLocation" value="Compatibility" />
+    <preference name="AndroidInsecureFileModeEnabled" value="true" />
     <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application">
 </edit-config>
 </widget>

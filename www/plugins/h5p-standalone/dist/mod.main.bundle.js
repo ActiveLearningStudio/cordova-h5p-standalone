@@ -7464,7 +7464,7 @@ function onDeviceReady() {
                     coreFileName = e[n].split("www/")
                     t += '<script src="' + coreFileName[1] + '"></script>';
                   } else {
-                  console.log(e[n]);
+                  // console.log(e[n]);
                   t += '<script src="' + e[n] + '"></script>';
                   }
                 }
