@@ -7448,22 +7448,24 @@ function onDeviceReady() {
               var fileNames = [];
                 for (var t = "", n = 0; n < e.length; n++) {
                   if (e[n].includes("h5p.css")) {
-                    t += '<link rel="stylesheet" href="' + e[n] + '">';
-                  } else {
-                  fileNames = e[n].split("www")
+                    fileNames = e[n].split("www/")
                     t += '<link rel="stylesheet" href="' + fileNames[1] + '">';
+                  } else {
+                  // fileNames = e[n].split("www/")
+                    t += '<link rel="stylesheet" href="' + e[n] + '">';
                   }
                 }
                 return t;
               },
               n = function (e) {
-                var fileNames = [];
+                var fileNames = [], coreFileName = [];
                 for (var t = "", n = 0; n < e.length; n++){
                   if (e[n].includes("frame.bundle.js")) {
-                    t += '<script src="' + e[n] + '"></script>';
+                    coreFileName = e[n].split("www/")
+                    t += '<script src="' + coreFileName[1] + '"></script>';
                   } else {
-                    fileNames = e[n].split("www")
-                    t += '<script src="' + fileNames[1] + '"></script>';
+                  console.log(e[n]);
+                  t += '<script src="' + e[n] + '"></script>';
                   }
                 }
                 return t;
@@ -8852,7 +8854,8 @@ function onDeviceReady() {
                 // console.log(this.h5pJsonPath),
               n.librariesPath
                 ? (this.librariesPath = y(n.librariesPath))
-                : (this.librariesPath = cordova.file.applicationDirectory + "www/activities"),
+                // : (this.librariesPath = cordova.file.applicationDirectory + "www/activities"),
+                : (this.librariesPath = this.h5pJsonPath),
               n.contentJsonPath
                 ? (this.contentUrl = y(n.contentJsonPath))
                 : (this.contentUrl = y(

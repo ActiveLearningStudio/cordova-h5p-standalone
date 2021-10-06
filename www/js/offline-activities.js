@@ -29,6 +29,7 @@ function onDeviceReady() {
             $('.activityLink').on('click', (e) => {
                 e.preventDefault();
                 var activityPath = e.target.id;
+                console.log("av", activityPath)
                 window.resolveLocalFileSystemURL(activityPath, function success(activities) {
                     var activitiesReader = activities.createReader();
                     activitiesReader.readEntries(getPlaylists = (activitiesFiles) => {
@@ -78,7 +79,7 @@ function onDeviceReady() {
                     var percent =  Math.round((progressEvent.loaded / progressEvent.total) * 100);
                     console.log(percent + "%");
                     if (percent == 100) {
-                        removeDependencies(destination);
+                        // removeDependencies(destination);
                         alert("activity prepared please open again!")
                     }
                 };

@@ -2,36 +2,46 @@ document.addEventListener('deviceready', onDeviceReady, false);
 function onDeviceReady() {
     var localStorage = window.localStorage,
     token = localStorage.getItem("token"),
-    courseContainer = $("#courseContainer");
-    console.log(token)
+    courseContainer = $("#courseContainer"),
+    limit = 3, offset = 0;
+
     if (token) {
+        handleDashboard(token, limit, offset)
+    } else {
+        window.location.href = 'index.html';
+    }
+    
+
+    function handleDashboard(token, limit, offset) {
         $.ajax({
             url: "https://map-lms.curriki.org/webservice/rest/server.php?",
             data: {
                 "wstoken": token,
                 "moodlewsrestformat": "json",
                 "wsfunction": "core_course_get_enrolled_courses_by_timeline_classification",
-                "classification": "inprogress"
+                "classification": "inprogress",
+                "limit": limit,
+                "offset": offset
             },
             success: (response) => {
-                // console.log(response)
+                console.log(response)
+                offset = response.nextoffset;
                 var courseWraper = '<div class="row mt-3 mb-3">';
                 response.courses.forEach(course => {
                     courseWraper += `
                     <div class="col-12">
-                    <a href="playlist.html?courseId=${course.id}"><h4>${course.fullname}</h4></a>
-                    <img src="${course.courseimage}" class="img-fluid">
-                    <button type="button" id="downloadProject" class="btn btn-primary">Download</button>
+                        <a href="playlist.html?courseId=${course.id}">
+                            <h4>${course.fullname}</h4>
+                        </a>
+                        <img src="${course.courseimage}" class="img-fluid">
+                        <button type="button" id="downloadProject" class="btn btn-primary">Download</button>
                     </div>`;
                 });
                 courseWraper += '</div>';
                 courseContainer.html(courseWraper);
             }
         })
-    } else {
-        window.location.href = 'index.html';
     }
-
     $(document).on('click', "#downloadProject", (e) => {
        var spinnerOptions = { dimBackground: true };
         SpinnerPlugin.activityStart("Downloading...", spinnerOptions);
@@ -66,15 +76,10 @@ function onDeviceReady() {
 
     $("#myDownloads").on('click', (e) => {
         e.preventDefault();
-        window.resolveLocalFileSystemURI(cordova.file.externalDataDirectory+ "projects", (entry) => {
+        window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory+ "projects", (entry) => {
             var projectReader = entry.createReader();
             projectReader.readEntries(getProjects = (listProjects) => {
-                listProjects.forEach((project, folderIndex) => {
-                if(project.isDirectory) {
-                    console.log(project);
-                    return window.location.href = "offline-project.html";
-                    // return false;
-                } else {
+                if (listProjects.length <= 0) {
                     var spinnerOptions = { dimBackground: true };
                     SpinnerPlugin.activityStart("Downloading...", spinnerOptions);
                     var dl = new download();
@@ -97,9 +102,17 @@ function onDeviceReady() {
                         processZip(cordova.file.externalDataDirectory+ "projects/sample-project.zip", cordova.file.externalDataDirectory+ "projects")
                         SpinnerPlugin.activityStop();
                     }
+                } else {
+                    listProjects.forEach((project, folderIndex) => {
+                        if(project.isDirectory) {
+                            console.log(project);
+                            return window.location.href = "offline-project.html";
+                            // return false;
+                        } else {
+                        }
+                    })
                 }
             });
-        });
         }, (err) => {console.log(err)})
 
     });
