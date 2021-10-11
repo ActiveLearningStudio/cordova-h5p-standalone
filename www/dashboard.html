@@ -38,25 +38,49 @@
         <meta name="msapplication-tap-highlight" content="no">
         <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
         <meta name="color-scheme" content="light dark">
+
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet"> 
+        <link href="https://kit-pro.fontawesome.com/releases/v5.15.3/css/pro.min.css" rel="stylesheet">
+
         <link rel="stylesheet" href="css/bootstrap.min.css">
         <link rel="stylesheet" href="css/index.css">
+        <link rel="stylesheet" href="css/app.css">
         <title>Login Page</title>
     </head>
     <body>
-        <div class="container">
-            <div class="row">
-                <div class="col-6">
-                    <a href="offline-project.html" id="myDownloads" class="btn btn-primary">My Downloads</a>
-                </div>
-                <div class="col-6">
-                    <button id="logout" class="btn btn-danger">Logout</button>
-                </div>
+        <div class="header">
+            <div class="header-menus">
+                <i class="fas fa-bars"></i>
+                <span>I-Wiz Central</span>
+            </div>
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
             </div>
         </div>
-        <a href="online-activity.html">Online</a>
-        <h1>Welcome to Dashboard</h1>
-        <div class="container" id="courseContainer"></div>
-        
+        <div class="main-login profile-page">
+            <div class="container-fluid">
+                <div class="" id="courseContainer"></div>
+            </div>
+        </div>
+        <footer>
+            <div class="footer-wrapper">
+                <div class="profile">
+                    <i class="far fa-user"></i>
+                    <span>Profile</span>
+                </div>
+                <div class="profile">
+                    <i class="far fa-user"></i>
+                    <span><a href="offline-project.html">Downloaded</a></span>
+                </div>
+                <div class="profile">
+                    <i class="far fa-user"></i>
+                    <span>Achievement</span>
+                </div>
+            </div>
+        </footer>
+        <script src="js/config.js"></script>
         <script src="cordova.js"></script>
         <script src="js/jquery.min.js"></script>
         <script src="js/bootstrap/bootstrap.min.js"></script>

@@ -38,54 +38,54 @@
         <meta name="msapplication-tap-highlight" content="no">
         <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
         <meta name="color-scheme" content="light dark">
+
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet"> 
+        <link href="https://kit-pro.fontawesome.com/releases/v5.15.3/css/pro.min.css" rel="stylesheet">
+
         <link rel="stylesheet" href="css/bootstrap.min.css">
         <link rel="stylesheet" href="css/index.css">
+        <link rel="stylesheet" href="css/app.css">
         <title>Login Page</title>
-        <script src="js/jquery.min.js"></script>
     </head>
     <body>
-        <script>
-            getUrlParams = location.search.split("courseId=");
-            courseId = getUrlParams[1];
-            var localStorage = window.localStorage,
-            token = localStorage.getItem("token");
-            $.ajax({
-                url: "https://map-lms.curriki.org/webservice/rest/server.php?",
-                data: {
-                    "wstoken": token,
-                    "moodlewsrestformat": "json",
-                    "wsfunction": "core_course_get_contents",
-                    "courseid": courseId,
-                },
-                success: (response) => {
-                    var playlistContainer = $("#playlistContainer");
-                    var playlistHTML = '';
-                    response.forEach(element => {
-                        if (element.name == "Playlists") {
-                            element.modules.forEach(module => {
-                                playlistHTML += `
-                                <div class="row mt-3 mb-3">
-                                    <div class = "col-10 m-auto">
-                                        <a href="online-activities.html">
-                                            <h4 class="text-center">${module.name}</h4>
-                                        </a>
-                                    </div>
-                                </div>`;
-                            });
-                        }
-                    });
-                    playlistContainer.html(playlistHTML);
-                }
-            });
-        </script>
-        <div class="text-right">
-            <button id="logout" class="btn btn-danger">Logout</button>
+        <div class="header">
+            <div class="header-menus">
+                <i class="fas fa-bars"></i>
+                <span>I-Wiz Central</span>
+            </div>
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+            </div>
         </div>
-        <h1>Welcome to Playlist</h1>
-        <div class="container" id="playlistContainer"></div>
-        
+        <!-- <button id="logout">logout</button> -->
+        <div class="main-login profile-page">
+            <div class="container-fluid">
+                <div class="" id="playlistContainer"></div>
+            </div>
+        </div>
+        <footer>
+            <div class="footer-wrapper">
+                <div class="profile">
+                    <i class="far fa-user"></i>
+                    <span>Profile</span>
+                </div>
+                <div class="profile">
+                    <i class="far fa-user"></i>
+                    <span><a href="offline-project.html">Downloaded</a></span>
+                </div>
+                <div class="profile">
+                    <i class="far fa-user"></i>
+                    <span>Achievement</span>
+                </div>
+            </div>
+        </footer>
+        <script src="js/jquery.min.js"></script>
+        <script src="js/config.js"></script>
         <script src="cordova.js"></script>
         <script src="js/bootstrap/bootstrap.min.js"></script>
+        <script src="js/online-playlist.js"></script>
         <script>
             $("#logout").on("click", () => {
                 localStorage.removeItem("token");

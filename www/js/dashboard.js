@@ -3,7 +3,7 @@ function onDeviceReady() {
     var localStorage = window.localStorage,
     token = localStorage.getItem("token"),
     courseContainer = $("#courseContainer"),
-    limit = 3, offset = 0;
+    limit = 0, offset = 0;
 
     if (token) {
         handleDashboard(token, limit, offset)
@@ -26,16 +26,29 @@ function onDeviceReady() {
             success: (response) => {
                 console.log(response)
                 offset = response.nextoffset;
-                var courseWraper = '<div class="row mt-3 mb-3">';
+                var courseWraper = '<div class="row">',
+                counter = 0;
                 response.courses.forEach(course => {
+                    counter++;
+                    if (counter == 1) {
+                        courseWraper += `<div class="grid-card-block">
+                        <div class="grid-wrapper">`;
+                    }
                     courseWraper += `
-                    <div class="col-12">
-                        <a href="playlist.html?courseId=${course.id}">
-                            <h4>${course.fullname}</h4>
-                        </a>
-                        <img src="${course.courseimage}" class="img-fluid">
-                        <button type="button" id="downloadProject" class="btn btn-primary">Download</button>
+                    <div class="grid-card-box">
+                        <img src="${course.courseimage}">
+                        <div class="description">
+                            <a href="playlist.html?courseId=${course.id}">
+                                <h5>${course.fullname}</h5>
+                            </a>
+                            <button type="button" id="downloadProject" class="btn btn-primary">Download</button>
+                        </div>
                     </div>`;
+
+                    if (counter == 2) {
+                        courseWraper += '</div></div>';
+                        counter = 0;
+                    }
                 });
                 courseWraper += '</div>';
                 courseContainer.html(courseWraper);

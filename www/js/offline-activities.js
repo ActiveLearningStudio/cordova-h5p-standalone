@@ -3,20 +3,40 @@ function onDeviceReady() {
     getUrlParams = location.search.split("activitiesPath=");
     activitiesPath = getUrlParams[1];
 
-    var offlineActivitiesHTML = '';
+    var offlineActivitiesHTML = '', counter = 0;
     window.resolveLocalFileSystemURL(activitiesPath, function success(activities) {
         var activitiesReader = activities.createReader();
         activitiesReader.readEntries(getPlaylists = (activitiesFolders) => {
             activitiesFolders.forEach((activitiesFolder, folderIndex) => {
                 if(activitiesFolder.isDirectory) {
+                    // offlineActivitiesHTML += `
+                    // <div class= "row mt-3 mb-3">
+                    //     <div class="col-12">
+                    //         <a href="offline-activity.html?activityPath=${activitiesFolder.nativeURL}" class="activityLink">
+                    //             <h4 class="text-center" id="${activitiesFolder.nativeURL}">${activitiesFolder.name}</h4>
+                    //         </a>
+                    //     </div>
+                    // </div>`;
+
+                    counter++;
+                    if (counter == 1) {
+                        offlineActivitiesHTML += `<div class="grid-card-block">
+                        <div class="grid-wrapper">`;
+                    }
                     offlineActivitiesHTML += `
-                    <div class= "row mt-3 mb-3">
-                        <div class="col-12">
+                    <div class="grid-card-box">
+                        <img src="">
+                        <div class="description">
                             <a href="offline-activity.html?activityPath=${activitiesFolder.nativeURL}" class="activityLink">
-                                <h4 class="text-center" id="${activitiesFolder.nativeURL}">${activitiesFolder.name}</h4>
+                                <h5 id="${activitiesFolder.nativeURL}">${activitiesFolder.name}</h5>
                             </a>
                         </div>
                     </div>`;
+
+                    if (counter == 2) {
+                        offlineActivitiesHTML += '</div></div>';
+                        counter = 0;
+                    }
                     $("#offlineActivitiesContainer").html(offlineActivitiesHTML);
 
                     
@@ -80,7 +100,10 @@ function onDeviceReady() {
                     console.log(percent + "%");
                     if (percent == 100) {
                         // removeDependencies(destination);
-                        alert("activity prepared please open again!")
+                        console.log(destination);
+                        setTimeout(() => {
+                            window.location.href = `offline-activity.html?activityPath=${destination}`;
+                        }, 1000);
                     }
                 };
                 // Proceed to unzip the file

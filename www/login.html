@@ -43,11 +43,10 @@
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet"> 
-	<link href="https://kit-pro.fontawesome.com/releases/v5.15.3/css/pro.min.css" rel="stylesheet">
 
 	<link rel="stylesheet" href="css/bootstrap.min.css">
 	<link rel="stylesheet" href="css/index.css">
-    <link rel="stylesheet" href="css/app.css">
+    <link rel="stylesheet" href="css/login.css">
 	<title>Login Page</title>
 	<script>
 		var localStorage = window.localStorage,
@@ -57,39 +56,72 @@
 		}
 	</script>
 
- </head>
+ 
+</head>
 
 <body>
-	<div class="main-login auth-page">
-		<div class="container-fluid">			
+	<div class="main-login">
+		<div class="container-fluid">
+			<div class="row mt-3 mb-3">
+				<div class="col-12 head">
+					<img src="img/marengo-logo.svg">
+				</div>
+			</div>
 			<div class="row">
-				<div class="form-outer welcome-page">
-				    <div class="col-12 m-auto">
-						<h1><span>Welcome to</span> i-Wiz</h1>
-						<h2>Pathway to Wisdom</h2>
+				<div class="col-12 m-auto">
+
+					<div class="form-outer">
+						<h1><span>Hello!</span> Sign in to get started.</h1>
 						<form action="">
-							<div class="row">								
-								<div class="col-12">
-									<div class="form-group"> 
-										<a href="login.html" type="button" class="btn btn-primary yellow-btn" id="loginButton">Sign in Now</a>
-									</div>
-								</div>
+							<div class="row">
 								<div class="col-12">
 									<div class="form-group">
-										<a href="singup.html" type="button" class="btn btn-primary white-btn" id="loginButton">Create an account</a>
+										<label for="userName">Username</label>
+										<input type="text" name="userName" id="userName" class="form-control">
 									</div>
 								</div>
-							</div>
+							 
+								<div class="col-12">
+									<div class="form-group">
+										<label for="password">Password</label>
+										<input type="password" name="password" id="password" class="form-control">
+									</div>
+								</div>
+							 
+								<div class="col-12">
+									<a href="">Forgot Your Password?</a>
+								</div>
+
+								<div class="col-12">
+									<div class="form-group">
+										<button type="button" class="btn btn-primary" id="loginButton">Login Now</button>
+									</div>
+								</div>
+							</div>																				
 						</form>
 					</div>
 				</div>
 			</div>
+
+			<div class="row">
+				<div class="col-12 bottom">
+					<h6>Or Login with</h6>
+					<ul>
+						<li><a href=""><img src="img/facebook.png"></a></li>
+						<li><a href=""><img src="img/twitter.png"></a></li>
+						<li><a href=""><img src="img/instagram.png"></a></li>
+						<li><a href=""><img src="img/google-plus.png"></a></li>
+					</ul>
+					<p>Don't have an account? <a href="">Sign Up</a></p>
+				</div>
+			</div>
 		</div>
 	</div>
+		<script src="js/config.js"></script>
 		<script src="cordova.js"></script>
 		<script src="js/jquery.min.js"></script>
 		<script src="js/bootstrap/bootstrap.min.js"></script>
-		<!-- <script src="js/login.js"></script> -->
+		<script src="js/login.js"></script>
 </body>
 
 </html>

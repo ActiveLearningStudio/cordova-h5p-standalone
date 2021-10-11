@@ -1,0 +1,361 @@
+html,body {margin: 0; padding: 0;font-family: Roboto;color :#333; font-size: 16px; line-height: 24px;}
+* {box-sizing: border-box;}
+.container-fluid {width: 100%;}
+.main-login { background-size:cover; background-position: center;min-height: 100vh;display: flex;align-items: center;justify-content: center;}
+.main-login h1 {margin: 0;font-size: 25px;font-weight: bold;margin-bottom: 20px;}
+.main-login h1 span {font-size: 20px;display: block;width: 100%;}
+.main-login .head {text-align: center;margin-bottom: 20px;}
+.main-login .head img {max-width: 250px;}
+.main-login .form-outer  {background-image: url(../img/bg.png); background: #fff;
+  width: calc(100% - 30px);
+  margin: 0 auto;
+  max-width: 450px;
+  padding: 30px;
+  border-radius: 5px;
+  border-radius: 10px;
+  box-shadow: 0 -1px 9px -7px #000;
+  margin-bottom: 15px;}
+.main-login .form-outer label {width: 100%;display: block;}
+.form-control {width: 100%; height: 40px;border: 0px;border-bottom: 1px solid #ccc;}
+.main-login .btn {margin-top: 30px;}
+.form-control:focus {outline: none;box-shadow: none;}
+.main-login .form-group {margin-bottom: 20px;}
+
+.btn.btn-primary {background :linear-gradient(90deg, rgba(246,93,28,1) 0%, rgba(242,168,77,1) 81%);}
+.btn {
+  border-radius: 20px;
+  color: #fff;
+  padding: 12px 30px;
+  font-weight: 600;
+  border: 0;
+  font-size: 18px;
+  width: 100%;
+  margin-top: 30px;
+}
+
+.main-login .bottom {text-align: center;}
+.main-login .bottom ul {margin: 0; padding: 0; list-style-type: none; margin-bottom: 10px;}
+.main-login .bottom ul img {max-width: 30px;height: auto;}
+.main-login .bottom ul li {display: inline-block;}
+
+.form-outer.welcome-page{
+  height: 100vh;
+    background-image: url(../img/bg.png);
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    align-content: flex-end;
+    border-radius: 0;
+    width: 100%;
+
+}
+.auth-page:before:before {
+    content: "";
+    background: rgba(0,0,0,0.5);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+}
+.form-outer.welcome-page h1, .form-outer.welcome-page h2, .form-outer.welcome-page form {
+    color: #fff;
+    position: relative;
+    display: block;
+    width: 100%;
+    text-align: center;
+  }
+  .form-outer.welcome-page button.yellow-btn {
+    background: #f4aa4b;
+}
+.form-outer.welcome-page form{
+  padding-top: 60px;
+}
+.form-outer.welcome-page .form-group button.white-btn {
+    background: #fff;
+    color: #333;
+}
+.form-outer.welcome-page h1 {
+    font-size: 45px;
+    font-weight: 800;
+    line-height: 45px;
+}
+.form-outer.welcome-page h1 span {
+    font-size: 32px;
+    font-weight: 400;
+}
+.form-outer.welcome-page .form-group {
+    margin-bottom: 0;
+}
+.form-outer.welcome-page h2 {
+    font-weight: 300;
+    font-size: 20px;
+}
+.form-outer.welcome-page .form-group button.white-btn {
+    margin-top: 20px;
+}
+.profile-page{
+    background-size: cover;
+    background-position: center;
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    background-color: #ebecee;
+    margin-top: 75px;
+    padding-top: 15px;
+}
+.header {
+    background: orangered;
+    display: inline-flex;
+    width: 100%;
+    justify-content: space-between;
+    padding: 25px 15px;
+    position: fixed;
+    top: 0;
+}
+.header .header-menus{
+    padding-left: 5px;
+}
+.header .search-bar {
+    padding-right: 5px;
+}
+.header .header-menus i {
+    font-size: 22px;
+    font-weight: 100;
+    margin-right: 10px;
+    color: #fff;
+}
+.header .header-menus span {
+    color: #fff;
+    font-size: 18px;
+    font-weight: 600;
+}
+.header .search-bar i {
+    color: #fff;
+    font-weight: 400;
+}
+
+.profile-card {
+    text-align: center;
+    background: #fff;
+    box-shadow: 0 0 11px #ccc;
+    margin: 45px 20px;
+    border-radius: 5px;
+}
+.profile-card .profile--img img {
+    display: inline-block;
+    border-radius: 50%;
+    margin-top: -30px;
+    width: 80px;
+    height: 80px;
+}
+.profile-card .profile--desc h3 {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+.profile-card .profile--desc span {
+    font-size: 13px;
+    color: #aaa;
+}
+.certs text {
+    font-size: 13px;
+    color: #aaa;
+}
+.certs ul {
+    padding-left: 0;
+}
+.certs ul li {
+    display: inline-block;
+    padding: 0 5px;
+}
+.certs ul li a {
+    display: flex;
+    float: left;
+    align-items: center;
+    text-decoration: none;
+}
+.certs ul li a img {
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    object-fit: cover;
+}
+.certs ul li a span.load-more {
+    display: inline-block;
+    border: 1px solid #aaa;
+    color: #f84600;
+    padding: 5px;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    font-size: 13px;
+    line-height: 20px;
+}
+.progress-block {
+    padding: 0 20px;
+    padding-bottom: 25px;
+}
+.prog-wrapper {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+.prog-wrapper .progress-card {
+    /*background: #3accac;*/
+    width: 100%;
+    border-radius: 3px;
+    text-align: center;
+}
+.prog-wrapper .progress-card .progress-img {
+    padding: 20px 0 10px 0;
+}
+.prog-wrapper .progress-card .progress-img img {
+    display: inline-block;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+}
+.progress-desc {
+    margin-bottom: 20px;
+}
+a.go-btn {
+    background: #fff;
+    color: #333;
+    font-weight: 700;
+    font-size: 18px;
+    padding: 4px 25px;
+    display: inline-block;
+    text-decoration: none;
+    border-radius: 50px;
+}
+.progress-bar {
+    color: #fff;
+    font-size: 15px
+}
+.progress-desc p {
+    margin-top: 0;
+}
+.progress-bar progress {
+    width: 58%;
+}
+.pink-card {
+    background: #f87a90;
+}
+.green-card {
+    background: #3accac;
+}
+.blue-card {
+    background: #31c3dd;
+}
+.purple-card {
+    background: #d56fdf;
+}
+footer {
+    background: #fff;
+    box-shadow: 0 0 13px #ccc;
+    border-bottom-left-radius: 50px;
+    border-bottom-right-radius: 50px;
+    position: fixed;
+    top: auto;
+    bottom: 0;
+}
+footer .footer-wrapper {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 21px 0;
+}
+footer .footer-wrapper .profile {
+    padding: 15px;
+    text-align: center;
+    box-shadow: 0 0 10px #ccc;
+}
+footer .footer-wrapper .profile i {
+    display: block;
+}
+.hero-block img {
+    width: 100%;
+}
+
+.her-block-description .left-desc text {
+    font-size: 14px;
+    line-height: 18px;
+    display: block;
+    color: #fff;
+}
+.her-block-description {
+    display: inline-flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0 15px;
+    align-items: flex-end;
+}
+.hero-block .her-block-description {
+    position: absolute;
+    top: auto;
+    bottom: 7px;
+    left: 0;
+    background: rgba(0,0,0,0.5);
+    padding: 10px 15px;
+}
+.hero-block {
+    margin: 0 15px 20px 15px;
+    position: relative;
+}
+.her-block-description .left-desc text span {
+    display: block;
+    line-height: 14px;
+}
+.her-block-description .right-btn i {
+    font-size: 22px;
+    color: #f76720;
+}
+
+.grid-card-block {
+    padding: 0 15px;
+    margin-bottom: 20px;
+}
+.grid-card-block .grid-wrapper {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+.grid-card-block .grid-wrapper .grid-card-box {
+    background: #fff;
+    border-radius: 5px;
+}
+.grid-card-block .grid-wrapper .grid-card-box img {
+    width: 100%;
+    border-radius: 5px;
+}
+.grid-card-block .grid-wrapper .grid-card-box .description a h5 {
+    margin: 0;
+    font-weight: 500;
+    font-size: 14px;
+    margin-bottom: 15px;
+    color: #333;
+    line-height: 18px;
+}
+.grid-card-block .grid-wrapper .grid-card-box button {
+    margin-top: 0;
+    padding: 5px;
+}
+.grid-card-block .grid-wrapper .grid-card-box .description {
+    padding: 10px;
+}
+.grid-card-block .grid-block-header {
+    display: inline-flex;
+    align-items: end;
+    width: 100%;
+    justify-content: space-between;
+}
+.grid-card-block .grid-block-header h3 {
+    margin-bottom: 10px;
+    margin-top: 0;
+}
+.grid-card-block .grid-block-header span {
+    display: block;
+    margin-bottom: 10px;
+}

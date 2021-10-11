@@ -40,55 +40,47 @@
         <meta name="color-scheme" content="light dark">
         <link rel="stylesheet" href="css/bootstrap.min.css">
         <link rel="stylesheet" href="css/index.css">
+        <link rel="stylesheet" href="css/app.css">
         <title>activities Page</title>
-        <script src="js/jquery.min.js"></script>
-        <script src="js/online-activities.js"></script>
     </head>
     <body>
-        <!-- <script>
-            var token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxMzMiLCJqdGkiOiJlNGUyZTgyZDM4ODkwOGUyOTcyZGUxMzEwOTc4MWJiYzcyZTAwMmEwM2JjZjY5NGNjNzhhZTgyZWU2NThhZGY3MzcyNjRlYTk5YzZlN2Y2MyIsImlhdCI6MTYzMjgwNDQwMCwibmJmIjoxNjMyODA0NDAwLCJleHAiOjE2NjQzNDA0MDAsInN1YiI6IjE0MzciLCJzY29wZXMiOltdfQ.ANU71Nl9syFSa7zKN4XIzEX5rnJ6cJ1g8SsFSz5EDActwpVwuxzpgf_HdpsdOcCwzTwPdy-18kx0HAHKsXE0tsbYY8Ncyf9tYuTlxcKXxXTA4YI29y7-ACAjLHpdTi29hwsTxYltwYYx-TxUYrEjOSrBOPOhluhn56F3DvdGw3JPS40aHZ7bpnJojLw8Ysv5Kpm4wFCjLQewoNpLfu7p53wYQ3jjusR4UDFE3M6I1nrmj3Pfsik4q9uKhimas0nm8PXhGSRbfaJPzTlNOVAcNdZuOMMnLIQt8ENThNZ_9z0HLLSvPc0jjzHEDRyu-khPGEPeFH56Kjm6GUYXwxl3LRPxTMWRcRP6q-JcphfOXkUaUfWilNRJ3jndzvta1vTqmgVUTO6xH3EoNGo_oYhA56b1Gm4UVc50Z3K2jG3Q4omzdkZlufLN9JB5H6eH6cQEEEP9rrSOX_lDRUchbqLDbBC9dghMr7E5R6uDlA9PAT5pcsPsydEvjTcPbv3aa5jRfvO31oixkR2JXGlHi3mTIAxI60eB_3NcgUEehtSwyx7o-epMDE6T6FL2fsBo5Kz_Bi4Cb-2Mem0umbD92kgFny1RBF7Vxj7eosMZXkdI6US6lIiC0bLVwr4bUnOVJ2lR5MNboIqw9IFT7JTLR8qaVfyUs4kTxi4que8JXmmYyDU';
-            $.ajax({
-                url: "https://lite.curriki.org/api/api/v1/projects/3694/playlists?skipContent=false",
-                headers: {
-                    Authorization: 'Bearer '+token
-                },
-                success: (response) => {
-                    console.log(response);
-                    var activitiesContainer = $("#activitiesContainer"),
-                    activitiesHTML = '',
-                    activityId = ''
-                    globalActId = [];
-                    response.playlists.forEach(element => {
-                        element.activities.forEach(activity => {
-                            $.each(activity.h5p_content, (key, h5pActivity) => {
-                                key == "id" ? activityId = h5pActivity : "";
-                                if (key == "id")
-                                globalActId += h5pActivity;
-                            });
-                            activitiesHTML += `
-                            <div class="row mt-3 mb-3">
-                                <div class = "col-10 m-auto">
-                                    <a href="online-activity.html?activityId=${activityId}">
-                                        <h4 class="text-center">${activity.title}</h4>
-                                    </a>
-                                    <img src="${activity.thumb_url}" class="img-fluid">
-                                </div>
-                            </div>`;
-                        });
-                    });
-                    activitiesContainer.html(activitiesHTML);
-                    export{globalActId}
-                }
-            });
-        </script> -->
-        <div class="text-right">
-            <button id="logout" class="btn btn-danger">Logout</button>
+        <div class="header">
+            <div class="header-menus">
+                <i class="fas fa-bars"></i>
+                <span>I-Wiz Central</span>
+            </div>
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+            </div>
         </div>
-        <h1>Welcome to Activities</h1>
-        <div class="container" id="activitiesContainer"></div>
+        <div class="main-login profile-page">
+            <div class="container-fluid">
+                <div class="" id="activitiesContainer"></div>
+            </div>
+        </div>
+        <footer>
+            <div class="footer-wrapper">
+                <div class="profile">
+                    <i class="far fa-user"></i>
+                    <span>Profile</span>
+                </div>
+                <div class="profile">
+                    <i class="far fa-user"></i>
+                    <span><a href="offline-project.html">Downloaded</a></span>
+                </div>
+                <div class="profile">
+                    <i class="far fa-user"></i>
+                    <span>Achievement</span>
+                </div>
+            </div>
+        </footer>
+        <!-- <div class="container" id="activitiesContainer"></div> -->
         
+        <script src="js/jquery.min.js"></script>
+        <script src="js/config.js"></script>
         <script src="cordova.js"></script>
         <script src="js/bootstrap/bootstrap.min.js"></script>
+        <script src="js/online-activities.js"></script>
         <script>
             $("#logout").on("click", () => {
                 localStorage.removeItem("token");

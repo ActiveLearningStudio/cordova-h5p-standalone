@@ -4,7 +4,8 @@ function onDeviceReady() {
     playlistPath = getUrlParams[1];
 
     var offlinePlaylistHTML = '',
-    activitiesPath = '';
+    activitiesPath = ''
+    counter = 0;
     window.resolveLocalFileSystemURL(playlistPath, function success(playlist) {
         var playlistReader = playlist.createReader();
         playlistReader.readEntries(getPlaylists = (playlistFolders) => {
@@ -28,14 +29,25 @@ function onDeviceReady() {
                                             var reader = new FileReader();
                                             reader.onloadend = function(evt) {
                                                 var playlistJSON = JSON.parse(evt.target.result);
+                                                counter++;
+                                                if (counter == 1) {
+                                                    offlinePlaylistHTML += `<div class="grid-card-block">
+                                                    <div class="grid-wrapper">`;
+                                                }
                                                 offlinePlaylistHTML += `
-                                                <div class= "row">
-                                                    <div class="col-12">
+                                                <div class="grid-card-box">
+                                                    <img src="">
+                                                    <div class="description">
                                                         <a href="offline-activities.html?activitiesPath=${activitiesPath.nativeURL}">
-                                                            <h4 class="text-center">${playlistJSON.title}</h4>
+                                                            <h5>${playlistJSON.title}</h5>
                                                         </a>
                                                     </div>
                                                 </div>`;
+
+                                                if (counter == 2) {
+                                                    offlinePlaylistHTML += '</div></div>';
+                                                    counter = 0;
+                                                }
                                                 $("#offlinePlaylistContainer").html(offlinePlaylistHTML);
                                             };
                                             reader.readAsText(file);
