@@ -49,7 +49,6 @@ function onDeviceReady() {
                                                 <a href="offline-playlist.html?playlistPath=${playlistPath.nativeURL}">
                                                     <h5>${projectJSON.name}</h5>
                                                 </a>
-                                                <button type="button" id="downloadProject" class="btn btn-primary">Download</button>
                                             </div>
                                         </div>`;
                                         if (counter == 2) {
