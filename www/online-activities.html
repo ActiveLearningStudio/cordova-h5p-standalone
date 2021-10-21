@@ -29,7 +29,7 @@
             * Disables use of inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
                 * Enable inline JS: add 'unsafe-inline' to default-src
         -->
-        <meta http-equiv="Content-Security-Policy" content="default-src 'unsafe-inline' 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval' https: cdvfile:; 
+        <meta http-equiv="Content-Security-Policy" content="default-src 'unsafe-inline' 'self' data: https://ssl.gstatic.com 'unsafe-eval' https: cdvfile:; 
             style-src 'self' https:; media-src *; img-src 'self' data: content: cdvfile: https:;">
         <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' cdvfile: file: https:"> -->
         <!-- <meta http-equiv="Content-Security-Policy" content="* * 'self' default-src 'unsafe-inline' 'unsafe-eval' http://* https://* data: cdvfile://* file:///* content://*;"> -->
@@ -77,9 +77,9 @@
         <!-- <div class="container" id="activitiesContainer"></div> -->
         
         <script src="js/jquery.min.js"></script>
-        <script src="js/config.js"></script>
         <script src="cordova.js"></script>
         <script src="js/bootstrap/bootstrap.min.js"></script>
+        <script src="js/config.js"></script>
         <script src="js/online-activities.js"></script>
         <script>
             $("#logout").on("click", () => {

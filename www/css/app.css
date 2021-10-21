@@ -27,10 +27,10 @@
 html,body {margin: 0; padding: 0;font-family: Fira Sans;color :#333; font-size: 16px; line-height: 24px;}
 * {box-sizing: border-box;}
 .container-fluid {width: 100%;}
-.main-login { background-size:cover; background-position: center;min-height: 100vh;display: flex;align-items: center;justify-content: center;}
-.main-login h1 {margin: 0;font-size: 25px;font-weight: bold;margin-bottom: 20px;}
+.main-login { background-size:cover; background-position: center;min-height: 100vh;display: flex;align-items: center;justify-content: center; position: relative;}
+.main-login h1 {margin: 0;font-size: 25px;font-weight: 600;margin-bottom: 20px;}
 .main-login h1 span {font-size: 20px;display: block;width: 100%;}
-.main-login .head {text-align: center;margin-bottom: 20px;}
+.main-login .head {text-align: center;margin-bottom: 20px; z-index: 1;}
 .main-login .head img {max-width: 250px;}
 .main-login .form-outer  {background-image: url(../img/bg.png); background: #fff;
   width: calc(100% - 30px);
@@ -40,12 +40,32 @@ html,body {margin: 0; padding: 0;font-family: Fira Sans;color :#333; font-size: 
   border-radius: 5px;
   border-radius: 10px;
   box-shadow: 0 -1px 9px -7px #000;
-  margin-bottom: 15px;}
+  margin-bottom: 15px;
+  position: relative;
+  
+}
+.login--form{
+    z-index: 1;
+    position: relative;
+}
 .main-login .form-outer label {width: 100%;display: block;}
 .form-control {width: 100%; height: 40px;border: 0px;border-bottom: 1px solid #ccc;}
 .main-login .btn {margin-top: 30px;}
 .form-control:focus {outline: none;box-shadow: none;}
 .main-login .form-group {margin-bottom: 20px;}
+.main-login:after {
+    content: "";
+    background: rgba(0,0,0,0.3);
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    left: 0;
+    top: 0;
+    }
+    .main-login.auth-page .form-outer.welcome-page {
+        z-index: 0;
+        }
 
 .btn.btn-primary {background :linear-gradient(90deg, rgba(246,93,28,1) 0%, rgba(242,168,77,1) 81%);}
 .btn {
@@ -59,7 +79,7 @@ html,body {margin: 0; padding: 0;font-family: Fira Sans;color :#333; font-size: 
   margin-top: 30px;
 }
 
-.main-login .bottom {text-align: center;}
+.main-login .bottom {text-align: center; z-index: 1;}
 .main-login .bottom ul {margin: 0; padding: 0; list-style-type: none; margin-bottom: 10px;}
 .main-login .bottom ul img {max-width: 30px;height: auto;}
 .main-login .bottom ul li {display: inline-block;}
@@ -74,6 +94,7 @@ html,body {margin: 0; padding: 0;font-family: Fira Sans;color :#333; font-size: 
     align-content: flex-end;
     border-radius: 0;
     width: 100%;
+    margin-bottom: 0;
 
 }
 .auth-page:before:before {
@@ -92,6 +113,7 @@ html,body {margin: 0; padding: 0;font-family: Fira Sans;color :#333; font-size: 
     display: block;
     width: 100%;
     text-align: center;
+    z-index: 1;
   }
   .form-outer.welcome-page button.yellow-btn {
     background: #f4aa4b;
@@ -132,13 +154,14 @@ html,body {margin: 0; padding: 0;font-family: Fira Sans;color :#333; font-size: 
     background-color: #ebecee;
     margin-top: 75px;
     padding-top: 15px;
+    padding-bottom: 70px;
 }
 .header {
     background: orangered;
     display: inline-flex;
     width: 100%;
     justify-content: space-between;
-    padding: 25px 15px;
+    padding: 40px 15px 10px 15px;
     position: fixed;
     top: 0;
 }
@@ -282,12 +305,18 @@ a.go-btn {
 footer {
     background: #fff;
     box-shadow: 0 0 13px #ccc;
-    border-bottom-left-radius: 50px;
-    border-bottom-right-radius: 50px;
+    /* border-bottom-left-radius: 50px;
+    border-bottom-right-radius: 50px; */
     position: fixed;
     top: auto;
     bottom: 0;
+    width: 100%;
+    z-index: 1;
 }
+footer .footer-wrapper .profile a {
+    color: orangered;
+    font-weight: 600;
+    }
 footer .footer-wrapper {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -338,10 +367,15 @@ footer .footer-wrapper .profile i {
     font-size: 22px;
     color: #f76720;
 }
-
+.course--cont-cls {
+    z-index: 1;
+    position: relative;
+}
 .grid-card-block {
     padding: 0 15px;
     margin-bottom: 20px;
+    z-index: 1;
+    position: relative;
 }
 .grid-card-block .grid-wrapper {
     display: grid;
@@ -355,6 +389,9 @@ footer .footer-wrapper .profile i {
 .grid-card-block .grid-wrapper .grid-card-box img {
     width: 100%;
     border-radius: 5px;
+    height: 180px;
+    width: 100%;
+    object-fit: cover;
 }
 .grid-card-block .grid-wrapper .grid-card-box .description a h5 {
     margin: 0;
