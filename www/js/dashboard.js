@@ -1,5 +1,15 @@
 document.addEventListener('deviceready', onDeviceReady, false);
 function onDeviceReady() {
+    console.log(device.platform);
+    var fileSystem = '';
+    switch (device.platform) {
+        case "iOS":
+            fileSystem = cordova.file.syncedDataDirectory;
+        break;
+        case "Android":
+            fileSystem = cordova.file.externalDataDirectory;
+        break;
+    }
     var localStorage = window.localStorage,
     token = localStorage.getItem("token"),
     courseContainer = $("#courseContainer"),
@@ -61,7 +71,7 @@ function onDeviceReady() {
         console.log("in download")
         var dl = new download();
         dl.Initialize({
-            fileSystem : cordova.file.externalDataDirectory,
+            fileSystem : fileSystem,
             folder: "projects",
             unzip: false,
             remove: false,
@@ -75,9 +85,9 @@ function onDeviceReady() {
             alert("download error: " + err);
         }
         function DownloaderSuccess(evt) {
-            // alert(cordova.file.externalDataDirectory);
+            // alert(fileSystem);
             console.log("yej");
-            processZip(cordova.file.externalDataDirectory+ "projects/sample-project.zip", cordova.file.externalDataDirectory+ "projects")
+            processZip(fileSystem+ "projects/sample-project.zip", fileSystem+ "projects")
             SpinnerPlugin.activityStop();
         }
     });
@@ -87,9 +97,26 @@ function onDeviceReady() {
         window.location.href = "index.html";
     });
 
+    function createDirectory(rootDirEntry) {
+        rootDirEntry.getDirectory('NewDirInRoot', { create: true }, function (dirEntry) {
+            dirEntry.getDirectory('images', { create: true }, function (subDirEntry) {
+    
+                createFile(subDirEntry, "fileInNewSubDir.txt");
+    
+            }, onErrorGetDir);
+        }, onErrorGetDir);
+    }
+
+    window.resolveLocalFileSystemURL(fileSystem, (entry) => {
+        entry.getDirectory('Documents', { create: true }, function (dirEntry) {
+            console.log(dirEntry)
+        })
+    })
+
     $("#myDownloads").on('click', (e) => {
         e.preventDefault();
-        window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory+ "projects", (entry) => {
+        
+        window.resolveLocalFileSystemURL(fileSystem+ "projects", (entry) => {
             var projectReader = entry.createReader();
             projectReader.readEntries(getProjects = (listProjects) => {
                 if (listProjects.length <= 0) {
@@ -97,7 +124,7 @@ function onDeviceReady() {
                     SpinnerPlugin.activityStart("Downloading...", spinnerOptions);
                     var dl = new download();
                     dl.Initialize({
-                        fileSystem : cordova.file.externalDataDirectory,
+                        fileSystem : fileSystem,
                         folder: "projects",
                         unzip: false,
                         remove: false,
@@ -112,7 +139,7 @@ function onDeviceReady() {
                     }
                     function DownloaderSuccess(evt) {
                         console.log("yej");
-                        processZip(cordova.file.externalDataDirectory+ "projects/sample-project.zip", cordova.file.externalDataDirectory+ "projects")
+                        processZip(fileSystem+ "projects/sample-project.zip", fileSystem+ "projects")
                         SpinnerPlugin.activityStop();
                     }
                 } else {

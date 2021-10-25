@@ -7448,11 +7448,21 @@ function onDeviceReady() {
               var fileNames = [];
                 for (var t = "", n = 0; n < e.length; n++) {
                   if (e[n].includes("h5p.css")) {
+                    console.log(e[n])
                     fileNames = e[n].split("www/")
-                    t += '<link rel="stylesheet" href="' + fileNames[1] + '">';
+                    t += '<link rel="stylesheet" href="' + e[n] + '">';
                   } else {
                   // fileNames = e[n].split("www/")
-                    t += '<link rel="stylesheet" href="' + e[n] + '">';
+                  var url;
+                  switch (device.platform) {
+                    case "iOS":
+                      url = window.WkWebView.convertFilePath(e[n]);
+                    break;
+                    case "Android":
+                      url = e[n];
+                    break;
+                  }
+                    t += '<link rel="stylesheet" href="' + url + '">';
                   }
                 }
                 return t;
@@ -7462,10 +7472,20 @@ function onDeviceReady() {
                 for (var t = "", n = 0; n < e.length; n++){
                   if (e[n].includes("frame.bundle.js")) {
                     coreFileName = e[n].split("www/")
-                    t += '<script src="' + coreFileName[1] + '"></script>';
+                    t += '<script src="' + e[n] + '"></script>';
                   } else {
                   // console.log(e[n]);
-                  t += '<script src="' + e[n] + '"></script>';
+                  var url;
+                  switch (device.platform) {
+                    case "iOS":
+                      url = window.WkWebView.convertFilePath(e[n]);
+                    break;
+                    case "Android":
+                      url = e[n];
+                    break;
+                  }
+                  // var url = window.WkWebView.convertFilePath(e[n])
+                  t += '<script src="' + url + '"></script>';
                   }
                 }
                 return t;

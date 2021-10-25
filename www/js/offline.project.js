@@ -1,6 +1,15 @@
 document.addEventListener('deviceready', onDeviceReady, false);
 function onDeviceReady() {
-    window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory + "projects/", function success(directoryEntry) {
+    var fileSystem = '';
+    switch (device.platform) {
+        case "iOS":
+            fileSystem = cordova.file.syncedDataDirectory;
+        break;
+        case "Android":
+            fileSystem = cordova.file.externalDataDirectory;
+        break;
+    }
+    window.resolveLocalFileSystemURL(fileSystem + "projects/", function success(directoryEntry) {
         //read Projects Folder
         var directoryReader = directoryEntry.createReader();
         directoryReader.readEntries(
@@ -76,7 +85,7 @@ function onDeviceReady() {
     function moveFile(fileUri, name) {
         window.resolveLocalFileSystemURL(fileUri,
             function(fileEntry){
-                newFileUri  = cordova.file.externalDataDirectory + "downloaded-activities/";
+                newFileUri  = fileSystem + "downloaded-activities/";
                 oldFileUri  = fileUri;
                 fileExt     = "." + "zip";
 
@@ -85,9 +94,9 @@ function onDeviceReady() {
                     function(dirEntry) {
                         // move the file to a new directory and rename it
                         fileEntry.moveTo(dirEntry, newFileName, successCallback = (evt) => {
-                            processZip(evt.nativeURL, cordova.file.externalDataDirectory + "h5p-libraries/" + name);
+                            processZip(evt.nativeURL, fileSystem+ "h5p-libraries/" + name);
                             setTimeout(() => {
-                                removeDependencies(cordova.file.externalDataDirectory + "h5p-libraries/" + name);
+                                removeDependencies(fileSystem+ "h5p-libraries/" + name);
                             }, 3000);
                         }, errorCallback);
                     },
@@ -248,7 +257,7 @@ function onDeviceReady() {
 
     // const offlineElement = document.getElementById('h5p-container');
     // const options = {
-    //     h5pJsonPath:  cordova.file.externalDataDirectory + "h5p-libraries/35382",
+    //     h5pJsonPath:  fileSystem+ "h5p-libraries/35382",
     //     frameJs: '../plugins/h5p-standalone/dist/mod.frame.bundle.js',
     //     frameCss: '../plugins/h5p-standalone/dist/styles/h5p.css',
     // }

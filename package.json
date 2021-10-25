@@ -13,6 +13,7 @@
   "author": "Apache Cordova Team",
   "license": "Apache-2.0",
   "devDependencies": {
+    "@globules-io/cordova-plugin-ios-xhr": "github:globules-io/cordova-plugin-ios-xhr",
     "cordova-android": "^10.1.0",
     "cordova-ios": "^6.2.0",
     "cordova-plugin-device": "^2.0.3",
@@ -33,7 +34,8 @@
       "cordova-plugin-downloader": {},
       "cordova-plugin-spinner": {},
       "cordova-plugin-network-information": {},
-      "cordova-sqlite-storage": {}
+      "cordova-sqlite-storage": {},
+      "@globules-io/cordova-plugin-ios-xhr": {}
     },
     "platforms": [
       "android",
