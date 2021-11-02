@@ -3,7 +3,7 @@ function onDeviceReady() {
     var fileSystem = '';
     switch (device.platform) {
         case "iOS":
-            fileSystem = cordova.file.syncedDataDirectory;
+            fileSystem = cordova.file.dataDirectory;
         break;
         case "Android":
             fileSystem = cordova.file.externalDataDirectory;

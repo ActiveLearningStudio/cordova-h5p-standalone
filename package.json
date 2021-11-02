@@ -13,7 +13,7 @@
   "author": "Apache Cordova Team",
   "license": "Apache-2.0",
   "devDependencies": {
-    "@globules-io/cordova-plugin-ios-xhr": "github:globules-io/cordova-plugin-ios-xhr",
+    "@ahovakimyan/cordova-plugin-wkwebviewxhrfix": "github:AraHovakimyan/cordova-plugin-wkwebviewxhrfix",
     "cordova-android": "^10.1.0",
     "cordova-ios": "^6.2.0",
     "cordova-plugin-device": "^2.0.3",
@@ -23,6 +23,7 @@
     "cordova-plugin-pdialog": "^2.0.1",
     "cordova-plugin-spinner": "github:Justin-Credible/cordova-plugin-spinner",
     "cordova-plugin-whitelist": "^1.3.4",
+    "cordova-plugin-wkwebview-file-xhr": "^3.0.0",
     "cordova-plugin-zip": "^3.1.0",
     "cordova-sqlite-storage": "^6.0.0"
   },
@@ -35,7 +36,7 @@
       "cordova-plugin-spinner": {},
       "cordova-plugin-network-information": {},
       "cordova-sqlite-storage": {},
-      "@globules-io/cordova-plugin-ios-xhr": {}
+      "cordova-plugin-wkwebview-file-xhr": {}
     },
     "platforms": [
       "android",
