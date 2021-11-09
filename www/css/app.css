@@ -685,3 +685,7 @@ footer .footer-wrapper .profile i {
     color: #fff;
     font-size: 18px;
 }
+
+div#offlineactiveButton.activity-page {
+    min-height: auto;
+}
