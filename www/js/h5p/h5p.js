@@ -414,12 +414,17 @@ H5P.init = function (target) {
  */
 H5P.getHeadTags = function (contentId) {
   var createStyleTags = function (styles) {
+    var networkState = navigator.connection.type;
     var tags = '',
     tagUrl = [];
     for (var i = 0; i < styles.length; i++) {
-      if (styles[i].includes("libraries")) {
-        tagUrl = styles[i].split("libraries");
-        tags += '<link rel="stylesheet" href="activities' + tagUrl[1] + '">';
+      if (networkState == Connection.NONE) {
+        if (styles[i].includes("libraries")) {
+          tagUrl = styles[i].split("libraries");
+          tags += '<link rel="stylesheet" href="activities' + tagUrl[1] + '">';
+        } else {
+          tags += '<link rel="stylesheet" href="' + styles[i] + '">';
+        }
       } else {
         tags += '<link rel="stylesheet" href="' + styles[i] + '">';
       }
@@ -429,13 +434,17 @@ H5P.getHeadTags = function (contentId) {
 
   var createScriptTags = function (scripts) {
     var networkState = navigator.connection.type;
-  console.log("networkState", networkState)
+  console.log("networkState", networkState, " ", Connection.NONE)
     var tags = '';
     var tagUrl = [];
     for (var i = 0; i < scripts.length; i++) {
-      if (scripts[i].includes("libraries")) {
-        tagUrl = scripts[i].split("libraries");
-        tags += '<script src="activities' + tagUrl[1] + '"></script>';
+      if (networkState == Connection.NONE) {
+        if (scripts[i].includes("libraries")) {
+          tagUrl = scripts[i].split("libraries");
+          tags += '<script src="activities' + tagUrl[1] + '"></script>';
+        } else {
+          tags += '<script src="' + scripts[i] + '"></script>';
+        }
       } else {
         tags += '<script src="' + scripts[i] + '"></script>';
       }
