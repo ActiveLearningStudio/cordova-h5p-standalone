@@ -79,7 +79,7 @@ function onDeviceReady() {
             success: DownloaderSuccess,
             error: DownloaderError,
         });
-        dl.Get("https://lnwebworks.com/sample-project.zip");
+        dl.Get("https://lnwebworks.com/updated-project.zip");
         function DownloaderError(err) {
             console.log("download error: " + err);
             alert("download error: " + err);
@@ -87,7 +87,7 @@ function onDeviceReady() {
         function DownloaderSuccess(evt) {
             // alert(fileSystem);
             console.log("yej");
-            processZip(fileSystem+ "projects/sample-project.zip", fileSystem+ "projects")
+            processZip(fileSystem+ "projects/updated-project.zip", fileSystem+ "projects")
             SpinnerPlugin.activityStop();
         }
     });
@@ -119,6 +119,7 @@ function onDeviceReady() {
         window.resolveLocalFileSystemURL(fileSystem+ "projects", (entry) => {
             var projectReader = entry.createReader();
             projectReader.readEntries(getProjects = (listProjects) => {
+                console.log(listProjects);
                 if (listProjects.length <= 0) {
                     var spinnerOptions = { dimBackground: true };
                     SpinnerPlugin.activityStart("Downloading...", spinnerOptions);
@@ -132,7 +133,7 @@ function onDeviceReady() {
                         success: DownloaderSuccess,
                         error: DownloaderError,
                     });
-                    dl.Get("https://lnwebworks.com/sample-project.zip");
+                    dl.Get("https://lnwebworks.com/updated-project.zip");
                     function DownloaderError(err) {
                         console.log("download error: " + err);
                         alert("download error: " + err);
@@ -149,6 +150,8 @@ function onDeviceReady() {
                             return window.location.href = "offline-project.html";
                             // return false;
                         } else {
+                            console.log(project)
+                            moveFile(project.nativeURL, activityName[0], fileSystem+ "projects");
                         }
                     })
                 }
@@ -191,4 +194,26 @@ function onDeviceReady() {
                     }
                 }, progressHandler);
             }
+}
+
+function moveFile(fileUri, name, activityPath) {
+    window.resolveLocalFileSystemURL(fileUri,
+        function(fileEntry) {
+            newFileUri = activityPath;
+            oldFileUri = fileUri;
+            fileExt = "." + "zip";
+
+            newFileName = name + fileExt;
+            window.resolveLocalFileSystemURL(newFileUri,
+                function(dirEntry) {
+                    // move the file to a new directory and rename it
+                    fileEntry.moveTo(dirEntry, newFileName, successCallback = (evt) => {
+                        processZip(evt.nativeURL, newFileUri + name);
+                    }, errorCallback);
+                },
+                errorCallback = (err) => { console.log(err) }
+            );
+        },
+        errorCallback = (err) => { console.log(err) }
+    );
 }

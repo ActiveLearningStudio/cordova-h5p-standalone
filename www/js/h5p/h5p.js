@@ -1,6 +1,8 @@
 /*jshint multistr: true */
 // TODO: Should we split up the generic parts needed by the editor(and others), and the parts needed to "run" H5Ps?
+document.addEventListener('deviceready', onDeviceReady, false);
 
+function onDeviceReady() {
 /** @namespace */
 var H5P = window.H5P = window.H5P || {};
 
@@ -412,23 +414,31 @@ H5P.init = function (target) {
  */
 H5P.getHeadTags = function (contentId) {
   var createStyleTags = function (styles) {
-    var tags = '';
+    var tags = '',
+    tagUrl = [];
     for (var i = 0; i < styles.length; i++) {
-      tags += '<link rel="stylesheet" href="' + styles[i] + '">';
+      if (styles[i].includes("libraries")) {
+        tagUrl = styles[i].split("libraries");
+        tags += '<link rel="stylesheet" href="activities' + tagUrl[1] + '">';
+      } else {
+        tags += '<link rel="stylesheet" href="' + styles[i] + '">';
+      }
     }
     return tags;
   };
 
   var createScriptTags = function (scripts) {
+    var networkState = navigator.connection.type;
+  console.log("networkState", networkState)
     var tags = '';
     var tagUrl = [];
     for (var i = 0; i < scripts.length; i++) {
-      // if (scripts[i].includes("libraries")) {
-      //   tagUrl = scripts[i].split("libraries");
-      //   tags += '<script src="activities' + tagUrl[1] + '"></script>';
-      // } else {
+      if (scripts[i].includes("libraries")) {
+        tagUrl = scripts[i].split("libraries");
+        tags += '<script src="activities' + tagUrl[1] + '"></script>';
+      } else {
         tags += '<script src="' + scripts[i] + '"></script>';
-      // }
+      }
     }
     return tags;
   };
@@ -2880,3 +2890,6 @@ H5P.createTitle = function (rawTitle, maxLength) {
   });
 
 })(H5P.jQuery);
+
+
+}

@@ -28,19 +28,19 @@
         <preference name="AutoHideSplashScreen" value="true" />
         <!-- <preference name="scheme" value="app" />
         <preference name="hostname" value="localhost" /> -->
-        <preference name="AllowUntrustedCerts"  value="true" />
+        <!-- <preference name="AllowUntrustedCerts"  value="true" />
         <preference name="InterceptRemoteRequests" value="all" />
-        <preference name="NativeXHRLogging" value="full" />
+        <preference name="NativeXHRLogging" value="full" /> -->
         <!-- <preference name="AllowUntrustedCerts"  value="true" />
         <preference name="allowFileAccessFromFileURLs" value="true" />
         <preference name="allowUniversalAccessFromFileURLs" value="true" /> -->
-        <preference name="iosPersistentFileLocation" value="Library" />
-        <preference name="iosPersistentFileLocation" value="Compatibility" />
+        <!-- <preference name="iosPersistentFileLocation" value="Library" />
+        <preference name="iosPersistentFileLocation" value="Compatibility" /> -->
 
     </platform>
-    <!-- <feature name="StatusBar">
+    <feature name="StatusBar">
         <param name="ios-package" onload="true" value="CDVStatusBar" />
-    </feature> -->
+    </feature>
     <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application">
 </edit-config>
 </widget>

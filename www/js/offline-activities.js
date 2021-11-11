@@ -99,17 +99,18 @@ function onDeviceReady() {
                     activitiesReader.readEntries(getPlaylists = (activitiesFiles) => {
                         activitiesFiles.forEach((activitiesFile) => {
                             if (activitiesFile.isFile) {
-                                console.log("file", activitiesFile);
-                                if (activitiesFile.name.includes(".h5p")) {
-                                    var activityName = activitiesFile.name.split(".")
-                                    moveFile(activitiesFile.nativeURL, activityName[0], activityPath);
+                                // return false
+                                if (activitiesFile.name.includes("h5p.json")) {
+                                    console.log("file>>>>", activitiesFile);
+                                    // var activityName = activitiesFile.name.split(".")
+                                    // moveFile(activitiesFile.nativeURL, activityName[0], activityPath);
+                                    window.location.href = `offline-activity.html?activityPath=${activitiesFile.nativeURL}`
                                 }
                             } else {
                                 // ------ Project.json address here -----
                                 // variable = playlistFile
                                 console.log("activities files...", activitiesFile);
                                 // activityPath[counterid] = activitiesFolder.nativeURL;
-                                window.location.href = `offline-activity.html?activityPath=${activitiesFile.nativeURL}`
                             }
                         });
                     });

@@ -23,7 +23,7 @@ function onDeviceReady() {
                                 } else {
                                     // --------- If any file inside sub project folder address here. ---------
                                     // variable = allPlaylist
-                                    console.log(allPlaylist);
+                                    console.log("file>>>>>>", allPlaylist);
                                     window.resolveLocalFileSystemURL(allPlaylist.nativeURL, function success(fileEntry) {
                                         fileEntry.file(function (file) {
                                             var reader = new FileReader();

@@ -20,60 +20,65 @@ function onDeviceReady() {
             var offlineProjectHTML = '',
             playlistPath = '';
             entries.forEach(function (entry) {
-              if (entry.isDirectory) {
-                //   -------- Sub Directory of Projects Folder ---------
-                window.resolveLocalFileSystemURL(entry.nativeURL, function success(subDirectoryEntry) {
-                    var subDirectoryReader = subDirectoryEntry.createReader();
-                    subDirectoryReader.readEntries(getSubDirectory = (subEntries) => {
-                        var counter = 0;
-                      subEntries.forEach((subEntry) => {
-                        if(subEntry.isDirectory) {
-                            playlistPath = subEntry;
-                        } else {
-                            // ------- Sub directory's file listing ---------
-                            // variable = subEntry
-                            window.resolveLocalFileSystemURL(subEntry.nativeURL, function success(fileEntry) {
-                                fileEntry.file(function (file) {
-                                    var reader = new FileReader();
-                                    reader.onloadend = function(evt) {
-                                        var projectJSON = JSON.parse(evt.target.result);
-                                        // offlineProjectHTML += `
-                                        // <div class= "row">
-                                        //     <div class="col-12">
-                                        //         <a href="offline-playlist.html?playlistPath=${playlistPath.nativeURL}">
-                                        //             <h4 class="text-center">${projectJSON.name}</h4>
-                                        //         </a>
-                                        //     </div>
-                                        // </div>`;
+                if (entry.isDirectory) {
+                    //   -------- Sub Directory of Projects Folder ---------
+                    window.resolveLocalFileSystemURL(entry.nativeURL, function success(subDirectoryEntry) {
+                        var subDirectoryReader = subDirectoryEntry.createReader();
+                        subDirectoryReader.readEntries(getSubDirectory = (subEntries) => {
+                            var counter = 0;
+                            subEntries.forEach((subEntry) => {
+                                if(subEntry.isDirectory) {
+                                    if (subEntry.name == "playlists") {
+                                        playlistPath = subEntry;
+                                    }
+                                } else {
+                                    // ------- Sub directory's file listing ---------
+                                    // variable = subEntry
+                                    if (subEntry.name == "project.json") {
+                                        window.resolveLocalFileSystemURL(subEntry.nativeURL, function success(fileEntry) {
+                                            fileEntry.file(function (file) {
+                                                var reader = new FileReader();
+                                                reader.onloadend = function(evt) {
+                                                    var projectJSON = JSON.parse(evt.target.result);
+                                                    console.log("JSON >>>>>>>", projectJSON);
+                                                    // offlineProjectHTML += `
+                                                    // <div class= "row">
+                                                    //     <div class="col-12">
+                                                    //         <a href="offline-playlist.html?playlistPath=${playlistPath.nativeURL}">
+                                                    //             <h4 class="text-center">${projectJSON.name}</h4>
+                                                    //         </a>
+                                                    //     </div>
+                                                    // </div>`;
 
-                                        counter++;
-                                        if (counter == 1) {
-                                            offlineProjectHTML += `<div class="grid-card-block">
-                                            <div class="grid-wrapper">`;
-                                        }
-                                        offlineProjectHTML += `
-                                        <div class="grid-card-box">
-                                            <img src="">
-                                            <div class="description">
-                                                <a href="offline-playlist.html?playlistPath=${playlistPath.nativeURL}">
-                                                    <h5>${projectJSON.name}</h5>
-                                                </a>
-                                            </div>
-                                        </div>`;
-                                        if (counter == 2) {
-                                            offlineProjectHTML += '</div></div>';
-                                            counter = 0;
-                                        }
-                                        $("#offlineProjectContainer").html(offlineProjectHTML);
-                                    };
-                                    reader.readAsText(file);
-                                }, onErrorReadFile = (err) => {console.log(err)});
-                            });
-                        }
-                      })
-                    }, onErrorReadFile = (err) => {console.log(err)});
-                  })
-              } else {}
+                                                    counter++;
+                                                    if (counter == 1) {
+                                                        offlineProjectHTML += `<div class="grid-card-block">
+                                                        <div class="grid-wrapper">`;
+                                                    }
+                                                    offlineProjectHTML += `
+                                                    <div class="grid-card-box">
+                                                        <img src="">
+                                                        <div class="description">
+                                                            <a href="offline-playlist.html?playlistPath=${playlistPath.nativeURL}">
+                                                                <h5>${projectJSON.name}</h5>
+                                                            </a>
+                                                        </div>
+                                                    </div>`;
+                                                    if (counter == 2) {
+                                                        offlineProjectHTML += '</div></div>';
+                                                        counter = 0;
+                                                    }
+                                                    $("#offlineProjectContainer").html(offlineProjectHTML);
+                                                };
+                                                reader.readAsText(file);
+                                            }, onErrorReadFile = (err) => {console.log(err)});
+                                        });
+                                    }
+                                }
+                            })
+                        }, onErrorReadFile = (err) => {console.log(err)});
+                    })
+                } else {}
             });
         }
         function errorHandler(error) {
