@@ -27,6 +27,8 @@ function onDeviceReady() {
                     counter++;
                     activityPath[counterid] = activitiesFolder.nativeURL;
                     console.log("counterid is..", counterid)
+                    console.log("====", activityPath[counterid])
+                    console.log("====", activityPath)
                     if (counter == 1) {
                         offlineActivitiesHTML += `<div class="grid-card-block">
                         <div class="grid-wrapper">`;
