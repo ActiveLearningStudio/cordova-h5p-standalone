@@ -127,9 +127,7 @@ function onDeviceReady() {
             console.log(">>>>>>>>>>", newActivityPath)
             var currentActivityId = getKeyByValue(activityIdObj, generateNewActivityPath),
                 nextActivityId = parseInt(currentActivityId) + 1;
-            // console.log("next id---", nextActivityId)
-            // console.log("current activity id--", currentActivityId)
-            // console.log("---", activityIdObj[nextActivityId]);
+
             window.resolveLocalFileSystemURL(activityIdObj[nextActivityId], function success(activities) {
                 var activitiesReader = activities.createReader();
                 activitiesReader.readEntries(getPlaylists = (activitiesFiles) => {

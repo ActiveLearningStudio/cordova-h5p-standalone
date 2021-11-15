@@ -112,7 +112,7 @@ function onDeviceReady() {
                                 // ------ Project.json address here -----
                                 // variable = playlistFile
                                 console.log("activities files...", activitiesFile);
-                                // activityPath[counterid] = activitiesFolder.nativeURL;
+
                             }
                         });
                     });
