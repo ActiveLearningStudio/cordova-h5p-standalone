@@ -791,7 +791,7 @@ div#offlineactiveButton.activity-page {
     }
     to {
         top: 0;
-        opacity: 1
+        opacity: 1;
     }
 }
 
