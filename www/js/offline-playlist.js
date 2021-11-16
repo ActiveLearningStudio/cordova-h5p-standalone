@@ -1,22 +1,23 @@
 document.addEventListener('deviceready', onDeviceReady, false);
+
 function onDeviceReady() {
     getUrlParams = location.search.split("playlistPath=");
     playlistPath = getUrlParams[1];
-
+    console.log("playlist path===", playlistPath)
     var offlinePlaylistHTML = '',
-    activitiesPath = ''
+        activitiesPath = ''
     counter = 0;
     window.resolveLocalFileSystemURL(playlistPath, function success(playlist) {
         var playlistReader = playlist.createReader();
         playlistReader.readEntries(getPlaylists = (playlistFolders) => {
             playlistFolders.forEach((playlistFolder) => {
-                if(playlistFolder.isDirectory) {
+                if (playlistFolder.isDirectory) {
                     // ----- Project Sub Folder -----
                     window.resolveLocalFileSystemURL(playlistFolder.nativeURL, function success(playlistContainer) {
                         var playlistContainerReader = playlistContainer.createReader();
                         playlistContainerReader.readEntries(getplaylistContainer = (allPlaylists) => {
                             allPlaylists.forEach((allPlaylist) => {
-                                if(allPlaylist.isDirectory) {
+                                if (allPlaylist.isDirectory) {
                                     // --------- Playlist Folder ---------
                                     console.log("allPlaylist", allPlaylist)
                                     activitiesPath = allPlaylist;
@@ -25,24 +26,39 @@ function onDeviceReady() {
                                     // variable = allPlaylist
                                     console.log("file>>>>>>", allPlaylist);
                                     window.resolveLocalFileSystemURL(allPlaylist.nativeURL, function success(fileEntry) {
-                                        fileEntry.file(function (file) {
+                                        fileEntry.file(function(file) {
                                             var reader = new FileReader();
                                             reader.onloadend = function(evt) {
+                                                console.log("event target result", evt.target.result)
                                                 var playlistJSON = JSON.parse(evt.target.result);
                                                 counter++;
+
+                                                //console.log("append tabs", appendCourse)
+                                                console.log("event target result", evt.target.result)
+
+
+
                                                 if (counter == 1) {
                                                     offlinePlaylistHTML += `<div class="grid-card-block">
                                                     <div class="grid-wrapper">`;
                                                 }
+
                                                 offlinePlaylistHTML += `
-                                                <div class="grid-card-box">
+                                             
+                                               
+                                                
+                                                <div class="grid-card-box"> 
                                                     <img src="">
                                                     <div class="description">
                                                         <a href="offline-activities.html?activitiesPath=${activitiesPath.nativeURL}">
                                                             <h5>${playlistJSON.title}</h5>
                                                         </a>
                                                     </div>
-                                                </div>`;
+                                              
+                                                 
+
+                                                </div>
+                                            </section>`;
 
                                                 if (counter == 2) {
                                                     offlinePlaylistHTML += '</div></div>';
@@ -51,17 +67,19 @@ function onDeviceReady() {
                                                 $("#offlinePlaylistContainer").html(offlinePlaylistHTML);
                                             };
                                             reader.readAsText(file);
-                                        }, onErrorReadFile = (err) => {console.log(err)});
+                                        }, onErrorReadFile = (err) => { console.log(err) });
                                     });
-                                } 
-                            }) 
+                                }
+                            })
                         })
                     })
                 } else {
                     // ------ Project.json address here -----
                     // variable = playlistFolder
-                } 
-            }) 
+                }
+            })
         })
+
     })
+
 }

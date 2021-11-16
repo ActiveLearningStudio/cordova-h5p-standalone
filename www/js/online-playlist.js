@@ -1,37 +1,45 @@
 getUrlParams = location.search.split("courseId=");
 courseId = getUrlParams[1];
 var localStorage = window.localStorage,
-  token = localStorage.getItem("token");
+    token = localStorage.getItem("token");
+var dashboardImage = localStorage.getItem(courseId);
+document.getElementById('onlineImage').src = dashboardImage;
+console.log("dashboard image is", dashboardImage)
 $.ajax({
-  url: "https://map-lms.curriki.org/webservice/rest/server.php?",
-  data: {
-    wstoken: token,
-    moodlewsrestformat: "json",
-    wsfunction: "core_course_get_contents",
-    courseid: courseId,
-  },
-  success: (response) => {
-    var playlistContainer = $("#playlistContainer");
-    var playlistHTML = "",
-      counter = 0;
-    response.forEach((element) => {
-      if (element.name == "Playlists") {
-        element.modules.forEach((module) => {
-          // playlistHTML += `
-          // <div class="row mt-3 mb-3">
-          //     <div class = "col-10 m-auto">
-          //         <a href="online-activities.html">
-          //             <h4 class="text-center">${module.name}</h4>
-          //         </a>
-          //     </div>
-          // </div>`;
+    url: "https://map-lms.curriki.org/webservice/rest/server.php?",
+    data: {
+        wstoken: token,
+        moodlewsrestformat: "json",
+        wsfunction: "core_course_get_contents",
+        courseid: courseId,
+    },
+    success: (response) => {
+        var playlistContainer = $("#playlistContainer");
+        var playlistHTML = "",
+            counter = 0;
+        response.forEach((element) => {
+            if (element.name == "Playlists") {
+                element.modules.forEach((module) => {
+                    // playlistHTML += `
+                    // <div class="row mt-3 mb-3">
+                    //     <div class = "col-10 m-auto">
+                    //         <a href="online-activities.html">
+                    //             <h4 class="text-center">${module.name}</h4>
+                    //         </a>
+                    //     </div>
+                    // </div>`;
 
-          counter++;
-          if (counter == 1) {
-            playlistHTML += `<div class="grid-card-block">
-                                    <div class="grid-wrapper">`;
-          }
-          playlistHTML += `
+                    counter++;
+
+                    if (counter == 1) {
+                        playlistHTML += `
+                        
+                        <div class="grid-card-block">
+                                    <div class="grid-wrapper">
+`;
+                    }
+                    playlistHTML += `
+                                
                                 <div class="grid-card-box">
                                     <img src="">
                                     <div class="description">
@@ -41,13 +49,15 @@ $.ajax({
                                     </div>
                                 </div>`;
 
-          if (counter == 2) {
-            playlistHTML += "</div></div>";
-            counter = 0;
-          }
+                    if (counter == 2) {
+                        playlistHTML += "</div></div>";
+                        counter = 0;
+                    }
+                });
+            }
         });
-      }
-    });
-    playlistContainer.html(playlistHTML);
-  },
+        playlistContainer.html(playlistHTML);
+
+
+    },
 });
