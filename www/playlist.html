@@ -81,25 +81,41 @@
 
     <div class="profile-page">
         <div class="container-fluid">
-            <div id="onlineImageShow">
-                <img src="" id="onlineImage"></div>
-            <div id="tabs">
+            <div id="onlineImageShow" class="main-bnnr">
+                <img src="" id="onlineImage">
+            </div>
+
+            <div class="social-share">
+                <div class="share-count">
+                    <a href="#"><i class="fas fa-users"></i>60k</a>
+                </div>
+                <div class="like-count">
+                    <a href="#"><i class="fas fa-heart"></i>60k</a>
+                </div>
+            </div>
+            <div id="tabs" class="tabs">
                 <div class="tabset">
                     <!-- Tab 1 -->
-                    <input type="radio" name="tabset" id="tab1" aria-controls="marzen" checked>
-                    <label for="tab1">Overview</label>
+                    <input type="radio" name="tabset" id="tab1" aria-controls="overview" checked>
+                    <label for="tab1" class="active">Overview</label>
                     <!-- Tab 2 -->
-                    <input type="radio" name="tabset" id="tab2" aria-controls="rauchbier">
+                    <input type="radio" name="tabset" id="tab2" aria-controls="courseContent">
                     <label for="tab2">Course Content</label>
                     <!-- Tab 3 -->
                     <div class="tab-panels">
-                        <section id="marzen" class="tab-panel">
-
-                            <p>You have important decisions to make about your education and career - wouldn’t it be nice if ypu better understood the forces of globalization and automation first?
-                            </p>
-
+                        <section id="overview" class="tab-panel">
+                            <h3>Introduction to<br> Microeconomics</h3>
+                            <p>By taking this free microeconomics course. you'll be exposed to the economic way of thinking You'll understand how to use economics in your life and, ultimately, see the world differently</p>
+                            <a href="#">Read more</a>
+                            <div class="tab-profile-block">
+                                <img src="img/logo.png">
+                                <span>Marginal Revolution University</span>
+                            </div>
+                            <div class="send-btn">
+                                <button><i class="far fa-envelope"></i> Send a Message</button>
+                            </div>
                         </section>
-                        <section id="rauchbier" class="tab-panel">
+                        <section id="courseContent" class="tab-panel">
                             <div class="" id="playlistContainer"></div>
                         </section>
                     </div>

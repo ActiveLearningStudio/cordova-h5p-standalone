@@ -29,34 +29,20 @@ function onDeviceReady() {
                                         fileEntry.file(function(file) {
                                             var reader = new FileReader();
                                             reader.onloadend = function(evt) {
-                                                console.log("event target result", evt.target.result)
                                                 var playlistJSON = JSON.parse(evt.target.result);
                                                 counter++;
-
-                                                //console.log("append tabs", appendCourse)
-                                                console.log("event target result", evt.target.result)
-
-
-
                                                 if (counter == 1) {
                                                     offlinePlaylistHTML += `<div class="grid-card-block">
                                                     <div class="grid-wrapper">`;
                                                 }
-
-                                                offlinePlaylistHTML += `
-                                             
-                                               
-                                                
+                                                offlinePlaylistHTML += `                                                
                                                 <div class="grid-card-box"> 
                                                     <img src="">
                                                     <div class="description">
                                                         <a href="offline-activities.html?activitiesPath=${activitiesPath.nativeURL}">
                                                             <h5>${playlistJSON.title}</h5>
                                                         </a>
-                                                    </div>
-                                              
-                                                 
-
+                                                    </div>                                              
                                                 </div>
                                             </section>`;
 
