@@ -10,8 +10,11 @@ function onDeviceReady() {
             fileSystem = cordova.file.externalDataDirectory;
             break;
     }
+    const CurrikiToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxMzMiLCJqdGkiOiJlNGUyZTgyZDM4ODkwOGUyOTcyZGUxMzEwOTc4MWJiYzcyZTAwMmEwM2JjZjY5NGNjNzhhZTgyZWU2NThhZGY3MzcyNjRlYTk5YzZlN2Y2MyIsImlhdCI6MTYzMjgwNDQwMCwibmJmIjoxNjMyODA0NDAwLCJleHAiOjE2NjQzNDA0MDAsInN1YiI6IjE0MzciLCJzY29wZXMiOltdfQ.ANU71Nl9syFSa7zKN4XIzEX5rnJ6cJ1g8SsFSz5EDActwpVwuxzpgf_HdpsdOcCwzTwPdy-18kx0HAHKsXE0tsbYY8Ncyf9tYuTlxcKXxXTA4YI29y7-ACAjLHpdTi29hwsTxYltwYYx-TxUYrEjOSrBOPOhluhn56F3DvdGw3JPS40aHZ7bpnJojLw8Ysv5Kpm4wFCjLQewoNpLfu7p53wYQ3jjusR4UDFE3M6I1nrmj3Pfsik4q9uKhimas0nm8PXhGSRbfaJPzTlNOVAcNdZuOMMnLIQt8ENThNZ_9z0HLLSvPc0jjzHEDRyu-khPGEPeFH56Kjm6GUYXwxl3LRPxTMWRcRP6q-JcphfOXkUaUfWilNRJ3jndzvta1vTqmgVUTO6xH3EoNGo_oYhA56b1Gm4UVc50Z3K2jG3Q4omzdkZlufLN9JB5H6eH6cQEEEP9rrSOX_lDRUchbqLDbBC9dghMr7E5R6uDlA9PAT5pcsPsydEvjTcPbv3aa5jRfvO31oixkR2JXGlHi3mTIAxI60eB_3NcgUEehtSwyx7o-epMDE6T6FL2fsBo5Kz_Bi4Cb-2Mem0umbD92kgFny1RBF7Vxj7eosMZXkdI6US6lIiC0bLVwr4bUnOVJ2lR5MNboIqw9IFT7JTLR8qaVfyUs4kTxi4que8JXmmYyDU';
     var localStorage = window.localStorage,
-        token = localStorage.getItem("token"),
+        token = localStorage.getItem("USER_TOKEN"),
+        userID = localStorage.getItem("USER_ID"),
+        adminToken = localStorage.getItem("ADMIN_TOKEN"),
         courseContainer = $("#courseContainer"),
         limit = 0,
         offset = 0;
@@ -25,12 +28,10 @@ function onDeviceReady() {
         $.ajax({
             url: "https://map-lms.curriki.org/webservice/rest/server.php?",
             data: {
-                "wstoken": token,
+                "wstoken": adminToken,
                 "moodlewsrestformat": "json",
-                "wsfunction": "core_course_get_enrolled_courses_by_timeline_classification",
-                "classification": "inprogress",
-                "limit": limit,
-                "offset": offset
+                "wsfunction": "core_enrol_get_users_courses",
+                "userid": userID
             },
             success: (response) => {
 
@@ -38,7 +39,7 @@ function onDeviceReady() {
                 offset = response.nextoffset;
                 var courseWraper = '<div class="row">',
                     counter = 0;
-                response.courses.forEach(course => {
+                response.forEach(course => {
 
                     counter++;
                     if (counter == 1) {
@@ -76,34 +77,100 @@ function onDeviceReady() {
         modal.style.display = "block";
         // When the user clicks on <span> (x), close the modal
         span.onclick = function() {
-                modal.style.display = "none";
-            }
+            modal.style.display = "none";
+        }
             // When the user clicks anywhere outside of the modal, close it
         window.onclick = function(event) {
             if (event.target == modal) {
                 modal.style.display = "none";
             }
         }
-        var dl = new download();
-        dl.Initialize({
-            fileSystem: fileSystem,
-            folder: "projects",
-            unzip: false,
-            remove: false,
-            timeout: 0,
-            success: DownloaderSuccess,
-            error: DownloaderError,
-        });
-        dl.Get("https://lnwebworks.com/updated-project.zip");
 
+        var spinnerOptions = { dimBackground: true };
+        SpinnerPlugin.activityStart("Preparing for Download", spinnerOptions);
+        $.ajax({
+            url: "https://lite.curriki.org/api/api/v1/suborganization/1/projects/3694/offline-project",
+            headers: {
+                Authorization: "Bearer " + CurrikiToken,
+            },
+            success: (res) => {
+                SpinnerPlugin.activityStop();
+                var getProjectpath = res.split('exports/'),
+                projectName = getProjectpath[1],
+                downloadPath = "https://lite.curriki.org/api/storage/exports/" + projectName;
+                console.log("projectName>>>", downloadPath);
+                // return false;
+                var confirmation = confirm('The project is ready to download. Click OK to download');
+                if (confirmation) {
+                    SpinnerPlugin.activityStart("Downloading...", spinnerOptions);
+                    console.log("in download")
+                    var dl = new download();
+                    dl.Initialize({
+                        fileSystem : fileSystem,
+                        folder: "projects",
+                        unzip: false,
+                        remove: false,
+                        timeout: 0,
+                        success: DownloaderSuccess,
+                        error: DownloaderError,
+                    });
+                    dl.Get(downloadPath);
+
+                    function DownloaderSuccess() {
+                        // alert(fileSystem);
+                        modal.style.display = "none";
+                        console.log("project>>", projectName);
+                        console.log("projectFull >>", fileSystem+ "projects/" + projectName);
+                        console.log("yej");
+                        window.resolveLocalFileSystemURL(fileSystem + "projects/", (entry) => {
+                            var reader = entry.createReader();
+                            reader.readEntries(getProjects = (listProjects) => {
+                                console.log("list>>",listProjects);
+                            })
+                        }, (err) => {console.log(err)})
+                        processZip(fileSystem + "projects/" + projectName, fileSystem + "projects", projectName)
+                        SpinnerPlugin.activityStop();
+                    }
+
+                    function DownloaderError(err) {
+                        console.log("download error: " + err);
+                        alert("download error: " + err);
+                    }
+                }
+            }
+        })
+    // return false;
+    // var spinnerOptions = { dimBackground: true };
+    //     SpinnerPlugin.activityStart("Downloading...", spinnerOptions);
+    //     console.log("in download")
+    //     var dl = new download();
+    //     dl.Initialize({
+    //         fileSystem : fileSystem,
+    //         folder: "projects",
+    //         unzip: false,
+    //         remove: false,
+    //         timeout: 0,
+    //         success: DownloaderSuccess,
+    //         error: DownloaderError,
+    //     });
+    //     dl.Get("http://localhost:30400/api/v1/suborganization/1/projects/49/h5p-project");
         function DownloaderError(err) {
             console.log("download error: " + err);
             alert("download error: " + err);
         }
-
-        function DownloaderSuccess(evt) {
+        function DownloaderSuccess(projectName) {
+            // alert(fileSystem);
+            console.log("project>>", projectName);
+            console.log("projectFull >>", fileSystem+ "projects/" + projectName);
             console.log("yej");
-            processZip(fileSystem + "projects/updated-project.zip", fileSystem + "projects")
+            window.resolveLocalFileSystemURL(fileSystem + "projects/", (entry) => {
+                var reader = entry.createReader();
+                reader.readEntries(getProjects = (listProjects) => {
+                    console.log("list>>",listProjects);
+                })
+            }, (err) => {console.log(err)})
+            processZip(fileSystem + "projects/" + projectName, fileSystem + "projects")
+            SpinnerPlugin.activityStop();
         }
     });
     $("#logout").on("click", () => {
@@ -166,7 +233,7 @@ function onDeviceReady() {
 
     });
 
-    function processZip(zipSource, destination) {
+    function processZip(zipSource, destination, projectName) {
         // Handle the progress event
         var progressHandler = function(progressEvent) {
             var percent = Math.round((progressEvent.loaded / progressEvent.total) * 100);
@@ -180,12 +247,24 @@ function onDeviceReady() {
             updateProgressBar(myProgressBar, percent);
             console.log(percent + "%");
             if (percent == 100) {
+                var projectNameArr = projectName.split(".");
                 setTimeout(() => {
-                    window.location.href = "offline-project.html";
+                    $.ajax({
+                        url: "https://lite.curriki.org/api/api/v1/project/delete/" + projectNameArr[0],
+                        headers: {
+                            Authorization: "Bearer " + CurrikiToken,
+                        },
+                        success: (res) => {
+                            // console.log(res);
+                            if (res == 1)
+                            window.location.href = "offline-project.html";
+                        }
+                    });
                 }, 2000);
             }
         }
         window.zip.unzip(zipSource, destination, (status) => {
+            console.log("zip", zipSource);
             if (status == 0) {
                 console.log("Files succesfully decompressed");
                 window.resolveLocalFileSystemURL(zipSource,

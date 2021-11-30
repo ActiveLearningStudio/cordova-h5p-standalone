@@ -1,14 +1,14 @@
 getUrlParams = location.search.split("courseId=");
 courseId = getUrlParams[1];
 var localStorage = window.localStorage,
-    token = localStorage.getItem("token");
+    adminToken = localStorage.getItem("ADMIN_TOKEN");
 var dashboardImage = localStorage.getItem(courseId);
 document.getElementById('onlineImage').src = dashboardImage;
 console.log("dashboard image is", dashboardImage)
 $.ajax({
     url: "https://map-lms.curriki.org/webservice/rest/server.php?",
     data: {
-        wstoken: token,
+        wstoken: adminToken,
         moodlewsrestformat: "json",
         wsfunction: "core_course_get_contents",
         courseid: courseId,

@@ -1,11 +1,12 @@
 document.addEventListener('deviceready', onDeviceReady, false);
 function onDeviceReady() {
-    var localStorage = window.localStorage;
-    // token = localStorage.getItem("token");
-    // if(token) {
+    var localStorage = window.localStorage,
+    adminToken =  localStorage.getItem("ADITIONAL_TOKEN");
+    // userToken = localStorage.getItem("USER_TOKEN");
+    // if(userToken) {
     //     window.location.href = 'dashboard.html';
     // }
-
+    // console.log("sdfs", ADMIN_TOKEN);
     $("#loginButton").on('click', function() {
         var userName = $("#userName").val(),
         password = $("#password").val();
@@ -18,8 +19,24 @@ function onDeviceReady() {
                 success: (response) => {
                     console.log(response);
                     if(response.token) {
-                        localStorage.setItem("token", response.token);
-                        window.location.href = 'dashboard.html';
+                        localStorage.setItem("USER_TOKEN", response.token);
+                        console.log("userName", userName);
+                        $.ajax({
+                            url: "https://map-lms.curriki.org/webservice/rest/server.php?",
+                            dataType: "json",
+                            data: {
+                                "wstoken": adminToken,
+                                "wsfunction": "core_user_get_users",
+                                "criteria[0][key]": "username",
+                                "criteria[0][value]": userName,
+                                "moodlewsrestformat": "json"
+                            },
+                            success: (userData) => {
+                                var userID = userData.users[0].id;
+                                localStorage.setItem("USER_ID", userID);
+                                window.location.href = 'dashboard.html';
+                            }
+                        })
                     }
                     response.error && alert(response.error);
                 }

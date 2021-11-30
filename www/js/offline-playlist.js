@@ -19,12 +19,18 @@ function onDeviceReady() {
                             allPlaylists.forEach((allPlaylist) => {
                                 if (allPlaylist.isDirectory) {
                                     // --------- Playlist Folder ---------
-                                    console.log("allPlaylist", allPlaylist)
                                     activitiesPath = allPlaylist;
                                 } else {
                                     // --------- If any file inside sub project folder address here. ---------
                                     // variable = allPlaylist
-                                    console.log("file>>>>>>", allPlaylist);
+                                    var playlistFolderPath = allPlaylist.nativeURL,
+                                    getPlaylistPath = playlistFolderPath.split("/");
+                                    getPlaylistPath.pop();
+                                    var newPlaylistFolderPath = getPlaylistPath.join("/")
+                                    // console.log("getPlaylistPath", newPlaylistFolderPath);
+                                    // console.log("activitiesPath >>>>>>", activitiesPath.nativeURL);
+                                    // console.log("filePath >>>>>>", allPlaylist.nativeURL);
+                                    // console.log("file>>>>>>", allPlaylist);
                                     window.resolveLocalFileSystemURL(allPlaylist.nativeURL, function success(fileEntry) {
                                         fileEntry.file(function(file) {
                                             var reader = new FileReader();
@@ -39,7 +45,7 @@ function onDeviceReady() {
                                                 <div class="grid-card-box"> 
                                                     <img src="">
                                                     <div class="description">
-                                                        <a href="offline-activities.html?activitiesPath=${activitiesPath.nativeURL}">
+                                                        <a href="offline-activities.html?activitiesPath=${newPlaylistFolderPath}/activities">
                                                             <h5>${playlistJSON.title}</h5>
                                                         </a>
                                                     </div>                                              

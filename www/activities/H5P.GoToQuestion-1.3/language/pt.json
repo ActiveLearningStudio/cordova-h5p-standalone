@@ -1,32 +1,32 @@
 {
   "semantics": [
     {
-      "label": "Texto da pergunta",
-      "description": "A pergunta na qual o utilizador se baseará para escolher uma opção."
+      "label": "Question Text",
+      "description": "The question that the user will make a choice based upon."
     },
     {
-      "label": "Opções",
-      "entity": "opção",
+      "label": "Choices",
+      "entity": "choice",
       "field": {
         "fields": [
           {
-            "label": "Texto da opção",
-            "description": "O título que será mostrado no botão da opção."
+            "label": "Choice Text",
+            "description": "The label that will displayed on the choice button."
           },
           {
-            "label": "Ir para",
-            "description": "O momento alvo em que o utilizador será redirecionado quando clicar no botão da opção. Insira o tempo no formato M:SS."
+            "label": "Go To",
+            "description": "The target time the user will be taken to upon pressing the choice button. Enter timecode in the format M:SS."
           },
           {
-            "label": "Texto de confirmação da opção",
-            "description": "Opcional. Texto de confirmação oque será mostrado após o utilizador ter clicado o botão da opção."
+            "label": "If Chosen Text",
+            "description": "An optional confirmation text that will be displayed after the user has pressed the choice button."
           }
         ]
       }
     },
     {
-      "label": "Título do botão \"Continuar\"",
-      "default": "Continuar"
+      "label": "Continue Button Label",
+      "default": "Continue"
     }
   ]
 }

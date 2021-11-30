@@ -14,9 +14,9 @@ function onDeviceReady() {
     splitActivitypath.splice(splitActivitypath.length - 1, 1),
         newActivityPath = splitActivitypath.join('/');
     var generateNewActivityPath = newActivityPath + "/";
-    console.log("split activity path...", splitActivitypath)
-    console.log("new activity path..", newActivityPath)
-    console.log("JSON PATH>>>>>>", activityPath);
+    // console.log("split activity path...", splitActivitypath)
+    // console.log("new activity path..", newActivityPath)
+    // console.log("JSON PATH>>>>>>", activityPath);
 
     // var xhr = new XMLHttpRequest();
     // xhr.open('GET', activityPath, true);
@@ -32,53 +32,55 @@ function onDeviceReady() {
 
 
     window.resolveLocalFileSystemURL(activityPath, function success(fileEntry) {
-            fileEntry.file(function(file) {
-                // console.log("im here>>>>", file);
-                var reader = new FileReader();
-                reader.onloadend = function(evt) {
-                    var playlistJSON = JSON.parse(evt.target.result);
-                    console.log("JOSN????", playlistJSON);
-                    var setting = playlistJSON.settings;
-                    window.H5PIntegration = {...setting }
-                    $('#h5p-container').append(playlistJSON.embed_code);
-                    console.log("setting>>>>", window.H5PIntegration);
-                    var scripts = `<script src="js/h5p/jquery.js"></script>
+        fileEntry.file(function (file) {
+            // console.log("im here>>>>", file);
+            var reader = new FileReader();
+            reader.onloadend = function(evt) {
+                var playlistJSON = JSON.parse(evt.target.result);
+                // console.log("JOSN????", playlistJSON);
+                var setting = playlistJSON.settings;
+                window.H5PIntegration = {...setting}
+                $('#h5p-container').append(playlistJSON.embed_code);
+                console.log("setting>>>>", window.H5PIntegration);
+                var scripts = `<script src="js/h5p/jquery.js"></script>
                 <script src="js/h5p/h5p.js"></script>
                 <script src="js/h5p/h5p-event-dispatcher.js"></script>
                 <script src="js/h5p/h5p-x-api.js"></script>
                 <script src="js/h5p/h5p-x-api-event.js"></script>
                 <script src="js/h5p/h5p-content-type.js"></script>
-                <script src="js/h5p/DocumentsUpload.js"></script>`;
-                    $("body").append(scripts);
-                }
-                reader.readAsText(file);
-            })
-        }, (err) => { console.log("error>>>", err) })
-        // const offlineElement = document.getElementById('h5p-container');
-        // const options = {
-        //     h5pJsonPath: activityPath,
-        //     frameJs: 'plugins/h5p-standalone/dist/mod.frame.bundle.js',
-        //     frameCss: 'plugins/h5p-standalone/dist/styles/h5p.css',
-        // }
-        // new H5PStandalone.H5P(offlineElement, options);
+                <script src="js/handle-xapi.js"></script>`;
+                $("body").append(scripts);
+            }
+            reader.readAsText(file);
+        })
+    }, (err) => {console.log("error>>>", err)})
+    // const offlineElement = document.getElementById('h5p-container');
+    // const options = {
+    //     h5pJsonPath: activityPath,
+    //     frameJs: 'plugins/h5p-standalone/dist/mod.frame.bundle.js',
+    //     frameCss: 'plugins/h5p-standalone/dist/styles/h5p.css',
+    // }
+    // new H5PStandalone.H5P(offlineElement, options);
 
     // ------------------------------------------------------------------------
-
+    $(document).on('load', '.h5p-iframe', () => {
+        console.log("hello")
+    })
 
     function offlinereadFile(fileEntry) {
         fileEntry.file(function(file) {
             var reader = new FileReader();
             // console.log("reader", reader);
             reader.onloadend = function() {
-                //console.log("blob", this.result)
+                // console.log("blob>>>>", this.result)
                 activityIdObj = this.result.split(",")
                     // console.log("activity id object...", activityIdObj)
                     // console.log("activity path...", activityPath)
                     // console.log("new activity...", newActivityPath)
                 var generateNewActivityPath = newActivityPath + "/",
                     indexno = activityIdObj.indexOf(generateNewActivityPath)
-                currentActivity = getKeyByValue(activityIdObj, generateNewActivityPath),
-
+                    currentActivity = getKeyByValue(activityIdObj, generateNewActivityPath),
+                    // console.log("currentActivity >>> ", currentActivity);
                     countActivity = Object.keys(activityIdObj).length,
                     totalActivity = countActivity - 1,
                     buttonsHTML = `
@@ -101,7 +103,7 @@ function onDeviceReady() {
         var currentActivityId = getKeyByValue(activityIdObj, generateNewActivityPath),
             prevActivityId = parseInt(currentActivityId) - 1;
         window.resolveLocalFileSystemURL(activityIdObj[prevActivityId], function success(activities) {
-            console.log("activity object--", activityIdObj)
+            // console.log("activity object--", activityIdObj)
             var activitiesReader = activities.createReader();
             activitiesReader.readEntries(getPlaylists = (activitiesFiles) => {
                 activitiesFiles.forEach((activitiesFile) => {
@@ -123,8 +125,8 @@ function onDeviceReady() {
 
     })
     $(document).on("click", "#nextButton", () => {
-            console.log(">>>>>>>>>>", activityIdObj)
-            console.log(">>>>>>>>>>", newActivityPath)
+            // console.log(">>>>>>>>>>", activityIdObj)
+            // console.log(">>>>>>>>>>", newActivityPath)
             var currentActivityId = getKeyByValue(activityIdObj, generateNewActivityPath),
                 nextActivityId = parseInt(currentActivityId) + 1;
 
@@ -132,12 +134,12 @@ function onDeviceReady() {
                 var activitiesReader = activities.createReader();
                 activitiesReader.readEntries(getPlaylists = (activitiesFiles) => {
                     activitiesFiles.forEach((activitiesFile) => {
-                        console.log("activities files==", activitiesFile)
+                        // console.log("activities files==", activitiesFile)
                         if (activitiesFile.isFile) {
                             if (activitiesFile.name.includes('h5p.json')) {
-                                console.log("file", activitiesFile);
+                                // console.log("file", activitiesFile);
                                 window.location.href = `offline-activity.html?activityPath=${activitiesFile.nativeURL}`;
-                                console.log("location---", window.location.href)
+                                // console.log("location---", window.location.href)
                             }
                         }
                     })

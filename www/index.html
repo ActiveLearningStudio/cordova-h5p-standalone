@@ -46,7 +46,7 @@
 	<title>Login Page</title>
 	<script>
 		var localStorage = window.localStorage,
-			token = localStorage.getItem("token");
+			token = localStorage.getItem("USER_TOKEN");
 		if (token) {
 			window.location.href = 'dashboard.html';
 		}
@@ -84,6 +84,7 @@
 		<script src="cordova.js"></script>
 		<script src="js/jquery.min.js"></script>
 		<script src="js/bootstrap/bootstrap.min.js"></script>
+		<script src="js/index.js"></script>
 		<!-- <script src="js/login.js"></script> -->
 </body>
 

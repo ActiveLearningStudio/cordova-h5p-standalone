@@ -22,7 +22,7 @@ H5P.CKEditor = (function (EventDispatcher, $) {
     resize_enabled: false,
     linkShowAdvancedTab: false,
     linkShowTargetTab: false,
-    removeButtons: 'Cut,Copy,Paste,Undo,Redo,Subscript,Superscript,Font,BulletedList,NumberedList,Outdent,Indent,About'
+    removeButtons: 'Cut,Copy,Paste,Undo,Redo,Anchor,Subscript,Superscript,Font,BulletedList,NumberedList,Outdent,Indent,About'
   };
 
   // Contains a "global" mapping between editor names and callback functions

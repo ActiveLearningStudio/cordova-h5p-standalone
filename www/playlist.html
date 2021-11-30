@@ -97,10 +97,10 @@
                 <div class="tabset">
                     <!-- Tab 1 -->
                     <input type="radio" name="tabset" id="tab1" aria-controls="overview" checked>
-                    <label for="tab1" class="active">Overview</label>
+                    <label for="tab1" id="overviewTab" onclick="this.classList.remove('inactive'); document.getElementById('courseTab').classList.add('inactive')">Overview</label>
                     <!-- Tab 2 -->
                     <input type="radio" name="tabset" id="tab2" aria-controls="courseContent">
-                    <label for="tab2">Course Content</label>
+                    <label for="tab2" id="courseTab" class="inactive" onclick="this.classList.remove('inactive'); document.getElementById('overviewTab').classList.add('inactive')">Course Content</label>
                     <!-- Tab 3 -->
                     <div class="tab-panels">
                         <section id="overview" class="tab-panel">

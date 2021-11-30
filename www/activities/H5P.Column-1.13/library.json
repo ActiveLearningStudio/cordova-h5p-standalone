@@ -7,7 +7,7 @@
   "author": "Joubel",
   "majorVersion": 1,
   "minorVersion": 13,
-  "patchVersion": 0,
+  "patchVersion": 1,
   "runnable": 1,
   "fullscreen": 0,
   "embedTypes": [
@@ -25,9 +25,6 @@
   "preloadedCss": [
     {
       "path": "styles/h5p-column.css"
-    },
-    {
-      "path": "styles/custom-column-layout.css"
     }
   ]
 }

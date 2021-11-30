@@ -418,33 +418,56 @@ H5P.getHeadTags = function (contentId) {
     var tags = '',
     tagUrl = [];
     for (var i = 0; i < styles.length; i++) {
-      if (networkState == Connection.NONE) {
+      // if (networkState == Connection.NONE) {
         if (styles[i].includes("libraries")) {
           tagUrl = styles[i].split("libraries");
           tags += '<link rel="stylesheet" href="activities' + tagUrl[1] + '">';
-        } else {
+        } else if (styles[i].includes("api/storage")) {
+          tagUrl = styles[i].split("h5p/h5p-core/styles");
+          if (!tagUrl[1]) {
+            tagUrl = styles[i].split("h5p/laravel-h5p/css");
+            tags += '<link rel="stylesheet" href="css/h5p' + tagUrl[1] + '">';
+          }
+          tags += '<link rel="stylesheet" href="css/h5p' + tagUrl[1] + '">';
+        } 
+        else {
           tags += '<link rel="stylesheet" href="' + styles[i] + '">';
         }
-      } else {
-        tags += '<link rel="stylesheet" href="' + styles[i] + '">';
-      }
+      // } else {
+      //   tags += '<link rel="stylesheet" href="' + styles[i] + '">';
+      // }
     }
     return tags;
   };
 
   var createScriptTags = function (scripts) {
     var networkState = navigator.connection.type;
-  console.log("networkState", networkState, " ", Connection.NONE)
+  // console.log("networkState", networkState, " ", Connection.NONE)
     var tags = '';
     var tagUrl = [];
     for (var i = 0; i < scripts.length; i++) {
+      // console.log("online>>", scripts[i]);
       if (networkState == Connection.NONE) {
         if (scripts[i].includes("libraries")) {
           tagUrl = scripts[i].split("libraries");
           tags += '<script src="activities' + tagUrl[1] + '"></script>';
+        } else if (scripts[i].includes("api/storage")) {
+          if (scripts[i].includes("api/storage/h5p/h5p-core/js/h5p.js")) {
+            tags += '<script src="js/h5p/h5p-core/js/h5p.js"></script>'
+          } else {
+
+          
+          tagUrl = scripts[i].split("h5p/h5p-core/js");
+          if (!tagUrl[1]) {
+            tagUrl = scripts[i].split("api/storage/h5p");
+            tags += '<script src="js/h5p' + tagUrl[1] + '"></script>'
+          }
+          tags += '<script src="js/h5p' + tagUrl[1] + '"></script>';
+          }
         } else {
           tags += '<script src="' + scripts[i] + '"></script>';
         }
+        // console.log("offline>>", "js/h5p" + tagUrl[1]);
       } else {
         tags += '<script src="' + scripts[i] + '"></script>';
       }

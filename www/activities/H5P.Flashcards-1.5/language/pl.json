@@ -30,10 +30,10 @@
             "label": "Alternative text for image"
           },
           {
-            "label": "Podpowiedź",
+            "label": "Tip",
             "fields": [
               {
-                "label": "Tekst podpowiedzi"
+                "label": "Tip text"
               }
             ]
           }
@@ -103,12 +103,12 @@
     },
     {
       "label": "Incorrect text for assistive technologies",
-      "default": "Nieprawidłowa odpowiedź. Prawidłowa odpowiedź to @answer",
+      "default": "Incorrect answer. Correct answer was @answer",
       "description": "Text that will be announced to assistive technologies. Use @answer as variable."
     },
     {
       "label": "Card change for assistive technologies",
-      "default": "Strona @current z @total",
+      "default": "Page @current of @total",
       "description": "Text that will be announced to assistive technologies when navigating between cards. Use @current and @total as variables."
     }
   ]

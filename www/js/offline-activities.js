@@ -26,9 +26,9 @@ function onDeviceReady() {
                     counterid++;
                     counter++;
                     activityPath[counterid] = activitiesFolder.nativeURL;
-                    console.log("counterid is..", counterid)
-                    console.log("====", activityPath[counterid])
-                    console.log("====", activityPath)
+                    // console.log("counterid is..", counterid)
+                    // console.log("====", activityPath[counterid])
+                    // console.log("====", activityPath)
                     if (counter == 1) {
                         offlineActivitiesHTML += `<div class="grid-card-block">
                         <div class="grid-wrapper">`;
@@ -74,8 +74,8 @@ function onDeviceReady() {
             function writeFile(fileEntry, dataObj) {
                 // Create a FileWriter object for our FileEntry (log.txt).
                 var data = dataObj = new Blob([dataObj], { type: 'application/json' });
-                console.log("data...", data)
-                console.log("data object is---", dataObj)
+                // console.log("data...", data)
+                // console.log("data object is---", dataObj)
                 fileEntry.createWriter(function(fileWriter) {
                     fileWriter.onwriteend = function() {
                         console.log("Successful file write..." + this.result);
@@ -97,6 +97,7 @@ function onDeviceReady() {
                 var activityPath = e.target.id;
                 console.log("av", activityPath)
                 window.resolveLocalFileSystemURL(activityPath, function success(activities) {
+                    console.log("activities >>", activities);
                     var activitiesReader = activities.createReader();
                     activitiesReader.readEntries(getPlaylists = (activitiesFiles) => {
                         activitiesFiles.forEach((activitiesFile) => {
@@ -116,7 +117,7 @@ function onDeviceReady() {
                             }
                         });
                     });
-                });
+                }, (err) => {console.log("errrr", err);});
             });
 
             function moveFile(fileUri, name, activityPath) {

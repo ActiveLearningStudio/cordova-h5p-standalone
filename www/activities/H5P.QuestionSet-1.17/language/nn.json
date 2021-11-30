@@ -92,7 +92,7 @@
         {
           "label": "Fremdriftstekst for hjelpemiddelteknologi",
           "description": "Kan bruke @current og @total variabler",
-          "default": "Deloppgåve @current av @total"
+          "default": "Deloppgave @current av @total"
         },
         {
           "label": "Ikke svart på spørsmål-tekst",
@@ -100,7 +100,7 @@
         },
         {
           "label": "Svart på spørsmål-tekst",
-          "default": "Svar gitt"
+          "default": "Svar avgitt"
         },
         {
           "label": "Aktivt spørsmål-tekst",
