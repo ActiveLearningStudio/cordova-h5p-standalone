@@ -192,9 +192,11 @@ H5P.XAPIEvent.prototype.setContext = function (instance) {
  */
 H5P.XAPIEvent.prototype.setActor = function () {
   if (H5PIntegration.user !== undefined) {
+    var userName = localStorage.getItem("LOGGED_USERNAME"),
+    userEmail = localStorage.getItem("LOGGED_USER_EMAIL");
     this.data.statement.actor = {
-      'name': H5PIntegration.user.name,
-      'mbox': 'mailto:' + H5PIntegration.user.mail,
+      'name': userName,
+      'mbox': userEmail,
       'objectType': 'Agent'
     };
   }

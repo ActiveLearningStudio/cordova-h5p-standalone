@@ -403,7 +403,11 @@ H5P.getHeadTags = function (contentId) {
   var createScriptTags = function (scripts) {
     var tags = '';
     for (var i = 0; i < scripts.length; i++) {
-      tags += '<script src="' + scripts[i] + '"></script>';
+      if (scripts[i].includes("api/storage/h5p/h5p-core/js/h5p.js")) {
+        tags += '<script src="js/h5p/h5p-core/js/h5p.js"></script>'
+      } else {
+        tags += '<script src="' + scripts[i] + '"></script>';
+      }
     }
     return tags;
   };
@@ -2187,10 +2191,10 @@ H5P.setFinished = function (contentId, score, maxScore, time) {
       finished: toUnix(new Date()),
       time: time
     };
-    H5P.jQuery.post(H5PIntegration.ajax.setFinished, data)
-      .fail(function () {
-        H5P.offlineRequestQueue.add(H5PIntegration.ajax.setFinished, data);
-      });
+    // H5P.jQuery.post(H5PIntegration.ajax.setFinished, data)
+    //   .fail(function () {
+    //     H5P.offlineRequestQueue.add(H5PIntegration.ajax.setFinished, data);
+    //   });
   }
 };
 

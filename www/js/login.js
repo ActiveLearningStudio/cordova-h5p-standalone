@@ -32,8 +32,12 @@ function onDeviceReady() {
                                 "moodlewsrestformat": "json"
                             },
                             success: (userData) => {
-                                var userID = userData.users[0].id;
+                                var userID = userData.users[0].id,
+                                userFullName = userData.users[0].fullname,
+                                userEmail = userData.users[0].email;
                                 localStorage.setItem("USER_ID", userID);
+                                localStorage.setItem("LOGGED_USERNAME", userFullName);
+                                localStorage.setItem("LOGGED_USER_EMAIL", userEmail);
                                 window.location.href = 'dashboard.html';
                             }
                         })

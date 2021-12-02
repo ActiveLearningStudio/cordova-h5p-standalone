@@ -35,8 +35,8 @@ function onDeviceReady() {
                 // console.log(iframeHTML)
                 window.H5PIntegration = {...setting}
                 $("#mainBody").append(iframeHTML);
-                var scripts = `<script src="js/h5p/jquery.js"></script>
-                <script src="js/h5p/h5p.js"></script>
+                var scripts = `<script src="js/h5p/h5p-core/js/jquery.js"></script>
+                <script src="js/h5p/h5p-core/js/h5p.js"></script>
                 <script src="js/h5p/h5p-event-dispatcher.js"></script>
                 <script src="js/h5p/h5p-x-api.js"></script>
                 <script src="js/h5p/h5p-x-api-event.js"></script>
@@ -44,28 +44,6 @@ function onDeviceReady() {
                 <script src="js/h5p/DocumentsUpload.js"></script>;
                 <script src="js/handle-xapi.js"></script>`;
                 $("body").append(scripts);
-
-                H5P.externalDispatcher.on('xAPI', function (event) {
-                    console.log(event.setObject(event.data.statement))
-                    // if(event.data.statement.result) {
-                    //     var xapiRes = JSON.stringify(event.data);
-                    //     console.log(xapiRes)
-                    //     $.ajax({
-                    //         type: "POST",
-                    //         url: "https://lite.curriki.org/api/api/v1/xapi/statements",
-                    //         headers: {
-                    //             Authorization: 'Bearer '+ CurrikiToken,
-                    //             "Content-Type": "application/json",
-                    //             "Accept": "application/json",
-                    //         },
-                    //         data: JSON.stringify(event.data),
-                    //         success: (res) => {
-                    //             console.log(res)
-                    //         },
-                    //         error: (jqXHr, err) => {console.log(err)}
-                    //     })
-                    // }
-                });
             }
         });
     }

@@ -1,8 +1,8 @@
 /*jshint multistr: true */
 // TODO: Should we split up the generic parts needed by the editor(and others), and the parts needed to "run" H5Ps?
-document.addEventListener('deviceready', onDeviceReady, false);
+// document.addEventListener('deviceready', onDeviceReady, false);
 
-function onDeviceReady() {
+// function onDeviceReady() {
 /** @namespace */
 var H5P = window.H5P = window.H5P || {};
 
@@ -453,16 +453,14 @@ H5P.getHeadTags = function (contentId) {
           tags += '<script src="activities' + tagUrl[1] + '"></script>';
         } else if (scripts[i].includes("api/storage")) {
           if (scripts[i].includes("api/storage/h5p/h5p-core/js/h5p.js")) {
-            tags += '<script src="js/h5p/h5p-core/js/h5p.js"></script>'
+            tags += '<script src="js/h5p/offline-h5p.js"></script>'
           } else {
-
-          
-          tagUrl = scripts[i].split("h5p/h5p-core/js");
-          if (!tagUrl[1]) {
-            tagUrl = scripts[i].split("api/storage/h5p");
-            tags += '<script src="js/h5p' + tagUrl[1] + '"></script>'
-          }
-          tags += '<script src="js/h5p' + tagUrl[1] + '"></script>';
+            tagUrl = scripts[i].split("h5p/h5p-core/js");
+            if (!tagUrl[1]) {
+              tagUrl = scripts[i].split("api/storage/h5p");
+              tags += '<script src="js/h5p' + tagUrl[1] + '"></script>'
+            }
+            tags += '<script src="js/h5p' + tagUrl[1] + '"></script>';
           }
         } else {
           tags += '<script src="' + scripts[i] + '"></script>';
@@ -2254,10 +2252,11 @@ H5P.setFinished = function (contentId, score, maxScore, time) {
       finished: toUnix(new Date()),
       time: time
     };
-    H5P.jQuery.post(H5PIntegration.ajax.setFinished, data)
-      .fail(function () {
-        H5P.offlineRequestQueue.add(H5PIntegration.ajax.setFinished, data);
-      });
+    console.log("data", data);
+    // H5P.jQuery.post(H5PIntegration.ajax.setFinished, data)
+    //   .fail(function () {
+    //     H5P.offlineRequestQueue.add(H5PIntegration.ajax.setFinished, data);
+    //   });
   }
 };
 
@@ -2383,6 +2382,7 @@ H5P.createTitle = function (rawTitle, maxLength) {
    * @param {boolean} [invalidate=false] Data is invalidated when content changes.
    * @param {boolean} [async=true]
    */
+
   function contentUserDataAjax(contentId, dataType, subContentId, done, data, preload, invalidate, async) {
     if (H5PIntegration.user === undefined) {
       // Not logged in, no use in saving.
@@ -2444,7 +2444,7 @@ H5P.createTitle = function (rawTitle, maxLength) {
     if (!subContentId) {
       subContentId = 0; // Default
     }
-
+    
     H5PIntegration.contents = H5PIntegration.contents || {};
     var content = H5PIntegration.contents['cid-' + contentId] || {};
     var preloadedData = content.contentUserData;
@@ -2924,4 +2924,4 @@ H5P.createTitle = function (rawTitle, maxLength) {
 })(H5P.jQuery);
 
 
-}
+// }
