@@ -15,6 +15,7 @@ function onDeviceReady() {
         token = localStorage.getItem("USER_TOKEN"),
         userID = localStorage.getItem("USER_ID"),
         adminToken = localStorage.getItem("ADMIN_TOKEN"),
+        customApiToken = localStorage.getItem("CUSTOM_API_TOKEN"),
         courseContainer = $("#courseContainer"),
         limit = 0,
         offset = 0;
@@ -54,7 +55,7 @@ function onDeviceReady() {
                             <a href="playlist.html?courseId=${course.id}">
                                 <h5>${course.fullname}</h5>
                             </a>                             
-                          <button type="button" id="downloadProject" class="btn btn-primary">Download</button>                         
+                          <button type="button" id="downloadProject" data-course-id="${course.id}" class="btn btn-primary">Download</button>                         
                         </div>
                     </div>`;
                     //set image in localstorage
@@ -71,74 +72,91 @@ function onDeviceReady() {
     }
 
     $(document).on('click', "#downloadProject", (e) => {
-        var modal = document.getElementById("myModal");
-        // Get the <span> element that closes the modal
-        var span = document.getElementsByClassName("close")[0];
-        modal.style.display = "block";
-        // When the user clicks on <span> (x), close the modal
-        span.onclick = function() {
-            modal.style.display = "none";
-        }
-            // When the user clicks anywhere outside of the modal, close it
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
-        }
-
-        var spinnerOptions = { dimBackground: true };
-        SpinnerPlugin.activityStart("Preparing for Download", spinnerOptions);
+        var courseID = e.target.getAttribute("data-course-id");
         $.ajax({
-            url: "https://lite.curriki.org/api/api/v1/suborganization/1/projects/3694/offline-project",
-            headers: {
-                Authorization: "Bearer " + CurrikiToken,
+            url: "https://map-lms.curriki.org/webservice/rest/server.php",
+            type: "get",
+            data: {
+                "moodlewsrestformat": "json",
+                "course_id": courseID,
+                "wsfunction": "local_curriki_moodle_plugin_fetch_project",
+                "wstoken": customApiToken
             },
-            success: (res) => {
-                SpinnerPlugin.activityStop();
-                var getProjectpath = res.split('exports/'),
-                projectName = getProjectpath[1],
-                downloadPath = "https://lite.curriki.org/api/storage/exports/" + projectName;
-                console.log("projectName>>>", downloadPath);
-                // return false;
-                var confirmation = confirm('The project is ready to download. Click OK to download');
-                if (confirmation) {
-                    SpinnerPlugin.activityStart("Downloading...", spinnerOptions);
-                    console.log("in download")
-                    var dl = new download();
-                    dl.Initialize({
-                        fileSystem : fileSystem,
-                        folder: "projects",
-                        unzip: false,
-                        remove: false,
-                        timeout: 0,
-                        success: DownloaderSuccess,
-                        error: DownloaderError,
-                    });
-                    dl.Get(downloadPath);
-
-                    function DownloaderSuccess() {
-                        // alert(fileSystem);
-                        modal.style.display = "none";
-                        console.log("project>>", projectName);
-                        console.log("projectFull >>", fileSystem+ "projects/" + projectName);
-                        console.log("yej");
-                        window.resolveLocalFileSystemURL(fileSystem + "projects/", (entry) => {
-                            var reader = entry.createReader();
-                            reader.readEntries(getProjects = (listProjects) => {
-                                console.log("list>>",listProjects);
-                            })
-                        }, (err) => {console.log(err)})
-                        processZip(fileSystem + "projects/" + projectName, fileSystem + "projects", projectName)
+            success: (project) => {
+                console.log("project", project);
+                var projectID = project.projectid;
+                // var modal = document.getElementById("myModal");
+                // // Get the <span> element that closes the modal
+                // var span = document.getElementsByClassName("close")[0];
+                // modal.style.display = "block";
+                // // When the user clicks on <span> (x), close the modal
+                // span.onclick = function() {
+                //     modal.style.display = "none";
+                // }
+                //     // When the user clicks anywhere outside of the modal, close it
+                // window.onclick = function(event) {
+                //     if (event.target == modal) {
+                //         modal.style.display = "none";
+                //     }
+                // }
+                if (projectID != null) {
+                var spinnerOptions = { dimBackground: true };
+                SpinnerPlugin.activityStart("Preparing for Download", spinnerOptions);
+                $.ajax({
+                    url: `https://lite.curriki.org/api/api/v1/suborganization/1/projects/${projectID}/offline-project`,
+                    headers: {
+                        Authorization: "Bearer " + CurrikiToken,
+                    },
+                    success: (res) => {
                         SpinnerPlugin.activityStop();
+                        var getProjectpath = res.split('exports/'),
+                        projectName = getProjectpath[1],
+                        downloadPath = "https://lite.curriki.org/api/storage/exports/" + projectName;
+                        console.log("projectName>>>", downloadPath);
+                        // return false;
+                        var confirmation = confirm('The project is ready to download. Click OK to download');
+                        if (confirmation) {
+                            SpinnerPlugin.activityStart("Downloading...", spinnerOptions);
+                            console.log("in download")
+                            var dl = new download();
+                            dl.Initialize({
+                                fileSystem : fileSystem,
+                                folder: "projects",
+                                unzip: false,
+                                remove: false,
+                                timeout: 0,
+                                success: DownloaderSuccess,
+                                error: DownloaderError,
+                            });
+                            dl.Get(downloadPath);
+        
+                            function DownloaderSuccess() {
+                                // alert(fileSystem);
+                                // modal.style.display = "none";
+                                console.log("project>>", projectName);
+                                console.log("projectFull >>", fileSystem+ "projects/" + projectName);
+                                console.log("yej");
+                                window.resolveLocalFileSystemURL(fileSystem + "projects/", (entry) => {
+                                    var reader = entry.createReader();
+                                    reader.readEntries(getProjects = (listProjects) => {
+                                        console.log("list>>",listProjects);
+                                    })
+                                }, (err) => {console.log(err)})
+                                processZip(fileSystem + "projects/" + projectName, fileSystem + "projects", projectName)
+                                SpinnerPlugin.activityStop();
+                            }
+        
+                            function DownloaderError(err) {
+                                console.log("download error: " + err);
+                                alert("download error: " + err);
+                            }
+                        }
                     }
-
-                    function DownloaderError(err) {
-                        console.log("download error: " + err);
-                        alert("download error: " + err);
-                    }
-                }
+                });
+            }
             }
         })
+    //    return false;
     // return false;
     // var spinnerOptions = { dimBackground: true };
     //     SpinnerPlugin.activityStart("Downloading...", spinnerOptions);

@@ -14,30 +14,15 @@ function onDeviceReady() {
     splitActivitypath.splice(splitActivitypath.length - 1, 1),
         newActivityPath = splitActivitypath.join('/');
     var generateNewActivityPath = newActivityPath + "/";
-    // console.log("split activity path...", splitActivitypath)
-    // console.log("new activity path..", newActivityPath)
-    // console.log("JSON PATH>>>>>>", activityPath);
-
-    // var xhr = new XMLHttpRequest();
-    // xhr.open('GET', activityPath, true);
-    // xhr.responseType = 'json';
-
-    // xhr.onload = function() {
-    //     if (this.status == 200) {
-    //         var json = JSON.stringify(this.response)
-    //         console.log(JSON.parse(json))
-    //     }
-    // };
-    // xhr.send();
-
 
     window.resolveLocalFileSystemURL(activityPath, function success(fileEntry) {
+        console.log("fileEntry", fileEntry);
         fileEntry.file(function (file) {
             // console.log("im here>>>>", file);
             var reader = new FileReader();
             reader.onloadend = function(evt) {
                 var playlistJSON = JSON.parse(evt.target.result);
-                // console.log("JOSN????", playlistJSON);
+                console.log("JOSN????", playlistJSON);
                 var setting = playlistJSON.settings,
                 html = playlistJSON.embed_code,
                 width = 'width=100%',
@@ -57,14 +42,7 @@ function onDeviceReady() {
             }
             reader.readAsText(file);
         })
-    }, (err) => {console.log("error>>>", err)})
-    // const offlineElement = document.getElementById('h5p-container');
-    // const options = {
-    //     h5pJsonPath: activityPath,
-    //     frameJs: 'plugins/h5p-standalone/dist/mod.frame.bundle.js',
-    //     frameCss: 'plugins/h5p-standalone/dist/styles/h5p.css',
-    // }
-    // new H5PStandalone.H5P(offlineElement, options);
+    }, (err) => {console.log("error>>>", err)});
 
     // ------------------------------------------------------------------------
     $(document).on('load', '.h5p-iframe', () => {
@@ -245,7 +223,7 @@ function readFile(fileEntry) {
             var data = JSON.parse(this.result)
             console.log(data)
             $.ajax({
-                url: "http://localhost:30400/api/v1/h5p/mobile-app-ajax/finish",
+                url: "https://lite.curriki.org/api/api/v1/h5p/ajax/reader/finish",
                 type: "POST",
                 headers: {
                     Authorization: "Bearer " + CurrikiToken,

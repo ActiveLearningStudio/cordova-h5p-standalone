@@ -13,47 +13,43 @@ function onDeviceReady() {
         activitiesReader.readEntries(getPlaylists = (activitiesFolders) => {
             activitiesFolders.forEach((activitiesFolder, folderIndex) => {
                 if (activitiesFolder.isDirectory) {
-                    // offlineActivitiesHTML += `
-                    // <div class= "row mt-3 mb-3">
-                    //     <div class="col-12">
-                    //         <a href="offline-activity.html?activityPath=${activitiesFolder.nativeURL}" class="activityLink">
-                    //             <h4 class="text-center" id="${activitiesFolder.nativeURL}">${activitiesFolder.name}</h4>
-                    //         </a>
-                    //     </div>
-                    // </div>`;
-
-
                     counterid++;
-                    counter++;
                     activityPath[counterid] = activitiesFolder.nativeURL;
-                    // console.log("counterid is..", counterid)
-                    // console.log("====", activityPath[counterid])
-                    // console.log("====", activityPath)
-                    if (counter == 1) {
-                        offlineActivitiesHTML += `<div class="grid-card-block">
-                        <div class="grid-wrapper">`;
-                    }
-                    offlineActivitiesHTML += `
-                    <div class="grid-card-box">
-                        <img src="">
-                        <div class="description">
-                            <a href="offline-activity.html?activityPath=${activitiesFolder.nativeURL}" class="activityLink">
-                                <h5 id="${activitiesFolder.nativeURL}">${activitiesFolder.name}</h5>
-                            </a>
-                        </div>
-                    </div>`;
-
-                    if (counter == 2) {
-                        offlineActivitiesHTML += '</div></div>';
-                        counter = 0;
-                    }
-                    $("#offlineActivitiesContainer").html(offlineActivitiesHTML);
-
-
                 } else {
-                    // ------ Project.json address here -----
-                    // variable = playlistFolder
+                    // ------ Activity.json address here -----
+                    // variable = activitiesFolder
                     console.log(activitiesFolder)
+                    window.resolveLocalFileSystemURL(activitiesFolder.nativeURL, function success(fileEntry) {
+                        var activityFolderURL = decodeURI(activitiesFolder.nativeURL).replace(activitiesFolder.name, "");
+                        fileEntry.file(function (file) {
+                            var reader = new FileReader();
+                            reader.onloadend = function(evt) {
+                                var activityJSON = JSON.parse(evt.target.result);
+                                var h5pJsonUrl = activityFolderURL + activityJSON.title + "/" + activityJSON.h5p_content_id;
+                                counter++;
+                                if (counter == 1) {
+                                    offlineActivitiesHTML += `<div class="grid-card-block">
+                                    <div class="grid-wrapper">`;
+                                }
+                                offlineActivitiesHTML += `
+                                <div class="grid-card-box">
+                                    <img src="${activityJSON.thumb_url}" style="250px;">
+                                    <div class="description">
+                                        <a href="offline-activity.html?activityPath=${h5pJsonUrl}-h5p.json" class="activityLink">
+                                            <h5 id="${h5pJsonUrl}-h5p.json">${activityJSON.title}</h5>
+                                        </a>
+                                    </div>
+                                </div>`;
+            
+                                if (counter == 2) {
+                                    offlineActivitiesHTML += '</div></div>';
+                                    counter = 0;
+                                }
+                                $("#offlineActivitiesContainer").html(offlineActivitiesHTML);
+                            }
+                            reader.readAsText(file);
+                        })
+                    });
                 }
             });
             console.log("activity path", activityPath);

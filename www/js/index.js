@@ -25,7 +25,9 @@ function onDeviceReady() {
     // Cordova is now initialized. Have fun!
     var aditionalToken =  "70ddd315152670b64cd39138c1999e79",
     adminToken = "af1c0c8d22e292a5243831a027d84fbd",
+    customApiToken = "817376de1406b8d64988a1cfefcc9d83",
     localStorage = window.localStorage;
     localStorage.setItem("ADITIONAL_TOKEN", aditionalToken);
     localStorage.setItem("ADMIN_TOKEN", adminToken);
+    localStorage.setItem("CUSTOM_API_TOKEN", customApiToken);
 }
