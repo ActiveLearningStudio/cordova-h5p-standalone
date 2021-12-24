@@ -17,48 +17,79 @@ function onDeviceReady() {
             errorHandler
         );
         function entryHandler(entries) {
-            var offlineProjectHTML = '',
-            playlistPath = '';
+            var offlineCoursesProgress = [];
+            if (localStorage.getItem("offlineCoursesProgress") !== null) {
+                offlineCoursesProgress = JSON.parse(localStorage.getItem('offlineCoursesProgress'));
+            }
+            var counter = 0;
+            var offlineProjectHTML = '';
             entries.forEach(function (entry) {
                 console.log("Entriess>>>>", entry);
-                var counter = 0;
                 if (entry.isDirectory) {
-                    //   -------- Sub Directory of Projects Folder ---------
-                    if (entry.name == "playlists") {
-                        playlistPath = entry;
-                    }
-                } else {
-                    if (entry.name == "project.json") {
-                        window.resolveLocalFileSystemURL(entry.nativeURL, function success(fileEntry) {
-                            fileEntry.file(function (file) {
-                                var reader = new FileReader();
-                                reader.onloadend = function(evt) {
-                                    var projectJSON = JSON.parse(evt.target.result);
-                                    console.log("JSON >>>>>>>", projectJSON);
-                                    counter++;
-                                    if (counter == 1) {
-                                        offlineProjectHTML += `<div class="grid-card-block">
-                                        <div class="grid-wrapper">`;
-                                    }
-                                    offlineProjectHTML += `
-                                    <div class="grid-card-box">
-                                        <img src="${projectJSON.thumb_url}">
-                                        <div class="description">
-                                            <a href="offline-playlist.html?playlistPath=${playlistPath.nativeURL}">
-                                                <h5>${projectJSON.name}</h5>
-                                            </a>
-                                        </div>
-                                    </div>`;
-                                    if (counter == 2) {
-                                        offlineProjectHTML += '</div></div>';
-                                        counter = 0;
-                                    }
-                                    $("#offlineProjectContainer").html(offlineProjectHTML);
-                                };
-                                reader.readAsText(file);
-                            }, onErrorReadFile = (err) => {console.log(err)});
+                    var projectDirectoryReader = entry.createReader();
+                    projectDirectoryReader.readEntries(
+                        projectEntryHandler,
+                        projectErrorHandler
+                    );
+
+                    function projectEntryHandler(projectEntries) {
+                        playlistPath = '';
+                        projectEntries.forEach(function (entry) {
+                            console.log(entry);
+                            if (entry.isDirectory) {
+                                if (entry.name == "playlists") {
+                                    playlistPath = entry;
+                                } 
+                            }
+                            else {
+                                if (entry.name == "project.json") {
+                                    var path = entry.nativeURL.replace(entry.name, "playlists");
+                                    window.resolveLocalFileSystemURL(entry.nativeURL, function success(fileEntry) {
+                                        fileEntry.file(function (file) {
+                                            var reader = new FileReader();
+                                            reader.onloadend = function(evt) {
+                                                var projectJSON = JSON.parse(evt.target.result);
+                                                var isRecordExist = offlineCoursesProgress[offlineCoursesProgress.findIndex((obj => obj.id == projectJSON.id))];
+                                                var progress = isRecordExist ? isRecordExist.progress : 0;
+                                                console.log("JSON >>>>>>>", projectJSON);
+                                                if(offlineCoursesProgress[offlineCoursesProgress.findIndex((obj => obj.id == projectJSON.id))] == undefined) {
+                                                    offlineCoursesProgress.push({'id': projectJSON.id, progress : 0, activities : [], completed_activities : []});
+                                                    localStorage.setItem("offlineCoursesProgress", JSON.stringify(offlineCoursesProgress));
+                                                }
+                                                counter++;
+                                                if (counter == 1) {
+                                                    offlineProjectHTML += `<div class="grid-card-block">
+                                                    <div class="grid-wrapper">`;
+                                                }
+                                                offlineProjectHTML += `
+                                                <div class="grid-card-box">
+                                                    <img src="${projectJSON.thumb_url}">
+                                                    <div class="description">
+                                                        <a href="offline-playlist.html?playlistPath=${path}&courseId=${projectJSON.id}">
+                                                            <h5>${projectJSON.name}</h5>
+                                                        </a>
+                                                        <div class="progress mt-0 mb-2" style="width: 100% !important; height:8px !important">
+                                                            <div class="progress-bar" role="progressbar" style="width: ${progress}%" aria-valuenow="${progress}" aria-valuemin="0" aria-valuemax="100"></div>
+                                                        </div>  
+                                                    </div>
+                                                </div>`;
+                                                if (counter == 2) {
+                                                    offlineProjectHTML += '</div></div>';
+                                                    counter = 0;
+                                                }
+                                                $("#offlineProjectContainer").html(offlineProjectHTML);
+                                            };
+                                            reader.readAsText(file);
+                                        }, onErrorReadFile = (err) => {console.log(err)});
+                                    });
+                                }
+                            }
                         });
                     }
+                    function projectErrorHandler(error) {
+                        console.log("ERROR", error);
+                    }
+                    //   -------- Sub Directory of Projects Folder ---------
                 }
             });
         }

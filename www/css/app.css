@@ -528,6 +528,7 @@ footer .footer-wrapper .profile i {
     margin-bottom: 20px;
     z-index: 1;
     position: relative;
+    width: 100%;
 }
 
 .grid-card-block .grid-wrapper {

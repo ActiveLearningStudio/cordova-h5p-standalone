@@ -35,13 +35,22 @@ function onDeviceReady() {
                 "userid": userID
             },
             success: (response) => {
-
-                console.log(response)
+                var courses=[];
                 offset = response.nextoffset;
                 var courseWraper = '<div class="row">',
                     counter = 0;
-                response.forEach(course => {
-
+                    var coursesProgress = [];
+                    if (localStorage.getItem("coursesProgress") === null || localStorage.getItem("coursesProgress").length != response.length) {
+                        response.forEach(course => {
+                            coursesProgress.push({'id': course.id, progress : 0, activities : [], completed_activities : []});
+                        });
+                        localStorage.setItem("coursesProgress", JSON.stringify(coursesProgress));
+                    } else {
+                        coursesProgress = JSON.parse(localStorage.getItem('coursesProgress'));
+                    }
+                    response.forEach(course => {
+                    courses.push(course.id);
+                    var progress = coursesProgress[coursesProgress.findIndex((obj => obj.id == course.id))].progress;
                     counter++;
                     if (counter == 1) {
                         courseWraper += `<div class="grid-card-block">
@@ -54,7 +63,10 @@ function onDeviceReady() {
                         <div class="description">
                             <a href="playlist.html?courseId=${course.id}">
                                 <h5>${course.fullname}</h5>
-                            </a>                             
+                            </a>   
+                            <div class="progress mt-0 mb-2" style="width: 100% !important; height:8px !important">
+                               <div class="progress-bar" role="progressbar" style="width: ${progress}%" aria-valuenow="${progress}" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>                          
                           <button type="button" id="downloadProject" data-course-id="${course.id}" class="btn btn-primary">Download</button>                         
                         </div>
                     </div>`;
@@ -65,6 +77,7 @@ function onDeviceReady() {
                         counter = 0;
                     }
                 });
+                localStorage.setItem('courses', courses);
                 courseWraper += '</div>';
                 courseContainer.html(courseWraper);
             }
@@ -100,78 +113,86 @@ function onDeviceReady() {
                 //     }
                 // }
                 if (projectID != null) {
-                var spinnerOptions = { dimBackground: true };
-                SpinnerPlugin.activityStart("Preparing for Download", spinnerOptions);
-                $.ajax({
-                    url: `https://lite.curriki.org/api/api/v1/suborganization/1/projects/${projectID}/offline-project`,
-                    headers: {
-                        Authorization: "Bearer " + CurrikiToken,
-                    },
-                    success: (res) => {
-                        SpinnerPlugin.activityStop();
-                        var getProjectpath = res.split('exports/'),
-                        projectName = getProjectpath[1],
-                        downloadPath = "https://lite.curriki.org/api/storage/exports/" + projectName;
-                        console.log("projectName>>>", downloadPath);
-                        // return false;
-                        var confirmation = confirm('The project is ready to download. Click OK to download');
-                        if (confirmation) {
-                            SpinnerPlugin.activityStart("Downloading...", spinnerOptions);
-                            console.log("in download")
-                            var dl = new download();
-                            dl.Initialize({
-                                fileSystem : fileSystem,
-                                folder: "projects",
-                                unzip: false,
-                                remove: false,
-                                timeout: 0,
-                                success: DownloaderSuccess,
-                                error: DownloaderError,
-                            });
-                            dl.Get(downloadPath);
-        
-                            function DownloaderSuccess() {
-                                // alert(fileSystem);
-                                // modal.style.display = "none";
-                                console.log("project>>", projectName);
-                                console.log("projectFull >>", fileSystem+ "projects/" + projectName);
-                                console.log("yej");
-                                window.resolveLocalFileSystemURL(fileSystem + "projects/", (entry) => {
-                                    var reader = entry.createReader();
-                                    reader.readEntries(getProjects = (listProjects) => {
-                                        console.log("list>>",listProjects);
-                                    })
-                                }, (err) => {console.log(err)})
-                                processZip(fileSystem + "projects/" + projectName, fileSystem + "projects", projectName)
-                                SpinnerPlugin.activityStop();
-                            }
-        
-                            function DownloaderError(err) {
-                                console.log("download error: " + err);
-                                alert("download error: " + err);
+                    var spinnerOptions = { dimBackground: true };
+                    SpinnerPlugin.activityStart("Preparing for Download", spinnerOptions);
+                    $.ajax({
+                        url: `https://lite.curriki.org/api/api/v1/suborganization/1/projects/${projectID}/offline-project`,
+                        headers: {
+                            Authorization: "Bearer " + CurrikiToken,
+                        },
+                        success: (res) => {
+                            SpinnerPlugin.activityStop();
+                            var getProjectpath = res.split('exports/'),
+                                projectName = getProjectpath[1],
+                                downloadPath = "https://lite.curriki.org/api/storage/exports/" + projectName;
+                            console.log("projectName>>>", downloadPath);
+                            // return false;
+                            var confirmation = confirm('The project is ready to download. Click OK to download');
+                            if (confirmation) {
+                                SpinnerPlugin.activityStart("Downloading...", spinnerOptions);
+                                console.log("in download")
+                                var dl = new download();
+                                dl.Initialize({
+                                    fileSystem: fileSystem,
+                                    folder: "projects",
+                                    unzip: false,
+                                    remove: false,
+                                    timeout: 0,
+                                    success: DownloaderSuccess,
+                                    error: DownloaderError,
+                                });
+                                dl.Get(downloadPath);
+
+                                function DownloaderSuccess() {
+                                    // alert(fileSystem);
+                                    // modal.style.display = "none";
+                                    console.log("project>>", projectName);
+                                    console.log("projectFull >>", fileSystem + "projects/" + projectName);
+                                    console.log("yej");
+                                    var name = projectName.split('.').slice(0, -1).join('.')
+                                    window.resolveLocalFileSystemURL(fileSystem + "projects/", (entry) => {
+                                        var reader = entry.createReader();
+                                        reader.readEntries(getProjects = (listProjects) => {
+                                            console.log("list>>", listProjects);
+                                        })
+                                        entry.getDirectory(name, { create: true }, function (dirEntry) {
+                                            console.log(dirEntry);
+                                            processZip(fileSystem + "projects/" + projectName, dirEntry.nativeURL, projectName)
+                                            SpinnerPlugin.activityStop();
+                                        }, onErrorGetDir = (err)=> {console.log(err);});
+                                    }, (err) => { console.log(err) })
+                                    // var rootDirEntry = fileSystem + "projects/";
+                                    // console.log(rootDirEntry);
+                                    
+
+                                }
+
+                                function DownloaderError(err) {
+                                    console.log("download error: " + err);
+                                    alert("download error: " + err);
+                                }
                             }
                         }
-                    }
-                });
-            }
+                    });
+                }
             }
         })
-    //    return false;
-    // return false;
-    // var spinnerOptions = { dimBackground: true };
-    //     SpinnerPlugin.activityStart("Downloading...", spinnerOptions);
-    //     console.log("in download")
-    //     var dl = new download();
-    //     dl.Initialize({
-    //         fileSystem : fileSystem,
-    //         folder: "projects",
-    //         unzip: false,
-    //         remove: false,
-    //         timeout: 0,
-    //         success: DownloaderSuccess,
-    //         error: DownloaderError,
-    //     });
-    //     dl.Get("http://localhost:30400/api/v1/suborganization/1/projects/49/h5p-project");
+        //    return false;
+        // return false;
+        // var spinnerOptions = { dimBackground: true };
+        //     SpinnerPlugin.activityStart("Downloading...", spinnerOptions);
+        //     console.log("in download")
+        //     var dl = new download();
+        //     dl.Initialize({
+        //         fileSystem : fileSystem,
+        //         folder: "projects",
+        //         unzip: false,
+        //         remove: false,
+        //         timeout: 0,
+        //         success: DownloaderSuccess,
+        //         error: DownloaderError,
+        //     });
+        //     dl.Get("http://localhost:30400/api/v1/suborganization/1/projects/49/h5p-project");
         function DownloaderError(err) {
             console.log("download error: " + err);
             alert("download error: " + err);
@@ -179,14 +200,14 @@ function onDeviceReady() {
         function DownloaderSuccess(projectName) {
             // alert(fileSystem);
             console.log("project>>", projectName);
-            console.log("projectFull >>", fileSystem+ "projects/" + projectName);
+            console.log("projectFull >>", fileSystem + "projects/" + projectName);
             console.log("yej");
             window.resolveLocalFileSystemURL(fileSystem + "projects/", (entry) => {
                 var reader = entry.createReader();
                 reader.readEntries(getProjects = (listProjects) => {
-                    console.log("list>>",listProjects);
+                    console.log("list>>", listProjects);
                 })
-            }, (err) => {console.log(err)})
+            }, (err) => { console.log(err) })
             processZip(fileSystem + "projects/" + projectName, fileSystem + "projects")
             SpinnerPlugin.activityStop();
         }
@@ -203,7 +224,7 @@ function onDeviceReady() {
     //     }, onErrorGetDir);
     // }
     window.resolveLocalFileSystemURL(fileSystem, (entry) => {
-        entry.getDirectory('Documents', { create: true }, function(dirEntry) {})
+        entry.getDirectory('Documents', { create: true }, function (dirEntry) { })
     })
     $("#myDownloads").on('click', (e) => {
         e.preventDefault();
@@ -253,16 +274,16 @@ function onDeviceReady() {
 
     function processZip(zipSource, destination, projectName) {
         // Handle the progress event
-        var progressHandler = function(progressEvent) {
+        var progressHandler = function (progressEvent) {
             var percent = Math.round((progressEvent.loaded / progressEvent.total) * 100);
 
-            function updateProgressBar(progressBar, value) {
-                value = Math.round(value);
-                progressBar.querySelector(".progress__fill").style.width = `${value}%`;
-                progressBar.querySelector(".progress__text").textContent = `${value}%`;
-            }
+            // function updateProgressBar(progressBar, value) {
+            //     value = Math.round(value);
+            //     progressBar.querySelector(".progress__fill").style.width = `${value}%`;
+            //     progressBar.querySelector(".progress__text").textContent = `${value}%`;
+            // }
             const myProgressBar = document.querySelector(".progress");
-            updateProgressBar(myProgressBar, percent);
+            // updateProgressBar(myProgressBar, percent);
             console.log(percent + "%");
             if (percent == 100) {
                 var projectNameArr = projectName.split(".");
@@ -275,28 +296,28 @@ function onDeviceReady() {
                         success: (res) => {
                             // console.log(res);
                             if (res == 1)
-                            window.location.href = "offline-project.html";
+                                window.location.href = "offline-project.html";
                         }
                     });
                 }, 2000);
             }
         }
         window.zip.unzip(zipSource, destination, (status) => {
-            console.log("zip", zipSource);
+            console.log("zip", zipSource, destination);
             if (status == 0) {
                 console.log("Files succesfully decompressed");
                 window.resolveLocalFileSystemURL(zipSource,
-                    function(fileEntry) {
+                    function (fileEntry) {
                         fileEntry.remove(
-                            function() {
+                            function () {
                                 console.log('File is removed.');
                             },
-                            function(error) {
+                            function (error) {
                                 alert('Unable to remove file.');
                             }
                         );
                     },
-                    function(error) { console.log(error) }
+                    function (error) { console.log(error) }
                 );
             }
             if (status == -1) {
@@ -308,14 +329,16 @@ function onDeviceReady() {
 
 function moveFile(fileUri, name, activityPath) {
     window.resolveLocalFileSystemURL(fileUri,
-        function(fileEntry) {
+        function (fileEntry) {
             newFileUri = activityPath;
             oldFileUri = fileUri;
             fileExt = "." + "zip";
 
             newFileName = name + fileExt;
+            console.log(newFileName);
             window.resolveLocalFileSystemURL(newFileUri,
-                function(dirEntry) {
+                function (dirEntry) {
+                    console.log(dirEntry);
                     // move the file to a new directory and rename it
                     fileEntry.moveTo(dirEntry, newFileName, successCallback = (evt) => {
                         processZip(evt.nativeURL, newFileUri + name);

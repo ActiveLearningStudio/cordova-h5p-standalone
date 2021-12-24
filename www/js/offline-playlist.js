@@ -1,13 +1,17 @@
 document.addEventListener('deviceready', onDeviceReady, false);
 
 function onDeviceReady() {
-    getUrlParams = location.search.split("playlistPath=");
-    playlistPath = getUrlParams[1];
-    console.log("playlist path===", playlistPath)
+    // getUrlParams = location.search.split("playlistPath=");
+    // playlistPath = getUrlParams[0];
+    getUrlParams = new URLSearchParams(location.search);
+    playlistPath = getUrlParams.get("playlistPath");
+    courseId = getUrlParams.get("courseId");
+    localStorage.setItem("activeOfflineCourse", courseId);
     var offlinePlaylistHTML = '',
         activitiesPath = ''
     counter = 0;
     window.resolveLocalFileSystemURL(playlistPath, function success(playlist) {
+        console.log(playlist);
         var playlistReader = playlist.createReader();
         playlistReader.readEntries(getPlaylists = (playlistFolders) => {
             playlistFolders.forEach((playlistFolder) => {
@@ -16,9 +20,13 @@ function onDeviceReady() {
                     window.resolveLocalFileSystemURL(playlistFolder.nativeURL, function success(playlistContainer) {
                         var playlistContainerReader = playlistContainer.createReader();
                         playlistContainerReader.readEntries(getplaylistContainer = (allPlaylists) => {
+                            console.log(allPlaylists);
+                            var offlineCoursesProgress = JSON.parse(localStorage.getItem('offlineCoursesProgress'));
+                            var activities = [];
                             allPlaylists.forEach((allPlaylist) => {
                                 if (allPlaylist.isDirectory) {
                                     // --------- Playlist Folder ---------
+                                    console.log("allPlaylist", allPlaylist);
                                     activitiesPath = allPlaylist;
                                 } else {
                                     // --------- If any file inside sub project folder address here. ---------
@@ -36,6 +44,14 @@ function onDeviceReady() {
                                             var reader = new FileReader();
                                             reader.onloadend = function(evt) {
                                                 var playlistJSON = JSON.parse(evt.target.result);
+                                                console.log(playlistJSON);
+                                                playlistJSON.activities.forEach((activity) => {
+                                                    activities.push(activity.h5p_content_id);
+                                                });
+                                                if(offlineCoursesProgress[offlineCoursesProgress.findIndex((obj => obj.id == courseId))] != null) {
+                                                    offlineCoursesProgress[offlineCoursesProgress.findIndex((obj => obj.id == courseId))].activities = activities;
+                                                    localStorage.setItem('offlineCoursesProgress', JSON.stringify(offlineCoursesProgress));
+                                                }
                                                 counter++;
                                                 if (counter == 1) {
                                                     offlinePlaylistHTML += `<div class="grid-card-block">

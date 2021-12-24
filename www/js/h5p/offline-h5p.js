@@ -447,17 +447,18 @@ H5P.getHeadTags = function (contentId) {
     var tagUrl = [];
     for (var i = 0; i < scripts.length; i++) {
       // console.log("online>>", scripts[i]);
-      if (networkState == Connection.NONE) {
+      // if (networkState == Connection.NONE) {
         if (scripts[i].includes("libraries")) {
           tagUrl = scripts[i].split("libraries");
           tags += '<script src="activities' + tagUrl[1] + '"></script>';
-        } else if (scripts[i].includes("api/storage")) {
-          if (scripts[i].includes("api/storage/h5p/h5p-core/js/h5p.js")) {
+        } else if (scripts[i].includes("storage")) {
+          console.log(scripts[i]);
+          if (scripts[i].includes("storage/h5p/h5p-core/js/h5p.js")) {
             tags += '<script src="js/h5p/offline-h5p.js"></script>'
           } else {
             tagUrl = scripts[i].split("h5p/h5p-core/js");
             if (!tagUrl[1]) {
-              tagUrl = scripts[i].split("api/storage/h5p");
+              tagUrl = scripts[i].split("storage/h5p");
               tags += '<script src="js/h5p' + tagUrl[1] + '"></script>'
             }
             tags += '<script src="js/h5p' + tagUrl[1] + '"></script>';
@@ -466,9 +467,7 @@ H5P.getHeadTags = function (contentId) {
           tags += '<script src="' + scripts[i] + '"></script>';
         }
         // console.log("offline>>", "js/h5p" + tagUrl[1]);
-      } else {
-        tags += '<script src="' + scripts[i] + '"></script>';
-      }
+      // } 
     }
     return tags;
   };

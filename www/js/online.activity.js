@@ -43,6 +43,20 @@ function onDeviceReady() {
                 <script src="js/h5p/h5p-content-type.js"></script>
                 <script src="js/h5p/DocumentsUpload.js"></script>`;
                 $("body").append(scripts);
+                
+                H5P.externalDispatcher.on('xAPI', function(event) {
+                    if ((event.getVerb() === 'completed' || event.getVerb() === 'answered') && !event.getVerifiedStatementValue(['context', 'contextActivities', 'parent'])) {
+                        var contentId = event.getVerifiedStatementValue(['object', 'definition', 'extensions', 'http://h5p.org/x-api/h5p-local-content-id']);
+                        var coursesProgress = JSON.parse(localStorage.getItem('coursesProgress'));
+                        var activeCourse = coursesProgress[coursesProgress.findIndex((obj => obj.id == localStorage.getItem('activeCourse')))];
+                        var completed_activities = activeCourse.completed_activities;
+                        if(completed_activities.indexOf(contentId) === -1) {
+                            completed_activities.push(contentId);
+                        }
+                        activeCourse.progress = ((completed_activities.length)*100)/activeCourse.activities.length;
+                        localStorage.setItem('coursesProgress', JSON.stringify(coursesProgress));
+                    }
+                });
             }
         });
     }
@@ -127,4 +141,6 @@ function onDeviceReady() {
     function getKeyByValue(object, value) {
         return Object.keys(object).find(key => object[key] == value);
     }
+
+    
 }

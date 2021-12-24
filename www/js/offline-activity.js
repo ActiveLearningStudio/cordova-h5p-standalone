@@ -163,6 +163,14 @@ function onOffline() {
             var score = event.getScore(),
             maxScore = event.getMaxScore(),
             contentId = event.getVerifiedStatementValue(['object', 'definition', 'extensions', 'http://h5p.org/x-api/h5p-local-content-id']),
+            offlineCoursesProgress = JSON.parse(localStorage.getItem('offlineCoursesProgress'));
+            activeOfflineCourse = offlineCoursesProgress[offlineCoursesProgress.findIndex((obj => obj.id == localStorage.getItem('activeOfflineCourse')))],
+            completed_activities = activeOfflineCourse.completed_activities;
+            if(completed_activities.indexOf(contentId) === -1) {
+                completed_activities.push(contentId);
+            }
+            activeOfflineCourse.progress = ((completed_activities.length)*100)/activeOfflineCourse.activities.length;
+            localStorage.setItem('offlineCoursesProgress', JSON.stringify(offlineCoursesProgress));
             email = event.data.statement.actor.mbox,
             toUnix = function (date) {
                 return Math.round(date.getTime() / 1000);
