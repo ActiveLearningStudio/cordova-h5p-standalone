@@ -10,13 +10,16 @@ function onDeviceReady() {
             fileSystem = cordova.file.externalDataDirectory;
             break;
     }
-    const CurrikiToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxMzMiLCJqdGkiOiJlNGUyZTgyZDM4ODkwOGUyOTcyZGUxMzEwOTc4MWJiYzcyZTAwMmEwM2JjZjY5NGNjNzhhZTgyZWU2NThhZGY3MzcyNjRlYTk5YzZlN2Y2MyIsImlhdCI6MTYzMjgwNDQwMCwibmJmIjoxNjMyODA0NDAwLCJleHAiOjE2NjQzNDA0MDAsInN1YiI6IjE0MzciLCJzY29wZXMiOltdfQ.ANU71Nl9syFSa7zKN4XIzEX5rnJ6cJ1g8SsFSz5EDActwpVwuxzpgf_HdpsdOcCwzTwPdy-18kx0HAHKsXE0tsbYY8Ncyf9tYuTlxcKXxXTA4YI29y7-ACAjLHpdTi29hwsTxYltwYYx-TxUYrEjOSrBOPOhluhn56F3DvdGw3JPS40aHZ7bpnJojLw8Ysv5Kpm4wFCjLQewoNpLfu7p53wYQ3jjusR4UDFE3M6I1nrmj3Pfsik4q9uKhimas0nm8PXhGSRbfaJPzTlNOVAcNdZuOMMnLIQt8ENThNZ_9z0HLLSvPc0jjzHEDRyu-khPGEPeFH56Kjm6GUYXwxl3LRPxTMWRcRP6q-JcphfOXkUaUfWilNRJ3jndzvta1vTqmgVUTO6xH3EoNGo_oYhA56b1Gm4UVc50Z3K2jG3Q4omzdkZlufLN9JB5H6eH6cQEEEP9rrSOX_lDRUchbqLDbBC9dghMr7E5R6uDlA9PAT5pcsPsydEvjTcPbv3aa5jRfvO31oixkR2JXGlHi3mTIAxI60eB_3NcgUEehtSwyx7o-epMDE6T6FL2fsBo5Kz_Bi4Cb-2Mem0umbD92kgFny1RBF7Vxj7eosMZXkdI6US6lIiC0bLVwr4bUnOVJ2lR5MNboIqw9IFT7JTLR8qaVfyUs4kTxi4que8JXmmYyDU';
-    var localStorage = window.localStorage,
+
+    const localStorage = window.localStorage,
         token = localStorage.getItem("USER_TOKEN"),
         userID = localStorage.getItem("USER_ID"),
         adminToken = localStorage.getItem("ADMIN_TOKEN"),
         customApiToken = localStorage.getItem("CUSTOM_API_TOKEN"),
         courseContainer = $("#courseContainer"),
+        currikiToken = localStorage.getItem("CURRIKI_TOKEN"),
+        moodleBaseURL = localStorage.getItem("MOODLE_BASE_API_URL"),
+        currikiBaseURL = localStorage.getItem("CURRIKI_BASE_API_URL"),
         limit = 0,
         offset = 0;
     if (token) {
@@ -27,7 +30,7 @@ function onDeviceReady() {
 
     function handleDashboard(token, limit, offset) {
         $.ajax({
-            url: "https://map-lms.curriki.org/webservice/rest/server.php?",
+            url: moodleBaseURL,
             data: {
                 "wstoken": adminToken,
                 "moodlewsrestformat": "json",
@@ -87,7 +90,7 @@ function onDeviceReady() {
     $(document).on('click', "#downloadProject", (e) => {
         var courseID = e.target.getAttribute("data-course-id");
         $.ajax({
-            url: "https://map-lms.curriki.org/webservice/rest/server.php",
+            url: moodleBaseURL,
             type: "get",
             data: {
                 "moodlewsrestformat": "json",
@@ -116,15 +119,15 @@ function onDeviceReady() {
                     var spinnerOptions = { dimBackground: true };
                     SpinnerPlugin.activityStart("Preparing for Download", spinnerOptions);
                     $.ajax({
-                        url: `https://lite.curriki.org/api/api/v1/suborganization/1/projects/${projectID}/offline-project`,
+                        url: `${currikiBaseURL}suborganization/1/projects/${projectID}/offline-project`,
                         headers: {
-                            Authorization: "Bearer " + CurrikiToken,
+                            Authorization: "Bearer " + currikiToken,
                         },
                         success: (res) => {
                             SpinnerPlugin.activityStop();
-                            var getProjectpath = res.split('exports/'),
-                                projectName = getProjectpath[1],
-                                downloadPath = "https://lite.curriki.org/api/storage/exports/" + projectName;
+                            var getProjectpath = res.split('org'),
+                                projectName = getProjectpath.join('org/api'),
+                                downloadPath = projectName.replace("http", "https");
                             console.log("projectName>>>", downloadPath);
                             // return false;
                             var confirmation = confirm('The project is ready to download. Click OK to download');
@@ -147,9 +150,11 @@ function onDeviceReady() {
                                     // alert(fileSystem);
                                     // modal.style.display = "none";
                                     console.log("project>>", projectName);
-                                    console.log("projectFull >>", fileSystem + "projects/" + projectName);
+                                    // console.log("projectFull >>", fileSystem + "projects/" + projectName);
                                     console.log("yej");
-                                    var name = projectName.split('.').slice(0, -1).join('.')
+                                    var fileName = projectName.split('exports/'),
+                                    name = fileName[1].split('.').slice(0, -1).join('.');
+                                    // console.log("nameee >>>", name); return false;
                                     window.resolveLocalFileSystemURL(fileSystem + "projects/", (entry) => {
                                         var reader = entry.createReader();
                                         reader.readEntries(getProjects = (listProjects) => {
@@ -157,9 +162,9 @@ function onDeviceReady() {
                                         })
                                         entry.getDirectory(name, { create: true }, function (dirEntry) {
                                             console.log(dirEntry);
-                                            processZip(fileSystem + "projects/" + projectName, dirEntry.nativeURL, projectName)
+                                            processZip(fileSystem + "projects/" + fileName[1], dirEntry.nativeURL, projectName)
                                             SpinnerPlugin.activityStop();
-                                        }, onErrorGetDir = (err)=> {console.log(err);});
+                                        }, onErrorGetDir = (err)=> {console.log("dir creating >>",err);});
                                     }, (err) => { console.log(err) })
                                     // var rootDirEntry = fileSystem + "projects/";
                                     // console.log(rootDirEntry);
@@ -177,100 +182,57 @@ function onDeviceReady() {
                 }
             }
         })
-        //    return false;
-        // return false;
-        // var spinnerOptions = { dimBackground: true };
-        //     SpinnerPlugin.activityStart("Downloading...", spinnerOptions);
-        //     console.log("in download")
-        //     var dl = new download();
-        //     dl.Initialize({
-        //         fileSystem : fileSystem,
-        //         folder: "projects",
-        //         unzip: false,
-        //         remove: false,
-        //         timeout: 0,
-        //         success: DownloaderSuccess,
-        //         error: DownloaderError,
-        //     });
-        //     dl.Get("http://localhost:30400/api/v1/suborganization/1/projects/49/h5p-project");
-        function DownloaderError(err) {
-            console.log("download error: " + err);
-            alert("download error: " + err);
-        }
-        function DownloaderSuccess(projectName) {
-            // alert(fileSystem);
-            console.log("project>>", projectName);
-            console.log("projectFull >>", fileSystem + "projects/" + projectName);
-            console.log("yej");
-            window.resolveLocalFileSystemURL(fileSystem + "projects/", (entry) => {
-                var reader = entry.createReader();
-                reader.readEntries(getProjects = (listProjects) => {
-                    console.log("list>>", listProjects);
-                })
-            }, (err) => { console.log(err) })
-            processZip(fileSystem + "projects/" + projectName, fileSystem + "projects")
-            SpinnerPlugin.activityStop();
-        }
     });
     $("#logout").on("click", () => {
         localStorage.removeItem("token");
         window.location.href = "index.html";
     });
-    // function createDirectory(rootDirEntry) {
-    //     rootDirEntry.getDirectory('NewDirInRoot', { create: true }, function(dirEntry) {
-    //         dirEntry.getDirectory('images', { create: true }, function(subDirEntry) {
-    //             createFile(subDirEntry, "fileInNewSubDir.txt");
-    //         }, onErrorGetDir);
-    //     }, onErrorGetDir);
-    // }
-    window.resolveLocalFileSystemURL(fileSystem, (entry) => {
-        entry.getDirectory('Documents', { create: true }, function (dirEntry) { })
-    })
-    $("#myDownloads").on('click', (e) => {
-        e.preventDefault();
-        window.resolveLocalFileSystemURL(fileSystem + "projects", (entry) => {
-            var projectReader = entry.createReader();
-            projectReader.readEntries(getProjects = (listProjects) => {
-                console.log(listProjects);
-                if (listProjects.length <= 0) {
-                    var dl = new download();
-                    dl.Initialize({
-                        fileSystem: fileSystem,
-                        folder: "projects",
-                        unzip: false,
-                        remove: false,
-                        timeout: 0,
-                        success: DownloaderSuccess,
-                        error: DownloaderError,
-                    });
-                    dl.Get("https://lnwebworks.com/updated-project.zip");
 
-                    function DownloaderError(err) {
-                        console.log("download error: " + err);
-                    }
+    // $("#myDownloads").on('click', (e) => {
+    //     e.preventDefault();
+    //     window.resolveLocalFileSystemURL(fileSystem + "projects", (entry) => {
+    //         var projectReader = entry.createReader();
+    //         projectReader.readEntries(getProjects = (listProjects) => {
+    //             console.log(listProjects);
+    //             if (listProjects.length <= 0) {
+    //                 var dl = new download();
+    //                 dl.Initialize({
+    //                     fileSystem: fileSystem,
+    //                     folder: "projects",
+    //                     unzip: false,
+    //                     remove: false,
+    //                     timeout: 0,
+    //                     success: DownloaderSuccess,
+    //                     error: DownloaderError,
+    //                 });
+    //                 dl.Get("https://lnwebworks.com/updated-project.zip");
 
-                    function DownloaderSuccess(evt) {
-                        console.log("yej");
+    //                 function DownloaderError(err) {
+    //                     console.log("download error: " + err);
+    //                 }
 
-                        processZip(fileSystem + "projects/sample-project.zip", fileSystem + "projects")
+    //                 function DownloaderSuccess(evt) {
+    //                     console.log("yej");
 
-                    }
-                } else {
-                    listProjects.forEach((project, folderIndex) => {
-                        if (project.isDirectory) {
-                            console.log(project);
-                            return window.location.href = "offline-project.html";
+    //                     processZip(fileSystem + "projects/sample-project.zip", fileSystem + "projects")
 
-                        } else {
+    //                 }
+    //             } else {
+    //                 listProjects.forEach((project, folderIndex) => {
+    //                     if (project.isDirectory) {
+    //                         console.log(project);
+    //                         return window.location.href = "offline-project.html";
 
-                            moveFile(project.nativeURL, activityName[0], fileSystem + "projects");
-                        }
-                    })
-                }
-            });
-        }, (err) => { console.log(err) })
+    //                     } else {
 
-    });
+    //                         moveFile(project.nativeURL, activityName[0], fileSystem + "projects");
+    //                     }
+    //                 })
+    //             }
+    //         });
+    //     }, (err) => { console.log(err) })
+
+    // });
 
     function processZip(zipSource, destination, projectName) {
         // Handle the progress event
@@ -289,9 +251,9 @@ function onDeviceReady() {
                 var projectNameArr = projectName.split(".");
                 setTimeout(() => {
                     $.ajax({
-                        url: "https://lite.curriki.org/api/api/v1/project/delete/" + projectNameArr[0],
+                        url: `${currikiBaseURL}project/delete/${projectNameArr[0]}`,
                         headers: {
-                            Authorization: "Bearer " + CurrikiToken,
+                            Authorization: "Bearer " + currikiToken,
                         },
                         success: (res) => {
                             // console.log(res);
