@@ -18,13 +18,17 @@ function onDeviceReady() {
                 } else {
                     // ------ Activity.json address here -----
                     // variable = activitiesFolder
-                    console.log(activitiesFolder)
+                    console.log("heeee >>>", activitiesFolder);
+                    console.log("heeee native>>>", activitiesFolder.nativeURL);
                     window.resolveLocalFileSystemURL(activitiesFolder.nativeURL, function success(fileEntry) {
+                        console.log("inside >>>>");
                         var activityFolderURL = decodeURI(activitiesFolder.nativeURL).replace(activitiesFolder.name, "");
+                        console.log("im here", activityFolderURL);
                         fileEntry.file(function (file) {
                             var reader = new FileReader();
                             reader.onloadend = function(evt) {
                                 var activityJSON = JSON.parse(evt.target.result);
+                                console.log("title>>>>>", activityJSON);
                                 var h5pJsonUrl = activityFolderURL + activityJSON.title + "/" + activityJSON.h5p_content_id;
                                 counter++;
                                 if (counter == 1) {
@@ -49,7 +53,7 @@ function onDeviceReady() {
                             }
                             reader.readAsText(file);
                         })
-                    });
+                    }, (err) => {"FIle >>>>", err});
                 }
             });
             console.log("activity path", activityPath);
