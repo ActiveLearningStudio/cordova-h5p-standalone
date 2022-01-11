@@ -7448,22 +7448,44 @@ function onDeviceReady() {
               var fileNames = [];
                 for (var t = "", n = 0; n < e.length; n++) {
                   if (e[n].includes("h5p.css")) {
+                    console.log(e[n])
+                    fileNames = e[n].split("www/")
                     t += '<link rel="stylesheet" href="' + e[n] + '">';
                   } else {
-                  fileNames = e[n].split("www")
-                    t += '<link rel="stylesheet" href="' + fileNames[1] + '">';
+                  // fileNames = e[n].split("www/")
+                  var url;
+                  switch (device.platform) {
+                    case "iOS":
+                      url = window.WkWebView.convertFilePath(e[n]);
+                    break;
+                    case "Android":
+                      url = e[n];
+                    break;
+                  }
+                    t += '<link rel="stylesheet" href="' + url + '">';
                   }
                 }
                 return t;
               },
               n = function (e) {
-                var fileNames = [];
+                var fileNames = [], coreFileName = [];
                 for (var t = "", n = 0; n < e.length; n++){
                   if (e[n].includes("frame.bundle.js")) {
+                    coreFileName = e[n].split("www/")
                     t += '<script src="' + e[n] + '"></script>';
                   } else {
-                    fileNames = e[n].split("www")
-                    t += '<script src="' + fileNames[1] + '"></script>';
+                  // console.log(e[n]);
+                  var url;
+                  switch (device.platform) {
+                    case "iOS":
+                      url = window.WkWebView.convertFilePath(e[n]);
+                    break;
+                    case "Android":
+                      url = e[n];
+                    break;
+                  }
+                  // var url = window.WkWebView.convertFilePath(e[n])
+                  t += '<script src="' + url + '"></script>';
                   }
                 }
                 return t;
@@ -8852,7 +8874,8 @@ function onDeviceReady() {
                 // console.log(this.h5pJsonPath),
               n.librariesPath
                 ? (this.librariesPath = y(n.librariesPath))
-                : (this.librariesPath = cordova.file.applicationDirectory + "www/activities"),
+                // : (this.librariesPath = cordova.file.applicationDirectory + "www/activities"),
+                : (this.librariesPath = this.h5pJsonPath),
               n.contentJsonPath
                 ? (this.contentUrl = y(n.contentJsonPath))
                 : (this.contentUrl = y(

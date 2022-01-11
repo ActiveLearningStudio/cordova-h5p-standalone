@@ -23,7 +23,8 @@ H5P.TrueFalse = (function ($, Question) {
   var Button = Object.freeze({
     CHECK: 'check-answer',
     TRYAGAIN: 'try-again',
-    SHOW_SOLUTION: 'show-solution'
+    SHOW_SOLUTION: 'show-solution',
+    SUBMIT_ANSWER: 'submit-answers'
   });
 
   /**
@@ -138,9 +139,13 @@ H5P.TrueFalse = (function ($, Question) {
 
       // Check button
       if (!params.behaviour.autoCheck && params.behaviour.enableCheckButton) {
-        self.addButton(Button.CHECK, params.l10n.checkAnswer, function () {
+        self.addButton(Button.CHECK, "Submit Answers", function () {
           checkAnswer();
           triggerXAPIAnswered();
+          if(typeof self.parent == "undefined") {
+            console.log('146');
+            self.triggerXAPIScored(self.getScore(), self.getMaxScore(), 'submitted-curriki');
+          }
         }, true, {
           'aria-label': params.l10n.a11yCheck
         }, {
@@ -152,6 +157,25 @@ H5P.TrueFalse = (function ($, Question) {
           }
         });
       }
+
+
+      // Check button
+      /*if(typeof self.parent == "undefined") {
+        self.addButton(Button.SUBMIT_ANSWER, "Submit Answers", function () {
+          self.triggerXAPIScored(0, 1, 'submitted-curriki');
+        }, true, {
+          'aria-label': params.l10n.a11yCheck
+        }, {
+          confirmationDialog: {
+            enable: params.behaviour.confirmCheckDialog,
+            l10n: params.confirmCheck,
+            instance: self,
+            $parentElement: $container
+          }
+        });
+
+      }*/
+      
 
       // Try again button
       if (params.behaviour.enableRetry === true) {

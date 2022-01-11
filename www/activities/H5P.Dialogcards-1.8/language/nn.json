@@ -110,11 +110,11 @@
     },
     {
       "label": "Text for the \"correct answer\" button",
-      "default": "Eg fekk riktig!"
+      "default": "I got it right!"
     },
     {
       "label": "Text for the \"incorrect answer\" button",
-      "default": "Eg fekk feil!"
+      "default": "I got it wrong"
     },
     {
       "label": "Text for \"Round\" message below cards and on the summary screen",
@@ -124,53 +124,53 @@
     {
       "label": "Text for \"Cards left\" message",
       "description": "@number will be replaced by the number of cards left in this round",
-      "default": "Tal på kort igjen: @number"
+      "default": "Cards left: @number"
     },
     {
       "label": "Text for the \"next round\" button",
       "description": "@round will be replaced by the round number",
-      "default": "Hald fram til runde @round"
+      "default": "Proceed to round @round"
     },
     {
       "label": "Text for the \"Start over\" button",
-      "default": "Start på nytt"
+      "default": "Start over"
     },
     {
       "label": "Text for the \"show summary\" button",
-      "default": "Neste"
+      "default": "Next"
     },
     {
       "label": "Title text for the summary page",
-      "default": "Oppsummering"
+      "default": "Summary"
     },
     {
       "label": "Text for \"Cards you got right:\"",
-      "default": "Kort du fekk rett:"
+      "default": "Cards you got right:"
     },
     {
       "label": "Text for \"Cards you got wrong:\"",
-      "default": "Kort du fekk feil:"
+      "default": "Cards you got wrong:"
     },
     {
       "label": "Text for \"Cards not shown:\"",
-      "default": "Kort som ikkje blir viste:"
+      "default": "Cards in pool not shown:"
     },
     {
       "label": "Text for \"Overall Score\"",
-      "default": "Total score"
+      "default": "Overall Score"
     },
     {
       "label": "Text for \"Cards completed\"",
-      "default": "Kort du har gjennomført:"
+      "default": "Cards you have completed learning:"
     },
     {
       "label": "Text for \"Completed rounds:\"",
-      "default": "Gjennomførte rundar:"
+      "default": "Completed rounds:"
     },
     {
       "label": "Message when all cards have been learned proficiently",
       "description": "@cards will be replaced by the number of all cards in the pool. @max will be replaced by the maximum proficiency level - 1.",
-      "default": "Bra jobba! Du fekk alle @cards korta rett @max gonger på rad!"
+      "default": "Well done! You got all @cards cards correct @max times in a row!"
     },
     {
       "label": "Fremgangstekst",
@@ -180,39 +180,39 @@
     {
       "label": "Label for card text",
       "description": "Used for accessibility by assistive technologies",
-      "default": "Kort front"
+      "default": "Card front"
     },
     {
       "label": "Label for card back",
       "description": "Used for accessibility by assistive technologies",
-      "default": "Kort bak"
+      "default": "Card back"
     },
     {
       "label": "Label for the show tip button",
-      "default": "Vis tips"
+      "default": "Show tip"
     },
     {
       "label": "Audio not supported message",
-      "default": "Nettlesaren din støtter ikkje denne audioen"
+      "default": "Your browser does not support this audio"
     },
     {
       "label": "Confirm starting over dialog",
       "fields": [
         {
           "label": "Header text",
-          "default": "Start på nytt?"
+          "default": "Start over?"
         },
         {
           "label": "Body text",
-          "default": "Alt du har gjort, vil forsvinne. Er du sikker på at du vil starte på nytt?"
+          "default": "All progress will be lost. Are you sure you want to start over?"
         },
         {
           "label": "Cancel button label",
-          "default": "Avbryt"
+          "default": "Cancel"
         },
         {
           "label": "Confirm button label",
-          "default": "Start på nytt"
+          "default": "Start over"
         }
       ]
     }

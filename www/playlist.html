@@ -18,9 +18,10 @@
     under the License.
 -->
 <html>
-    <head>
-        <meta charset="utf-8">
-        <!--
+
+<head>
+    <meta charset="utf-8">
+    <!--
         Customize this policy to fit your own app's needs. For more guidance, see:
             https://github.com/apache/cordova-plugin-whitelist/blob/master/README.md#content-security-policy
         Some notes:
@@ -29,66 +30,127 @@
             * Disables use of inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
                 * Enable inline JS: add 'unsafe-inline' to default-src
         -->
-        <meta http-equiv="Content-Security-Policy" content="default-src 'unsafe-inline' 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval' https: cdvfile:; 
-            style-src 'self' https:; media-src *; img-src 'self' data: content: cdvfile:;">
-        <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' cdvfile: file: https:"> -->
-        <!-- <meta http-equiv="Content-Security-Policy" content="* * 'self' default-src 'unsafe-inline' 'unsafe-eval' http://* https://* data: cdvfile://* file:///* content://*;"> -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'unsafe-inline' 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval' https: cdvfile:; 
+            style-src 'self' https:; media-src *; img-src 'self' data: content: cdvfile: https:;">
+    <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' cdvfile: file: https:"> -->
+    <!-- <meta http-equiv="Content-Security-Policy" content="* * 'self' default-src 'unsafe-inline' 'unsafe-eval' http://* https://* data: cdvfile://* file:///* content://*;"> -->
 
-        <meta name="format-detection" content="telephone=no">
-        <meta name="msapplication-tap-highlight" content="no">
-        <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
-        <meta name="color-scheme" content="light dark">
-        <link rel="stylesheet" href="css/bootstrap.min.css">
-        <link rel="stylesheet" href="css/index.css">
-        <title>Login Page</title>
-        <script src="js/jquery.min.js"></script>
-    </head>
-    <body>
-        <script>
-            getUrlParams = location.search.split("courseId=");
-            courseId = getUrlParams[1];
-            var localStorage = window.localStorage,
-            token = localStorage.getItem("token");
-            $.ajax({
-                url: "https://map-lms.curriki.org/webservice/rest/server.php?",
-                data: {
-                    "wstoken": token,
-                    "moodlewsrestformat": "json",
-                    "wsfunction": "core_course_get_contents",
-                    "courseid": courseId,
-                },
-                success: (response) => {
-                    var playlistContainer = $("#playlistContainer");
-                    var playlistHTML = '';
-                    response.forEach(element => {
-                        if (element.name == "Playlists") {
-                            element.modules.forEach(module => {
-                                playlistHTML += `
-                                <div class="row mt-3 mb-3">
-                                    <div class = "col-10 m-auto">
-                                        <h4 class="text-center">${module.name}</h4>
-                                    </div>
-                                </div>`;
-                            });
-                        }
-                    });
-                    playlistContainer.html(playlistHTML);
-                }
-            });
-        </script>
-        <div class="text-right">
-            <button id="logout" class="btn btn-danger">Logout</button>
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-tap-highlight" content="no">
+    <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
+    <meta name="color-scheme" content="light dark">
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/all.css">
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/app.css">
+    <title>Login Page</title>
+</head>
+
+<body>
+    <div class="header">
+        <nav role="navigation">
+            <div id="menuToggle">
+                <input type="checkbox" />
+                <span></span>
+                <span></span>
+                <span></span>
+                <ul id="menu">
+                    <a href="dashboard.html">
+                        <li>Home</li>
+                    </a>
+                    <a href="" onclick="localStorage.removeItem('USER_TOKEN');window.location.href = 'index.html';">
+                        <li>Logout</li>
+                    </a>
+                    <a href="#">
+                        <li>Info</li>
+                    </a>
+                    <a href="#">
+                        <li>Contact</li>
+                    </a>
+                </ul>
+            </div>
+        </nav>
+        <div class="header-menus">
+            <span>I-Wiz Central</span>
         </div>
-        <h1>Welcome to Playlist</h1>
-        <div class="container" id="playlistContainer"></div>
-        
-        <script src="cordova.js"></script>
-        <script src="js/bootstrap/bootstrap.min.js"></script>
-        <script>
-            $("#logout").on("click", () => {
-                localStorage.removeItem("token");
-                window.location.href = "index.html";
-            });
-        </script>
-    </body>
+        <div class="search-bar-block">
+            <a href="javascript: history.back()"><i class="fa fa-arrow-left"></i></a>
+        </div>
+    </div>
+
+    <div class="profile-page">
+        <div class="container-fluid">
+            <div id="onlineImageShow" class="main-bnnr">
+                <img src="" id="onlineImage">
+            </div>
+
+            <div class="social-share">
+                <div class="share-count">
+                    <a href="#"><i class="fas fa-users"></i>60k</a>
+                </div>
+                <div class="like-count">
+                    <a href="#"><i class="fas fa-heart"></i>60k</a>
+                </div>
+            </div>
+            <div id="tabs" class="tabs">
+                <div class="tabset">
+                    <!-- Tab 1 -->
+                    <input type="radio" name="tabset" id="tab1" aria-controls="overview" checked>
+                    <label for="tab1" id="overviewTab" onclick="this.classList.remove('inactive'); document.getElementById('courseTab').classList.add('inactive')">Overview</label>
+                    <!-- Tab 2 -->
+                    <input type="radio" name="tabset" id="tab2" aria-controls="courseContent">
+                    <label for="tab2" id="courseTab" class="inactive" onclick="this.classList.remove('inactive'); document.getElementById('overviewTab').classList.add('inactive')">Course Content</label>
+                    <!-- Tab 3 -->
+                    <div class="tab-panels">
+                        <section id="overview" class="tab-panel">
+                            <h3>Introduction to<br> Microeconomics</h3>
+                            <p>By taking this free microeconomics course. you'll be exposed to the economic way of thinking You'll understand how to use economics in your life and, ultimately, see the world differently</p>
+                            <a href="#">Read more</a>
+                            <div class="tab-profile-block">
+                                <img src="img/logo.png">
+                                <span>Marginal Revolution University</span>
+                            </div>
+                            <div class="send-btn">
+                                <button><i class="far fa-envelope"></i> Send a Message</button>
+                            </div>
+                        </section>
+                        <section id="courseContent" class="tab-panel">
+                            <div class="" id="playlistContainer"></div>
+                        </section>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <div class="footer-wrapper">
+            <div class="profile">
+                <i class="fas fa-user"></i>
+                <span><a href="dashboard.html">Profile</a></span>
+            </div>
+            <div class="profile">
+                <i class="fas fa-download"></i>
+                <span><a href="offline-project.html">Downloaded</a></span>
+            </div>
+            <div class="profile">
+                <i class="fas fa-trophy"></i>
+                <span>Achievement</span>
+            </div>
+        </div>
+    </footer>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/config.js"></script>
+    <script src="cordova.js"></script>
+    <script src="js/bootstrap/bootstrap.min.js"></script>
+    <script src="js/online-playlist.js"></script>
+    <script>
+        $("#logout").on("click", () => {
+            localStorage.removeItem("token");
+            window.location.href = "index.html";
+        });
+    </script>
+</body>
+
 </html>

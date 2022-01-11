@@ -1,6 +1,15 @@
 document.addEventListener('deviceready', onDeviceReady, false);
 function onDeviceReady() {
-    window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory + "projects/", function success(directoryEntry) {
+    var fileSystem = '';
+    switch (device.platform) {
+        case "iOS":
+            fileSystem = cordova.file.dataDirectory;
+        break;
+        case "Android":
+            fileSystem = cordova.file.externalDataDirectory;
+        break;
+    }
+    window.resolveLocalFileSystemURL(fileSystem + "projects/", function success(directoryEntry) {
         //read Projects Folder
         var directoryReader = directoryEntry.createReader();
         directoryReader.readEntries(
@@ -8,41 +17,80 @@ function onDeviceReady() {
             errorHandler
         );
         function entryHandler(entries) {
-            var offlineProjectHTML = '',
-            playlistPath = '';
+            var offlineCoursesProgress = [];
+            if (localStorage.getItem("offlineCoursesProgress") !== null) {
+                offlineCoursesProgress = JSON.parse(localStorage.getItem('offlineCoursesProgress'));
+            }
+            var counter = 0;
+            var offlineProjectHTML = '';
             entries.forEach(function (entry) {
-              if (entry.isDirectory) {
-                //   -------- Sub Directory of Projects Folder ---------
-                window.resolveLocalFileSystemURL(entry.nativeURL, function success(subDirectoryEntry) {
-                    var subDirectoryReader = subDirectoryEntry.createReader();
-                    subDirectoryReader.readEntries(getSubDirectory = (subEntries) => {
-                      subEntries.forEach((subEntry) => {
-                        if(subEntry.isDirectory) {
-                            playlistPath = subEntry;
-                        } else {
-                            // ------- Sub directory's file listing ---------
-                            // variable = subEntry
-                            window.resolveLocalFileSystemURL(subEntry.nativeURL, function success(fileEntry) {
-                                fileEntry.file(function (file) {
-                                    var reader = new FileReader();
-                                    reader.onloadend = function(evt) {
-                                        var projectJSON = JSON.parse(evt.target.result);
-                                        offlineProjectHTML += `
-                                        <div class= "row">
-                                            <div class="col-12">
-                                                <a href="offline-playlist.html?playlistPath=${playlistPath.nativeURL}"><h4 class="text-center">${projectJSON.name}</h4></a>
-                                            </div>
-                                        </div>`;
-                                        $("#offlineProjectContainer").html(offlineProjectHTML);
-                                    };
-                                    reader.readAsText(file);
-                                }, onErrorReadFile = (err) => {console.log(err)});
-                            });
-                        }
-                      })
-                    }, onErrorReadFile = (err) => {console.log(err)});
-                  })
-              } else {}
+                console.log("Entriess>>>>", entry);
+                if (entry.isDirectory) {
+                    var projectDirectoryReader = entry.createReader();
+                    projectDirectoryReader.readEntries(
+                        projectEntryHandler,
+                        projectErrorHandler
+                    );
+
+                    function projectEntryHandler(projectEntries) {
+                        playlistPath = '';
+                        projectEntries.forEach(function (entry) {
+                            console.log(entry);
+                            if (entry.isDirectory) {
+                                if (entry.name == "playlists") {
+                                    playlistPath = entry;
+                                } 
+                            }
+                            else {
+                                if (entry.name == "project.json") {
+                                    var path = entry.nativeURL.replace(entry.name, "playlists");
+                                    window.resolveLocalFileSystemURL(entry.nativeURL, function success(fileEntry) {
+                                        fileEntry.file(function (file) {
+                                            var reader = new FileReader();
+                                            reader.onloadend = function(evt) {
+                                                var projectJSON = JSON.parse(evt.target.result);
+                                                var isRecordExist = offlineCoursesProgress[offlineCoursesProgress.findIndex((obj => obj.id == projectJSON.id))];
+                                                var progress = isRecordExist ? isRecordExist.progress : 0;
+                                                console.log("JSON >>>>>>>", projectJSON);
+                                                if(offlineCoursesProgress[offlineCoursesProgress.findIndex((obj => obj.id == projectJSON.id))] == undefined) {
+                                                    offlineCoursesProgress.push({'id': projectJSON.id, progress : 0, activities : [], completed_activities : []});
+                                                    localStorage.setItem("offlineCoursesProgress", JSON.stringify(offlineCoursesProgress));
+                                                }
+                                                counter++;
+                                                if (counter == 1) {
+                                                    offlineProjectHTML += `<div class="grid-card-block">
+                                                    <div class="grid-wrapper">`;
+                                                }
+                                                offlineProjectHTML += `
+                                                <div class="grid-card-box">
+                                                    <img src="${projectJSON.thumb_url}">
+                                                    <div class="description">
+                                                        <a href="offline-playlist.html?playlistPath=${path}&courseId=${projectJSON.id}">
+                                                            <h5>${projectJSON.name}</h5>
+                                                        </a>
+                                                        <div class="progress mt-0 mb-2" style="width: 100% !important; height:8px !important">
+                                                            <div class="progress-bar" role="progressbar" style="width: ${progress}%" aria-valuenow="${progress}" aria-valuemin="0" aria-valuemax="100"></div>
+                                                        </div>  
+                                                    </div>
+                                                </div>`;
+                                                if (counter == 2) {
+                                                    offlineProjectHTML += '</div></div>';
+                                                    counter = 0;
+                                                }
+                                                $("#offlineProjectContainer").html(offlineProjectHTML);
+                                            };
+                                            reader.readAsText(file);
+                                        }, onErrorReadFile = (err) => {console.log(err)});
+                                    });
+                                }
+                            }
+                        });
+                    }
+                    function projectErrorHandler(error) {
+                        console.log("ERROR", error);
+                    }
+                    //   -------- Sub Directory of Projects Folder ---------
+                }
             });
         }
         function errorHandler(error) {
@@ -54,7 +102,7 @@ function onDeviceReady() {
     function moveFile(fileUri, name) {
         window.resolveLocalFileSystemURL(fileUri,
             function(fileEntry){
-                newFileUri  = cordova.file.externalDataDirectory + "downloaded-activities/";
+                newFileUri  = fileSystem + "downloaded-activities/";
                 oldFileUri  = fileUri;
                 fileExt     = "." + "zip";
 
@@ -63,9 +111,9 @@ function onDeviceReady() {
                     function(dirEntry) {
                         // move the file to a new directory and rename it
                         fileEntry.moveTo(dirEntry, newFileName, successCallback = (evt) => {
-                            processZip(evt.nativeURL, cordova.file.externalDataDirectory + "h5p-libraries/" + name);
+                            processZip(evt.nativeURL, fileSystem+ "h5p-libraries/" + name);
                             setTimeout(() => {
-                                removeDependencies(cordova.file.externalDataDirectory + "h5p-libraries/" + name);
+                                removeDependencies(fileSystem+ "h5p-libraries/" + name);
                             }, 3000);
                         }, errorCallback);
                     },
@@ -226,7 +274,7 @@ function onDeviceReady() {
 
     // const offlineElement = document.getElementById('h5p-container');
     // const options = {
-    //     h5pJsonPath:  cordova.file.externalDataDirectory + "h5p-libraries/35382",
+    //     h5pJsonPath:  fileSystem+ "h5p-libraries/35382",
     //     frameJs: '../plugins/h5p-standalone/dist/mod.frame.bundle.js',
     //     frameCss: '../plugins/h5p-standalone/dist/styles/h5p.css',
     // }

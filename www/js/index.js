@@ -20,122 +20,98 @@
 // Wait for the deviceready event before using any of Cordova's device APIs.
 // See https://cordova.apache.org/docs/en/latest/cordova/events/events.html#deviceready
 document.addEventListener('deviceready', onDeviceReady, false);
-
 function onDeviceReady() {
     // Cordova is now initialized. Have fun!
-    console.log(window.localStorage)
-    window.sqlitePlugin.echoTest(function() {
-        console.log('ECHO test OK');
-    });
+    /**
+     * Additional Token contains function
+     * core_user_create_users
+     * core_user_get_users
+     */
+    const 
+    aditionalToken =  "70ddd315152670b64cd39138c1999e79",
 
-    $.ajax({
-        url: "https://seminary-tools.000webhostapp.com/api/contentjson.php",
-        success: (res) => {
-            var data = JSON.parse(res);
-            var filtered = data.filtered.toString();
-            console.log(data)
-        }
-    })
+    /**
+     * Admin Token Contains Moodle default functions 
+     * Moodle mobile web service
+     */
+    adminToken = "46bb3c71c49b1a1bac300dce505fa193",
 
-    const el = document.getElementById('h5p-container');
-    const options = {
-        h5pJsonPath:  'https://lnwebworks.com/work/quiz',
-        frameJs: '../plugins/h5p-standalone/dist/frame.bundle.js',
-        frameCss: '../plugins/h5p-standalone/dist/styles/h5p.css',
-    }
-    new H5PStandalone.H5P(el, options);
+    /**
+     * Custom Api Token for Moodle's Custom API's
+     * The APIs are
+     * 
+     * local_curriki_moodle_plugin_create_playlist
+     * CurrikiStudio - Create a playlist under Playlists topic.
+     * 
+     * local_curriki_moodle_plugin_fetch_course
+     * CurrikiStudio - Fetch a course for playlists.
+     * 
+     * local_curriki_moodle_plugin_fetch_project
+     * CurrikiStudio - Fetch a project ID using Moodle course ID.
+     */
+    customApiToken = "817376de1406b8d64988a1cfefcc9d83",
 
-    H5P.externalDispatcher.on('xAPI', function (event) {
-        switch (event.getVerb()) {
-            case 'completed':
-                var obtainedScores = event.getScore(),
-                maxScores = event.getMaxScore(),
-                uuid = device.uuid;
-                $.ajax({
-                    url: "https://seminary-tools.000webhostapp.com/api/save_data.php",
-                    data: {'obtainedScore' : obtainedScores, 'maxScores' : maxScores, 'uuid' : uuid},
-                    success: function(result) {
-                        console.log(result)
-                    }
-                });
-            break;
-        }
-    });
+    /**
+     * Set Base URL of Currki Studio for API
+     */
+    baseURL = "https://dev.currikistudio.org/api/api/v1/",
 
-    document.getElementById("downloadActivity").addEventListener("click", () => {
-        var options = { dimBackground: true };
-        SpinnerPlugin.activityStart("Loading...", options);
-        var dl = new download();
-        dl.Initialize({
-            fileSystem : cordova.file.externalDataDirectory,
-            folder: "downloaded-activities",
-            unzip: false,
-            remove: false,
-            timeout: 0,
-            success: DownloaderSuccess,
-            error: DownloaderError,
-        });
-        dl.Get("https://lite.curriki.org/api/api/v1/h5p/export/35382");
-        function DownloaderError(err) {
-            console.log("download error: " + err);
-            alert("download error: " + err);
-        }
-        function DownloaderSuccess(evt) {
-            console.log(evt)
-            function moveFile(fileUri) {
-                window.resolveLocalFileSystemURL(fileUri,
-                    function(fileEntry){
-                        newFileUri  = cordova.file.externalDataDirectory + "downloaded-activities/";
-                        oldFileUri  = fileUri;
-                        fileExt     = "." + "zip";
-        
-                        newFileName = "35382" + fileExt;
-                        window.resolveLocalFileSystemURL(newFileUri,
-                            function(dirEntry) {
-                                // move the file to a new directory and rename it
-                                fileEntry.moveTo(dirEntry, newFileName, successCallback = (evt) => {
-                                    console.log(evt.nativeURL)
-                                    processZip(evt.nativeURL, cordova.file.externalDataDirectory + "h5p-libraries/35382")
-                                    SpinnerPlugin.activityStop();
-                                }, errorCallback);
-                            },
-                            errorCallback = (err) => {console.log(err)}
-                        );
-                    },
-                    errorCallback = (err) => {console.log(err)}
-                );
-            }
-            moveFile(cordova.file.externalDataDirectory + "downloaded-activities/35382")
-            console.log(cordova.file.externalDataDirectory);
-        }
-        function processZip(zipSource, destination) {
-            // Handle the progress event
-            var progressHandler = function(progressEvent){
-                var percent =  Math.round((progressEvent.loaded / progressEvent.total) * 100);
-                // Display progress in the console : 8% ...
-                console.log(percent + "%");
-            };
-            // Proceed to unzip the file
-            window.zip.unzip(zipSource, destination, (status) => {
-                if(status == 0){
-                    console.log("Files succesfully decompressed");
-                    window.resolveLocalFileSystemURL (zipSource, 
-                        function (fileEntry) { 
-                            fileEntry.remove(
-                                function () { 
-                                    console.log('File is removed.'); 
-                                }, 
-                                function (error) {
-                                    alert('Unable to remove file.');
-                                }
-                            ); 
-                        }, function (error) {console.log(error)}
-                     );
-                }
-                if(status == -1){
-                    console.error("Oops, cannot decompress files");
-                }
-            }, progressHandler);
-        }
-    })
+    /**
+     * Moodle App base URL for API
+     */
+    moodleBaseURL = "https://map-lms.curriki.org/webservice/rest/server.php",
+
+    /**
+     * Moodle Login API URL
+     */
+    moodleLoginURL = "https://map-lms.curriki.org/login/token.php",
+
+    /**
+     * 
+     * Curriki Studio Auth Token to get data from studio
+     */
+    currikiToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxMzQzIiwianRpIjoiNzc2OWEwMjdiMTc5MWU1MDJhMjRmZDgzYmNlOGY0MzI5MWRhZDc0NDlkYWU0MDQxOTVmNjZjYWQ1ZWE3Y2I2ZGQyYWIxMDljNjlhMWRlZTkiLCJpYXQiOjE2MzI5OTc1MzksIm5iZiI6MTYzMjk5NzUzOSwiZXhwIjoxNjY0NTMzNTM4LCJzdWIiOiIyIiwic2NvcGVzIjpbXX0.TnhPLCJBupzV0c81wywUhoviCjyETzb8kpPokPXNEn6hDFkGqud3cgCWnf4-_8AHCfD10tK6hm9qfZD2g6K6nAfHfwdblBWu_kqeohXHdJsc-4NRKmQYlMcdOiDRt3gLqj656vCo09tFi6Ui5fb9w_FBPgWLuJRuR319hOWt0L5lZ82tnZsoCw8pvBQyqX4MbkXxBDzd7Z3rQfF5-L8YRH8dinguFYpr08-JLV7ZhDsAdRzYtpnPUiAPPQvKBPCosbJ-JJWXUwvRhKGy71ttIzKQ4bbZknWNxRJC4a6d9lU_wcXokeal5EP3H9nqpBtGu9gTqubycVXBHzXQi3pl03QhFtDncgSVie32QQdGKm74WouzUiYoBqSG-oCSfP2AaKNz9RGcTIeG8cSaQfgyzUSKZId-cbcazbplkbXiH25LW8FYrcDtxpO7x7jB3a1kJU1MPs-bv0w5KvHRl5-mIn1BQES_tbNpaFRfBGTO2h-yPWdmGiEuP3yz_0JLfbFt8HgkqL_ATLhSUE9q0IN1-dXGa33Mz22bQHA_tvh9vVygpICPCxM6sXlA3v0WNHhMF6YZIwjir1k-qhlfYuO9fWmudEGzrbhdez1aG-QQAUlGO8NDlEDC3d-6pSH8NiIc0_gNJfGgs4Db0IFe1BVu_OvXoPJs_Up1XK0l2GGRXTA",
+
+    /**
+     *
+     * Saving all Variables into the local storage
+     * 
+     * Initialize local storage 
+     */
+    localStorage = window.localStorage;
+
+    /**
+     * Saving Additonal Token
+     */
+    localStorage.setItem("ADITIONAL_TOKEN", aditionalToken);
+
+    /**
+     * Saving Admin Token
+     */
+    localStorage.setItem("ADMIN_TOKEN", adminToken);
+
+    /**
+     * Saving Custom API Token
+     */
+    localStorage.setItem("CUSTOM_API_TOKEN", customApiToken);
+
+    /**
+     * Saving Base URL for the API
+     */
+    localStorage.setItem("CURRIKI_BASE_API_URL", baseURL);
+
+    /**
+     * Saving Curriki Token into the Local Storage
+     */
+    localStorage.setItem("CURRIKI_TOKEN", currikiToken);
+
+    /**
+     * Saving Moodle Base URL for API
+     */
+    localStorage.setItem("MOODLE_BASE_API_URL", moodleBaseURL);
+
+    /**
+     * Saving Moodle Login URL
+     */
+    localStorage.setItem("MOODLE_LOGIN_URL", moodleLoginURL);
 }

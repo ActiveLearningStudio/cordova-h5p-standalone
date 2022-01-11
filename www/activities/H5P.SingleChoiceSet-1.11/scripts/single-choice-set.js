@@ -403,7 +403,9 @@ H5P.SingleChoiceSet = (function ($, UI, Question, SingleChoice, SolutionView, Re
     else {
       self.showButton('try-again');
       self.showButton('show-solution');
-      self.showButton('view-summary');
+      if( typeof this.parent == 'undefined') { 
+       self.showButton('view-summary');
+      }
     }
     self.handleQueuedButtonChanges();
     self.scoreTimeout = undefined;
@@ -508,30 +510,33 @@ H5P.SingleChoiceSet = (function ($, UI, Question, SingleChoice, SolutionView, Re
       }, self.results.corrects !== self.options.choices.length, {
         'aria-label': this.l10n.a11yShowSolution,
       });
-
-      this.addButton('view-summary', 'View Summary', function () {
-        //self.showSolutions();
-        var confirmationDialog = new H5P.ConfirmationDialog({
-          headerText: 'Single Choice Set Summary',
-          dialogText: viewSummary(self),
-          cancelText: 'Cancel',
-          confirmText: "Submit Answers"
-        });
-        
-        confirmationDialog.on('confirmed', function () {
-          self.triggerXAPIScored(0, 1, 'submitted-curriki');
-          //confirmationDialog.hide();
-          H5P.jQuery('.h5p-question-show-solution').click();
+      if( typeof this.parent == 'undefined') {
+        this.addButton('view-summary', 'Submit Answers', function () {
+          //self.showSolutions();
+          self.triggerXAPIScored(self.getScore(), self.getMaxScore(), 'submitted-curriki');
           
+          /*var confirmationDialog = new H5P.ConfirmationDialog({
+            headerText: 'Single Choice Set Summary',
+            dialogText: viewSummary(self),
+            cancelText: 'Cancel',
+            confirmText: "Submit Answers"
+          });
+          
+          confirmationDialog.on('confirmed', function () {
+            self.triggerXAPIScored(0, 1, 'submitted-curriki');
+            //confirmationDialog.hide();
+            H5P.jQuery('.h5p-question-show-solution').click();
+            
+          });
+          
+          
+          confirmationDialog.appendTo(parent.document.body);
+          confirmationDialog.show();*/
+
+
+
         });
-        
-        
-        confirmationDialog.appendTo(parent.document.body);
-        confirmationDialog.show();
-
-
-
-      });
+      }
     }
   };
 

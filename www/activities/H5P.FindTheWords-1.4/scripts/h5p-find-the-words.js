@@ -177,7 +177,33 @@ H5P.FindTheWords = (function ($, UI) {
     this.$progressBar = UI.createScoreBar(this.vocabulary.words.length, 'scoreBarLabel');
 
     // buttons section
-    that.$submitButton = that.createButton('submit', 'check', that.options.l10n.check, that.gameSubmitted);
+    /*
+    that.$viewSummaryButton = that.createButton('show-summary', 'View summary', 'View summary' , function () {   
+      var  xAPIAnsEvent = this.createXAPIEventTemplate('answered');
+      this.addQuestionToXAPI(xAPIAnsEvent);
+      this.addResponseToXAPI(xAPIAnsEvent);
+      this.trigger(xAPIAnsEvent);
+      
+      var user_response = xAPIAnsEvent.data.statement.result.response;
+      var total_score = that.getMaxScore();
+      var scored_result = that.getScore();
+      var confirmationDialog = new H5P.ConfirmationDialog({
+              headerText: 'Find the words summary',
+              dialogText: that.showSummary(total_score,scored_result,user_response),
+              cancelText: 'Cancel',
+              confirmText: "Submit Answers"
+            });
+            confirmationDialog.on('confirmed', function () {
+               that.triggerXAPIScored(scored_result,total_score, 'submitted-curriki');
+              H5P.jQuery('.h5p-question-check-answer').click();
+              
+            });
+            confirmationDialog.appendTo(parent.document.body);
+            confirmationDialog.show();
+    });
+    */
+
+    that.$submitButton = that.createButton('submit', 'check', "Submit Answers", that.gameSubmitted);
     if (this.options.behaviour.enableShowSolution) {
       this.$showSolutionButton = this.createButton('solution', 'eye', this.options.l10n.showSolution, that.showSolutions);
     }
@@ -199,6 +225,30 @@ H5P.FindTheWords = (function ($, UI) {
     this.$feedbackContainer = $('<div class="feedback-container"/>');
     this.$buttonContainer = $('<div class="button-container" />');
   };
+
+
+  FindTheWords.prototype.showSummary = function (total_score,scored_result,user_response) {
+    var summary_html = "";
+    var user_response_ary = user_response.split("[,]");
+    if(user_response_ary.length > 0  && user_response_ary[0] != ""){
+       var table_content = '<tbody>';
+       var is_correct = "Correct";
+       for (var m =0; m < user_response_ary.length; m++){
+        table_content += '<tr>';
+        table_content += '<td>'+user_response_ary[m]+'</td>';
+        table_content += '<td>'+is_correct+'</td>';
+        table_content += '</tr>';
+
+      }
+      var summary_html = '<div class="custom-summary-section"><div class="h5p-summary-table-pages"><table class="h5p-score-table-custom" style="min-height:100px;width:100%"><thead><tr><th>Ans</th><th>Correct</th></tr></thead>'+table_content+'</table></div></div>';
+      var table_content_overall_score = '<tbody>';
+      var overall_summary_html = '<div class="custom-score-section"><b>Overall Score: </b>You got '+scored_result+' of '+total_score+' points.</div>';
+      var summary_html = summary_html.concat(overall_summary_html);
+    }else{
+      var summary_html = "You did not attempt activity yet.";
+    }
+    return summary_html;
+  }
 
   /**
    * createButton - creating all buttons used in this game.
@@ -279,6 +329,7 @@ H5P.FindTheWords = (function ($, UI) {
     this.trigger(xAPIEvent);
 
     this.trigger('resize');
+    this.triggerXAPIScored(this.getScore(),this.getMaxScore(), 'submitted-curriki');
   };
 
   /**
@@ -318,6 +369,7 @@ H5P.FindTheWords = (function ($, UI) {
     this.registerGridEvents();
 
     this.$submitButton.appendTo(this.$buttonContainer);
+    //this.$viewSummaryButton.appendTo(this.$buttonContainer);
     this.$puzzleContainer.focus();
 
     this.trigger('resize');
@@ -445,6 +497,7 @@ H5P.FindTheWords = (function ($, UI) {
     this.$feedback.appendTo(this.$feedbackContainer);
     this.$progressBar.appendTo(this.$feedbackContainer);
 
+    //this.$viewSummaryButton.appendTo(this.$buttonContainer);
     this.$submitButton.appendTo(this.$buttonContainer);
 
     //append status and feedback and button containers to footer
