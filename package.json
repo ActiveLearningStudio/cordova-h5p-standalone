@@ -1,6 +1,6 @@
 {
-  "name": "com.example.leo",
-  "displayName": "leo",
+  "name": "com.curriki.reader",
+  "displayName": "Curriki Reader",
   "version": "1.0.0",
   "description": "A sample Apache Cordova application that responds to the deviceready event.",
   "main": "index.js",
@@ -39,8 +39,8 @@
       "cordova-plugin-wkwebview-file-xhr": {}
     },
     "platforms": [
-      "android",
-      "ios"
+      "ios",
+      "android"
     ]
   }
 }
