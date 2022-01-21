@@ -1,6 +1,9 @@
 document.addEventListener('deviceready', onDeviceReady, false);
 
 function onDeviceReady() {
+
+ 
+
     var fileSystem = '';
     switch (device.platform) {
         case "iOS":
@@ -99,6 +102,8 @@ function onDeviceReady() {
                 "wstoken": customApiToken
             },
             success: (project) => {
+
+                
                 console.log("project", project);
                 var projectID = project.projectid;
                 // var modal = document.getElementById("myModal");
@@ -147,6 +152,7 @@ function onDeviceReady() {
                                 dl.Get(downloadPath);
 
                                 function DownloaderSuccess() {
+                                    
                                     // alert(fileSystem);
                                     // modal.style.display = "none";
                                     console.log("project>>", projectName);
@@ -166,6 +172,7 @@ function onDeviceReady() {
                                             SpinnerPlugin.activityStop();
                                         }, onErrorGetDir = (err)=> {console.log("dir creating >>",err);});
                                     }, (err) => { console.log(err) })
+                                    $("#myModalDownload").modal("show")
                                     // var rootDirEntry = fileSystem + "projects/";
                                     // console.log(rootDirEntry);
                                     
