@@ -20,12 +20,107 @@ function onDeviceReady() {
         currikiToken = localStorage.getItem("CURRIKI_TOKEN"),
         moodleBaseURL = localStorage.getItem("MOODLE_BASE_API_URL"),
         currikiBaseURL = localStorage.getItem("CURRIKI_BASE_API_URL"),
+        imageUrl = localStorage.getItem("CURRIKI_BASE_IMAGE_URL"),
         limit = 0,
         offset = 0;
     if (token) {
-        handleDashboard(token, limit, offset)
+        handleDashboard(token, limit, offset);
+        
     } else {
         window.location.href = 'index.html';
+    }
+
+    async function getCourses(response){
+        console.log("Test Api res-->", response);
+
+        let projectIds = [];
+        let promises = [];
+
+        await response.forEach(course => {
+            let request = $.ajax({
+                url: moodleBaseURL,
+                type: "get",
+                data: {
+                    "moodlewsrestformat": "json",
+                    "course_id": course.id,
+                    "wsfunction": "local_curriki_moodle_plugin_fetch_project",
+                    "wstoken": customApiToken
+                },
+                success: (project) => {
+                    console.log({projectid:project.projectid})
+                    projectIds.push(project.projectid);
+                }
+            });
+            promises.push( request);
+        })
+        $.when.apply(null, promises).done(function(){
+            console.log("projectIds", projectIds);
+            let obj = {
+                "project_id": projectIds
+            }
+            console.log("obj",obj);
+            $.ajax({
+                url: `${currikiBaseURL}suborganization/1/projects/by-ids`,
+                headers: {
+                    Authorization: "Bearer " + currikiToken,
+                },
+                type: "POST",
+                data: obj,
+                
+                success: (projects) => {
+                    console.log("projecttt", projects);
+                    var courseWraper = '<div class="row">',
+                    counter = 0;
+                    console.log("courseContainer", courseContainer);
+                    projects.forEach(course => {
+                        counter++;
+                        if (counter == 1) {
+                            courseWraper += `<div class="grid-card-block">
+                            <div class="grid-wrapper">`;
+                        }
+                    courseWraper += `
+                                <div class="grid-card-box">
+                                    <img src="${course.thumb_url.includes('https') ? course.thumb_url : imageUrl+course.thumb_url}">
+                                   
+                                    <div class="description">
+                                        <a href="playlist.html?courseId=${course.id}">
+                                            <h5>${course.name}</h5>
+                                        </a>   
+                                        <div class="progress mt-0 mb-2" style="width: 100% !important; height:8px !important">
+                                        <div class="progress-bar" role="progressbar" style="width:0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>                          
+                                    <button type="button" id="downloadProject" data-course-id="${course.id}" class="btn btn-primary">Download</button>                         
+                                    </div>
+                                </div>`;
+                        if (counter == 2) {
+                            courseWraper += '</div></div>';
+                            counter = 0;
+                        }
+                    });
+                    // localStorage.setItem('courses', courses);
+                    courseWraper += '</div>';
+                    courseContainer.html(courseWraper);
+                }
+            });
+            
+        });
+
+        // console.log("INSIDE TEST API");
+        // let obj = {
+        //     "project_id": ["2093", "7443", "7479"]
+        // }
+        // $.ajax({
+        //     type: "POST",
+        //     url: `${currikiBaseURL}suborganization/1/projects/by-ids`,
+        //     headers: {
+        //         Authorization: "Bearer " + currikiToken,
+        //     },
+        //     dataType: 'json',
+        //     data: obj,
+        //     success: (resposne) =>{
+        //         console.log('resposne', resposne);
+        //     }
+        // }) 
     }
 
     function handleDashboard(token, limit, offset) {
@@ -38,6 +133,7 @@ function onDeviceReady() {
                 "userid": userID
             },
             success: (response) => {
+                console.log("RESP--->", response);
                 var courses=[];
                 offset = response.nextoffset;
                 var courseWraper = '<div class="row">',
@@ -51,35 +147,37 @@ function onDeviceReady() {
                     } else {
                         coursesProgress = JSON.parse(localStorage.getItem('coursesProgress'));
                     }
-                    response.forEach(course => {
-                    courses.push(course.id);
-                    var progress = coursesProgress[coursesProgress.findIndex((obj => obj.id == course.id))].progress;
-                    counter++;
-                    if (counter == 1) {
-                        courseWraper += `<div class="grid-card-block">
-                        <div class="grid-wrapper">`;
-                    }
-                    courseWraper += `
-                    <div class="grid-card-box">
-                        <img src="${course.courseimage}">
+                    getCourses(response);
 
-                        <div class="description">
-                            <a href="playlist.html?courseId=${course.id}">
-                                <h5>${course.fullname}</h5>
-                            </a>   
-                            <div class="progress mt-0 mb-2" style="width: 100% !important; height:8px !important">
-                               <div class="progress-bar" role="progressbar" style="width: ${progress}%" aria-valuenow="${progress}" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>                          
-                          <button type="button" id="downloadProject" data-course-id="${course.id}" class="btn btn-primary">Download</button>                         
-                        </div>
-                    </div>`;
-                    //set image in localstorage
-                    localStorage.setItem(course.id, course.courseimage);
-                    if (counter == 2) {
-                        courseWraper += '</div></div>';
-                        counter = 0;
-                    }
-                });
+                    // response.forEach(course => {
+                    // courses.push(course.id);
+                    // var progress = coursesProgress[coursesProgress.findIndex((obj => obj.id == course.id))].progress;
+                    // counter++;
+                    // if (counter == 1) {
+                    //     courseWraper += `<div class="grid-card-block">
+                    //     <div class="grid-wrapper">`;
+                    // }
+                    // courseWraper += `
+                    // <div class="grid-card-box">
+                    //     <img src="${course.courseimage}">
+
+                    //     <div class="description">
+                    //         <a href="playlist.html?courseId=${course.id}">
+                    //             <h5>${course.fullname}</h5>
+                    //         </a>   
+                    //         <div class="progress mt-0 mb-2" style="width: 100% !important; height:8px !important">
+                    //            <div class="progress-bar" role="progressbar" style="width: ${progress}%" aria-valuenow="${progress}" aria-valuemin="0" aria-valuemax="100"></div>
+                    //         </div>                          
+                    //       <button type="button" id="downloadProject" data-course-id="${course.id}" class="btn btn-primary">Download</button>                         
+                    //     </div>
+                    // </div>`;
+                    // //set image in localstorage
+                    // localStorage.setItem(course.id, course.courseimage);
+                    // if (counter == 2) {
+                    //     courseWraper += '</div></div>';
+                    //     counter = 0;
+                    // }
+                    // });
                 localStorage.setItem('courses', courses);
                 courseWraper += '</div>';
                 courseContainer.html(courseWraper);
@@ -89,99 +187,73 @@ function onDeviceReady() {
 
     $(document).on('click', "#downloadProject", (e) => {
         var courseID = e.target.getAttribute("data-course-id");
-        $.ajax({
-            url: moodleBaseURL,
-            type: "get",
-            data: {
-                "moodlewsrestformat": "json",
-                "course_id": courseID,
-                "wsfunction": "local_curriki_moodle_plugin_fetch_project",
-                "wstoken": customApiToken
-            },
-            success: (project) => {
-                console.log("project", project);
-                var projectID = project.projectid;
-                // var modal = document.getElementById("myModal");
-                // // Get the <span> element that closes the modal
-                // var span = document.getElementsByClassName("close")[0];
-                // modal.style.display = "block";
-                // // When the user clicks on <span> (x), close the modal
-                // span.onclick = function() {
-                //     modal.style.display = "none";
-                // }
-                //     // When the user clicks anywhere outside of the modal, close it
-                // window.onclick = function(event) {
-                //     if (event.target == modal) {
-                //         modal.style.display = "none";
-                //     }
-                // }
-                if (projectID != null) {
-                    var spinnerOptions = { dimBackground: true };
-                    SpinnerPlugin.activityStart("Preparing for Download", spinnerOptions);
-                    $.ajax({
-                        url: `${currikiBaseURL}suborganization/1/projects/${projectID}/offline-project`,
-                        headers: {
-                            Authorization: "Bearer " + currikiToken,
-                        },
-                        success: (res) => {
-                            SpinnerPlugin.activityStop();
-                            var getProjectpath = res.split('org'),
-                                projectName = getProjectpath.join('org/api'),
-                                downloadPath = projectName.replace("http", "https");
-                            console.log("projectName>>>", downloadPath);
-                            // return false;
-                            var confirmation = confirm('The project is ready to download. Click OK to download');
-                            if (confirmation) {
-                                SpinnerPlugin.activityStart("Downloading...", spinnerOptions);
-                                console.log("in download")
-                                var dl = new download();
-                                dl.Initialize({
-                                    fileSystem: fileSystem,
-                                    folder: "projects",
-                                    unzip: false,
-                                    remove: false,
-                                    timeout: 0,
-                                    success: DownloaderSuccess,
-                                    error: DownloaderError,
-                                });
-                                dl.Get(downloadPath);
+        if (courseID != null) {
+            var spinnerOptions = { dimBackground: true };
+            SpinnerPlugin.activityStart("Preparing for Download", spinnerOptions);
+            $.ajax({
+                url: `${currikiBaseURL}suborganization/1/projects/${courseID}/offline-project`,
+                headers: {
+                    Authorization: "Bearer " + currikiToken,
+                },
+                success: (res) => {
+                    SpinnerPlugin.activityStop();
+                    var getProjectpath = res.split('org'),
+                        projectName = getProjectpath.join('org/api'),
+                        downloadPath = projectName.replace("http", "https");
+                    console.log("projectName>>>", downloadPath);
+                    // return false;
+                    var confirmation = confirm('The project is ready to download. Click OK to download');
+                    if (confirmation) {
+                        SpinnerPlugin.activityStart("Downloading...", spinnerOptions);
+                        console.log("in download")
+                        var dl = new download();
+                        dl.Initialize({
+                            fileSystem: fileSystem,
+                            folder: "projects",
+                            unzip: false,
+                            remove: false,
+                            timeout: 0,
+                            success: DownloaderSuccess,
+                            error: DownloaderError,
+                        });
+                        dl.Get(downloadPath);
 
-                                function DownloaderSuccess() {
-                                    // alert(fileSystem);
-                                    // modal.style.display = "none";
-                                    console.log("project>>", projectName);
-                                    // console.log("projectFull >>", fileSystem + "projects/" + projectName);
-                                    console.log("yej");
-                                    var fileName = projectName.split('exports/'),
-                                    name = fileName[1].split('.').slice(0, -1).join('.');
-                                    // console.log("nameee >>>", name); return false;
-                                    window.resolveLocalFileSystemURL(fileSystem + "projects/", (entry) => {
-                                        var reader = entry.createReader();
-                                        reader.readEntries(getProjects = (listProjects) => {
-                                            console.log("list>>", listProjects);
-                                        })
-                                        entry.getDirectory(name, { create: true }, function (dirEntry) {
-                                            console.log(dirEntry);
-                                            processZip(fileSystem + "projects/" + fileName[1], dirEntry.nativeURL, projectName)
-                                            SpinnerPlugin.activityStop();
-                                        }, onErrorGetDir = (err)=> {console.log("dir creating >>",err);});
-                                    }, (err) => { console.log(err) })
-                                    // var rootDirEntry = fileSystem + "projects/";
-                                    // console.log(rootDirEntry);
-                                    
+                        function DownloaderSuccess() {
+                            
+                            // alert(fileSystem);
+                            // modal.style.display = "none";
+                            console.log("project>>", projectName);
+                            // console.log("projectFull >>", fileSystem + "projects/" + projectName);
+                            console.log("yej");
+                            var fileName = projectName.split('exports/'),
+                            name = fileName[1].split('.').slice(0, -1).join('.');
+                            // console.log("nameee >>>", name); return false;
+                            window.resolveLocalFileSystemURL(fileSystem + "projects/", (entry) => {
+                                var reader = entry.createReader();
+                                reader.readEntries(getProjects = (listProjects) => {
+                                    console.log("list>>", listProjects);
+                                })
+                                entry.getDirectory(name, { create: true }, function (dirEntry) {
+                                    console.log(dirEntry);
+                                    processZip(fileSystem + "projects/" + fileName[1], dirEntry.nativeURL, projectName)
+                                    SpinnerPlugin.activityStop();
+                                }, onErrorGetDir = (err)=> {console.log("dir creating >>",err);});
+                            }, (err) => { console.log(err) })
+                            $("#myModalDownload").modal("show")
+                            // var rootDirEntry = fileSystem + "projects/";
+                            // console.log(rootDirEntry);
+                            
 
-                                }
-
-                                function DownloaderError(err) {
-                                    console.log("download error: " + err);
-                                    alert("download error: " + err);
-                                }
-                            }
                         }
-                    });
+
+                        function DownloaderError(err) {
+                            console.log("download error: " + err);
+                            alert("download error: " + err);
+                        }
+                    }
                 }
-            }
-        })
+            });
+        }
     });
     $("#logout").on("click", () => {
         localStorage.removeItem("token");
