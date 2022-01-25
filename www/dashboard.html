@@ -84,20 +84,20 @@
 
         </div>
     </div>
-    <div id="myModal" class="modal">
+    <div id="myModalDownload" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <span class="close">&times;</span>
-                <h5 class="text-dwn">Downloading...</h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>   
             </div>
             <div class="modal-body">
-                <div class="progress">
-                    <div class="progress__fill"></div>
-                    <span class="progress__text">0%</span>
-                </div>
+                <p>Your Project has been downloaded successfully! Please visit "My Content" to view this Project.</p>     
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn_ok_1" class="btn btn-primary" onclick="$('#myModalDownload').modal('hide')">OK</button>
             </div>
         </div>
     </div>
+    
     <footer>
         <div class="footer-wrapper">
             <div class="profile">
@@ -114,11 +114,15 @@
             </div>
         </div>
     </footer>
+
+    
+
     <script src="js/config.js"></script>
     <script src="cordova.js"></script>
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap/bootstrap.min.js"></script>
     <script src="js/dashboard.js"></script>
+   
 </body>
 
 </html>

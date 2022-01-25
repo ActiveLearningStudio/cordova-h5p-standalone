@@ -1050,3 +1050,22 @@ div#offlineactiveButton.activity-page {
     width: 100%;
     background: #4cace6;
 }
+.modal-backdrop{
+    display: none;
+}
+.modal-header{
+padding: 2px 16px; 
+background-color:white;
+}
+div#myModalDownload .modal-content {
+    height: auto;
+}
+#myModalDownload .modal-footer {
+    justify-content: center;
+}   
+#myModalDownload button.close {
+    margin-right: -15px !important;
+}
+#myModalDownload .modal-footer button {
+    padding: 5px 30px;
+}

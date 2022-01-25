@@ -1,6 +1,9 @@
 document.addEventListener('deviceready', onDeviceReady, false);
 
 function onDeviceReady() {
+
+ 
+
     var fileSystem = '';
     switch (device.platform) {
         case "iOS":
