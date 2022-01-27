@@ -11,6 +11,8 @@ function onDeviceReady() {
     }
     window.resolveLocalFileSystemURL(fileSystem + "projects/", function success(directoryEntry) {
         //read Projects Folder
+
+
         var directoryReader = directoryEntry.createReader();
         directoryReader.readEntries(
             entryHandler,

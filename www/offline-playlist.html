@@ -34,7 +34,7 @@
         style-src 'self' 'default-src'; media-src *; img-src 'self' data: content:;"> -->
     <!-- <meta http-equiv="Content-Security-Policy" content="* * 'self' default-src 'unsafe-inline' 'unsafe-eval' http://* https://* data: cdvfile://* file:///* content://*;"> -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'unsafe-inline' 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval' https: cdvfile:; 
-        style-src 'self' https:; media-src * data:; img-src 'self' data: content: file: cdvfile:;">
+        style-src 'self' https:; media-src * data:; img-src 'self' data: content: file: cdvfile: https: ;">
     <meta name="format-detection" content="telephone=no">
     <meta name="msapplication-tap-highlight" content="no">
     <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
@@ -82,7 +82,7 @@
             <div id="onlineImageShow"></div>
             <div>
                 <div class="grid-card-box main-bnnr">
-                    <img src="img/principles-micro.png">
+                    <img src="https://reactnativecode.com/wp-content/uploads/2018/02/Default_Image_Thumbnail.png" id="thumb_url">
                 </div>
             </div>
             <div class="social-share">
@@ -103,7 +103,7 @@
                     <label for="tab2" id="courseTab" class="inactive" onclick="this.classList.remove('inactive'); document.getElementById('overviewTab').classList.add('inactive')">Course Content</label>
                     <div class="tab-panels">
                         <section id="overview_tab" class="tab-panel">
-                            <h3>Introduction to<br> Microeconomics</h3>
+                            <!-- <h3>Introduction to<br> Microeconomics</h3>
                             <p>By taking this free microeconomics course. you'll be exposed to the economic way of thinking You'll understand how to use economics in your life and, ultimately, see the world differently</p>
                             <a href="#">Read more</a>
                             <div class="tab-profile-block">
@@ -112,10 +112,11 @@
                             </div>
                             <div class="send-btn">
                                 <button><i class="far fa-envelope"></i> Send a Message</button>
-                            </div>
+                            </div> -->
                         </section>
                         <section id="contentCourse_tab" class="tab-panel">
-                            <div class="" id="offlinePlaylistContainer"></div>
+                            <div class="" id="offlinePlaylistContainer">
+                            </div>
                         </section>
                     </div>
                 </div>

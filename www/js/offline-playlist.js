@@ -1,18 +1,73 @@
 document.addEventListener('deviceready', onDeviceReady, false);
 
+const removeLastDirectoryPartOf = (the_url) =>
+{
+    var the_arr = the_url.split('/');
+    the_arr.pop();
+    return( the_arr.join('/') );
+}
+
+
 function onDeviceReady() {
     // getUrlParams = location.search.split("playlistPath=");
     // playlistPath = getUrlParams[0];
     getUrlParams = new URLSearchParams(location.search);
     playlistPath = getUrlParams.get("playlistPath");
+    const overview_tab = document.getElementById("overview_tab")
+    const thumb_url = document.getElementById("thumb_url")
+    console.log(playlistPath)
+
     courseId = getUrlParams.get("courseId");
     localStorage.setItem("activeOfflineCourse", courseId);
     var offlinePlaylistHTML = '',
         activitiesPath = ''
     counter = 0;
+
+    window.resolveLocalFileSystemURL( removeLastDirectoryPartOf(playlistPath) , 
+    function success(project) {
+         var projectReader = project.createReader();
+         projectReader.readEntries(  (projectFolders) => {
+               projectFolders.forEach(( projectItem ) => {
+                    if(projectItem.isDirectory == false) {
+                        console.log({projectItem})
+                        console.log({native_url:projectItem.nativeURL})
+
+                        /**
+                         * TODO: Read Project.Json file
+                         */
+                        window.resolveLocalFileSystemURL( projectItem.nativeURL , function (fileEntry) {
+                            fileEntry.file( (file) => {
+                                var reader = new FileReader();
+                                reader.readAsText(file)
+                                reader.onloadend = function(evt) {
+                                    var projectJSON = JSON.parse(evt.target.result)
+                                    overview_tab.innerHTML = `<h3>Introduction to<br> ${projectJSON.name} </h3>
+                                    <p> ${projectJSON.description} </p>`
+                                    thumb_url.src = projectJSON.thumb_url
+                                }
+                            })
+                        }, (err) => {
+                            console.log(err)
+                        })
+
+                    }
+               })
+         })
+    }, 
+    (err) => {
+        console.log(err)
+    })
+
+
+   
+
     window.resolveLocalFileSystemURL(playlistPath, function success(playlist) {
-        console.log(playlist);
+
+
         var playlistReader = playlist.createReader();
+
+        console.log({playlistReader})
+
         playlistReader.readEntries(getPlaylists = (playlistFolders) => {
             playlistFolders.forEach((playlistFolder) => {
                 if (playlistFolder.isDirectory) {
@@ -20,7 +75,7 @@ function onDeviceReady() {
                     window.resolveLocalFileSystemURL(playlistFolder.nativeURL, function success(playlistContainer) {
                         var playlistContainerReader = playlistContainer.createReader();
                         playlistContainerReader.readEntries(getplaylistContainer = (allPlaylists) => {
-                            console.log(allPlaylists);
+                            console.log({allPlaylists});
                             var offlineCoursesProgress = JSON.parse(localStorage.getItem('offlineCoursesProgress'));
                             var activities = [];
                             allPlaylists.forEach((allPlaylist) => {
@@ -59,7 +114,7 @@ function onDeviceReady() {
                                                 }
                                                 offlinePlaylistHTML += `                                                
                                                 <div class="grid-card-box"> 
-                                                    <img src="">
+                                                    <img src="https://reactnativecode.com/wp-content/uploads/2018/02/Default_Image_Thumbnail.png">
                                                     <div class="description">
                                                         <a href="offline-activities.html?activitiesPath=${newPlaylistFolderPath}/activities">
                                                             <h5>${playlistJSON.title}</h5>
