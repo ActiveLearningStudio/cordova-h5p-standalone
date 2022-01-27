@@ -71,7 +71,7 @@ function onDeviceReady() {
                 data: obj,
                 
                 success: (projects) => {
-                    console.log("projecttt", projects);
+                    console.log({courseWraper});
                     var courseWraper = '<div class="row">',
                     counter = 0;
                     console.log("courseContainer", courseContainer);
