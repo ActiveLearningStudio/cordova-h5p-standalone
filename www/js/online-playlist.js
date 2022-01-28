@@ -61,7 +61,7 @@ function onDeviceReady() {
                 }
                 playlistHTML += `
                             <div class="grid-card-box">
-                                <img src="">
+                                <img src="https://reactnativecode.com/wp-content/uploads/2018/02/Default_Image_Thumbnail.png">
                                 <div class="description">
                                     <a href="online-activities.html?playlistId=${element.id}">
                                         <h5>${element.title}</h5>

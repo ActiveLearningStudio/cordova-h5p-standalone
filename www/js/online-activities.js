@@ -12,7 +12,7 @@ function onDeviceReady() {
             Authorization: "Bearer " + currikiToken,
         },
         success: (response) => {
-            console.log(response);
+            console.log("responseee-----",response);
             var activitiesContainer = $("#activitiesContainer"),
             activitiesHTML = "",
             activityId = "",
@@ -44,7 +44,7 @@ function onDeviceReady() {
                 }
                 activitiesHTML += `
                 <div class="grid-card-box">
-                    <img src="">
+                    <img src="${activity.thumb_url}">
                     <div class="description">
                         <a href="online-activity.html?activityId=${activityId}">
                             <h5>${activity.title}</h5>
