@@ -33,99 +33,77 @@ function onDeviceReady() {
         window.location.href = 'index.html';
     }
 
-    async function getCourses(response){
+   
+
+
+    async function getCoursesList(response){
         console.log("Test Api res-->", response);
 
         let projectIds = [];
-        let promises = [];
 
-        await response.forEach(course => {
-            let request = $.ajax({
-                url: moodleBaseURL,
-                type: "get",
-                data: {
-                    "moodlewsrestformat": "json",
-                    "course_id": course.id,
-                    "wsfunction": "local_curriki_moodle_plugin_fetch_project",
-                    "wstoken": customApiToken
-                },
-                success: (project) => {
-                    console.log({projectid:project.projectid})
-                    projectIds.push(project.projectid);
+        let request = $.ajax({
+            url: moodleBaseURL,
+            type: "get",
+            data: {
+                "moodlewsrestformat": "json",
+                "user_id": userID,
+                "wsfunction": "local_curriki_moodle_plugin_get_user_projects",
+                "wstoken": customApiToken
+            },
+            success: (project_ids) => {
+
+                let projects_ids_arr = []
+                project_ids.forEach( el => projects_ids_arr.push(el.projectid) )
+                let obj = {
+                    "project_id": projects_ids_arr
                 }
-            });
-            promises.push( request);
-        })
-        $.when.apply(null, promises).done(function(){
-            console.log("projectIds", projectIds);
-            let obj = {
-                "project_id": projectIds
-            }
-            console.log("obj",obj);
-            $.ajax({
-                url: `${currikiBaseURL}suborganization/1/projects/by-ids`,
-                headers: {
-                    Authorization: "Bearer " + currikiToken,
-                },
-                type: "POST",
-                data: obj,
                 
-                success: (projects) => {
-                    console.log({courseWraper});
-                    var courseWraper = '<div class="row">',
-                    counter = 0;
-                    console.log("courseContainer", courseContainer);
-                    projects.forEach(course => {
-                        counter++;
-                        if (counter == 1) {
-                            courseWraper += `<div class="grid-card-block">
-                            <div class="grid-wrapper">`;
-                        }
-                    courseWraper += `
-                                <div class="grid-card-box">
-                                    <img src="${course.thumb_url.includes('https') ? course.thumb_url : imageUrl+course.thumb_url}">
-                                   
-                                    <div class="description">
-                                        <a href="playlist.html?courseId=${course.id}">
-                                            <h5>${course.name}</h5>
-                                        </a>   
-                                        <div class="progress mt-0 mb-2" style="width: 100% !important; height:8px !important">
-                                        <div class="progress-bar" role="progressbar" style="width:0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                                        </div>                          
-                                    <button type="button" id="downloadProject" data-course-id="${course.id}" class="btn btn-primary">Download</button>                         
-                                    </div>
-                                </div>`;
-                        if (counter == 2) {
-                            courseWraper += '</div></div>';
-                            counter = 0;
-                        }
-                    });
-                    // localStorage.setItem('courses', courses);
-                    courseWraper += '</div>';
-                    courseContainer.html(courseWraper);
-                }
-            });
-            
+                $.ajax({
+                    url: `${currikiBaseURL}suborganization/1/projects/by-ids`,
+                    headers: {
+                        Authorization: "Bearer " + currikiToken,
+                    },
+                    type: "POST",
+                    data: obj,
+                    
+                    success: (projects) => {
+                       
+                        var courseWraper = '<div class="row">',
+                        counter = 0;
+                        projects.forEach(course => {
+                            counter++;
+                            if (counter == 1) {
+                                courseWraper += `<div class="grid-card-block">
+                                <div class="grid-wrapper">`;
+                            }
+                        courseWraper += `
+                                    <div class="grid-card-box">
+                                        <img src="${course.thumb_url.includes('https') ? course.thumb_url : imageUrl+course.thumb_url}">
+                                       
+                                        <div class="description">
+                                            <a href="playlist.html?courseId=${course.id}">
+                                                <h5>${course.name}</h5>
+                                            </a>   
+                                            <div class="progress mt-0 mb-2" style="width: 100% !important; height:8px !important">
+                                            <div class="progress-bar" role="progressbar" style="width:0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>                          
+                                        <button type="button" id="downloadProject" data-course-id="${course.id}" class="btn btn-primary">Download</button>                         
+                                        </div>
+                                    </div>`;
+                            if (counter == 2) {
+                                courseWraper += '</div></div>';
+                                counter = 0;
+                            }
+                        });
+                        // localStorage.setItem('courses', courses);
+                        courseWraper += '</div>';
+                        courseContainer.html(courseWraper);
+                    }
+                });
+            }
         });
 
-        // console.log("INSIDE TEST API");
-        // let obj = {
-        //     "project_id": ["2093", "7443", "7479"]
-        // }
-        // $.ajax({
-        //     type: "POST",
-        //     url: `${currikiBaseURL}suborganization/1/projects/by-ids`,
-        //     headers: {
-        //         Authorization: "Bearer " + currikiToken,
-        //     },
-        //     dataType: 'json',
-        //     data: obj,
-        //     success: (resposne) =>{
-        //         console.log('resposne', resposne);
-        //     }
-        // }) 
     }
-
     function handleDashboard(token, limit, offset) {
         $.ajax({
             url: moodleBaseURL,
@@ -150,7 +128,7 @@ function onDeviceReady() {
                     } else {
                         coursesProgress = JSON.parse(localStorage.getItem('coursesProgress'));
                     }
-                    getCourses(response);
+                    getCoursesList(response);
 
                     // response.forEach(course => {
                     // courses.push(course.id);
