@@ -48,58 +48,13 @@
     <script src="cordova.js"></script>
 </head>
 
-<body id="">
-    <div class="header">
-        <nav role="navigation">
-            <div id="menuToggle">
-                <input type="checkbox" />
-                <span></span>
-                <span></span>
-                <span></span>
-                <ul id="menu">
-                    <a href="dashboard.html">
-                        <li>Home</li>
-                    </a>
-                    <a href="" onclick="localStorage.removeItem('USER_TOKEN');window.location.href = 'index.html';">
-                        <li>Logout</li>
-                    </a>
-                    <a href="#">
-                        <li>Info</li>
-                    </a>
-                    <a href="#">
-                        <li>Contact</li>
-                    </a>
-                </ul>
-            </div>
-        </nav>
-        <div class="header-menus">
-            <span>COURSE CATALOG</span>
-        </div>
-        <div class="search-bar-block">
-            <a href="javascript: history.back()"><i class="fa fa-arrow-left"></i></a>
-        </div>
-    </div>
+<body>
     <div id="mainBody" class="activity-page"></div>
-    <footer>
-        <div class="footer-wrapper">
-            <div class="profile">
-                <i class="fas fa-user"></i>
-                <span><a href="dashboard.html">Catalog</a></span>
-            </div>
-            <div class="profile">
-                <i class="fas fa-download"></i>
-                <span><a href="offline-project.html">My Course</a></span>
-            </div>
-            <div class="profile">
-                <i class="fas fa-trophy"></i>
-                <span>Achievement</span>
-            </div>
-        </div>
-    </footer>
-    <script src="js/config.js"></script>
+    <script src="js/bootstrap/bootstrap.min.js"></script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/api.js"></script>
     <script src="js/online.activity.js"></script>
     <script src="https://lite.curriki.org/api/storage/h5p/h5p-core/js/h5p-resizer.js" charset="UTF-8"></script>
-    <script src="js/bootstrap/bootstrap.min.js"></script>
 </body>
 
 </html>

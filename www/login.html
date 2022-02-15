@@ -18,10 +18,9 @@
     under the License.
 -->
 <html>
-
-<head>
-	<meta charset="utf-8">
-	<!--
+  <head>
+    <meta charset="utf-8" />
+    <!--
         Customize this policy to fit your own app's needs. For more guidance, see:
             https://github.com/apache/cordova-plugin-whitelist/blob/master/README.md#content-security-policy
         Some notes:
@@ -30,77 +29,109 @@
             * Disables use of inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
                 * Enable inline JS: add 'unsafe-inline' to default-src
         -->
-	<meta http-equiv="Content-Security-Policy" content="default-src 'unsafe-inline' 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval' https: cdvfile:; 
-            style-src 'self' https:; media-src *; img-src 'self' data: content: cdvfile:;">
-	<!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' cdvfile: file: https:"> -->
-	<!-- <meta http-equiv="Content-Security-Policy" content="* * 'self' default-src 'unsafe-inline' 'unsafe-eval' http://* https://* data: cdvfile://* file:///* content://*;"> -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'unsafe-inline' 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval' https: cdvfile:; 
+            style-src 'self' https:; media-src *; img-src 'self' data: content: cdvfile:;"
+    />
+    <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' cdvfile: file: https:"> -->
+    <!-- <meta http-equiv="Content-Security-Policy" content="* * 'self' default-src 'unsafe-inline' 'unsafe-eval' http://* https://* data: cdvfile://* file:///* content://*;"> -->
 
-	<meta name="format-detection" content="telephone=no">
-	<meta name="msapplication-tap-highlight" content="no">
-	<meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
-	<meta name="color-scheme" content="light dark">
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    <meta
+      name="viewport"
+      content="initial-scale=1, width=device-width, viewport-fit=cover"
+    />
+    <meta name="color-scheme" content="light dark" />
 
-	<link rel="stylesheet" href="css/bootstrap.min.css">
-	<link rel="stylesheet" href="css/index.css">
-    <link rel="stylesheet" href="css/app.css">
-	<title>Login Page</title>
-	<script>
-		var localStorage = window.localStorage,
-			token = localStorage.getItem("token");
-		if (token) {
-			window.location.href = 'dashboard.html';
-		}
-	</script>
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/index.css" />
+    <link rel="stylesheet" href="css/app.css" />
+    <title>Login Page</title>
+    <script>
+      var localStorage = window.localStorage,
+        token = localStorage.getItem("token");
+      if (token) {
+        window.location.href = "dashboard.html";
+      }
+    </script>
+  </head>
 
- 
-</head>
-
-<body>
-	<div class="main-login">
-		<div class="container-fluid">
-			<div class="row mt-3 mb-3">
-				<div class="col-12 head">
-					<img src="img/logo-main.svg">
-				</div>
-			</div>
-			<div class="row login--form">
-				<div class="col-12 m-auto">
-
-					<div class="form-outer">
-						<h1>Sign in to get started.</h1>
-						<form action="">
-							<div class="row">
-								<div class="col-12">
-									<div class="form-group">
-										<label for="userName">Username</label>
-										<input type="text" name="userName" id="userName" class="form-control">
-									</div>
-								</div>
-							 
-								<div class="col-12">
-									<div class="form-group">
-										<label for="password">Password</label>
-										<input type="password" name="password" id="password" class="form-control">
-									</div>
-								</div>
-
-								<div class="col-12">
-									<div class="form-group mb-0">
-										<button type="button" class="btn btn-primary" id="loginButton">Login Now</button>
-									</div>
-								</div>
-							</div>																				
-						</form>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-		<script src="js/config.js"></script>
-		<script src="cordova.js"></script>
-		<script src="js/jquery.min.js"></script>
-		<script src="js/bootstrap/bootstrap.min.js"></script>
-		<script src="js/login.js"></script>
-</body>
-
+  <body>
+    <div class="main-wrapper">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="form-outer">
+            <div class="header-banner">
+              <img src="img/main-banner-img.png" />
+            </div>
+            <div class="col-12 m-auto">
+              <form autocomplete="off">
+                <div class="row">
+                  <div class="col-12">
+                    <div class="main-title">
+                      <h4>Log in to get started</h4>
+                    </div>
+                    <div class="mb-66"></div>
+                    <div class="error-message">
+                      <h6>Login not successfull!</h6>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <div class="floating-label-group form-group username-field">
+                      <input
+                        type="text"
+                        id="username"
+                        class="form-control"
+                        autocomplete="false"
+                        name="hidden"
+                        autofocus
+                        required
+                      />
+                      <label class="floating-label">Username</label>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <div
+                      class="
+                        floating-label-group
+                        form-group
+                        mb-32
+                        password-field
+                      "
+                    >
+                      <input
+                        type="password"
+                        id="PWD"
+                        class="form-control"
+                        autocomplete="false"
+                        name="hidden"
+                        autofocus
+                        required
+                      />
+                      <label class="floating-label">Password</label>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <button class="btn primary-btn" type="submit">Login</button>
+                  </div>
+                  <div class="col-12">
+                    <div class="reset-text">
+                      <span>Reset password?</span>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="js/config.js"></script>
+    <script src="cordova.js"></script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap/bootstrap.min.js"></script>
+    <script src="js/login.js"></script>
+  </body>
 </html>

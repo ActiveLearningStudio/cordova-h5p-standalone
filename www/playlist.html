@@ -18,9 +18,8 @@
     under the License.
 -->
 <html>
-
-<head>
-    <meta charset="utf-8">
+  <head>
+    <meta charset="utf-8" />
     <!--
         Customize this policy to fit your own app's needs. For more guidance, see:
             https://github.com/apache/cordova-plugin-whitelist/blob/master/README.md#content-security-policy
@@ -30,135 +29,131 @@
             * Disables use of inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
                 * Enable inline JS: add 'unsafe-inline' to default-src
         -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'unsafe-inline' 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval' https: cdvfile:; 
-            style-src 'self' https:; media-src *; img-src 'self' data: content: cdvfile: https:;">
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'unsafe-inline' 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval' https: cdvfile:; 
+            style-src 'self' https:; media-src *; img-src 'self' data: content: cdvfile: https:;"
+    />
     <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' cdvfile: file: https:"> -->
     <!-- <meta http-equiv="Content-Security-Policy" content="* * 'self' default-src 'unsafe-inline' 'unsafe-eval' http://* https://* data: cdvfile://* file:///* content://*;"> -->
 
-    <meta name="format-detection" content="telephone=no">
-    <meta name="msapplication-tap-highlight" content="no">
-    <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
-    <meta name="color-scheme" content="light dark">
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    <meta
+      name="viewport"
+      content="initial-scale=1, width=device-width, viewport-fit=cover"
+    />
+    <meta name="color-scheme" content="light dark" />
 
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/all.css">
-    <link rel="stylesheet" href="css/index.css">
-    <link rel="stylesheet" href="css/app.css">
-    <title>Login Page</title>
-</head>
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/style.css">
+	<title>My courses</title>
+  </head>
 
-<body>
-    <div class="header">
-        <nav role="navigation">
-            <div id="menuToggle">
-                <input type="checkbox" />
-                <span></span>
-                <span></span>
-                <span></span>
-                <ul id="menu">
-                    <a href="dashboard.html">
-                        <li>Home</li>
-                    </a>
-                    <a href="" onclick="localStorage.removeItem('USER_TOKEN');window.location.href = 'index.html';">
-                        <li>Logout</li>
-                    </a>
-                    <a href="#">
-                        <li>Info</li>
-                    </a>
-                    <a href="#">
-                        <li>Contact</li>
-                    </a>
+  <body>
+    <div class="main-wrapper">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="page-header">
+            <div class="header-title">
+              <img src="img/left-white-icon.svg" />
+            </div>
+            <div class="header-menu">
+              <ul>
+                <li>
+                  <a href="#"><img src="img/username-icon-white.svg" /></a>
+                </li>
+                <li>
+                  <a href="#"><img src="img/burger-menu.svg" /></a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="main-wrap">
+            <div class="course-detail-wrap">
+              <div class="thumb-content">
+                <p id="course-title">
+                  Introduction to microeconomics for students in rural towns and
+                  villages
+                </p>
+                <img src="img/course-main-img.png" id="course-image" />
+              </div>
+              <div class="tab-content">
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                  <li class="nav-item">
+                    <a
+                      class="nav-link active"
+                      id="overview-tab"
+                      data-toggle="tab"
+                      href="#overview"
+                      role="tab"
+                      aria-controls="overview"
+                      aria-selected="true"
+                      >Overview</a
+                    >
+                  </li>
+                  <li class="nav-item">
+                    <a
+                      class="nav-link"
+                      id="course-content-tab"
+                      data-toggle="tab"
+                      href="#course-content"
+                      role="tab"
+                      aria-controls="course-content"
+                      aria-selected="false"
+                      >Course Content</a
+                    >
+                  </li>
                 </ul>
-            </div>
-        </nav>
-        <div class="header-menus">
-            <span>COURSE CATALOG</span>
-        </div>
-        <div class="search-bar-block">
-            <a href="javascript: history.back()"><i class="fa fa-arrow-left"></i></a>
-        </div>
-    </div>
-
-    <div class="profile-page">
-        <div class="container-fluid">
-            <div id="onlineImageShow" class="main-bnnr">
-                <img src="" id="onlineImage">
-            </div>
-
-            <div class="social-share">
-                <div class="share-count">
-                    <a href="#"><i class="fas fa-users"></i>60k</a>
-                </div>
-                <div class="like-count">
-                    <a href="#"><i class="fas fa-heart"></i>60k</a>
-                </div>
-            </div>
-            <div id="tabs" class="tabs">
-                <div class="tabset">
-                    <!-- Tab 1 -->
-                    <input type="radio" name="tabset" id="tab1" aria-controls="overview" checked>
-                    <label for="tab1" id="overviewTab" onclick="this.classList.remove('inactive'); document.getElementById('courseTab').classList.add('inactive')">Overview</label>
-                    <!-- Tab 2 -->
-                    <input type="radio" name="tabset" id="tab2" aria-controls="courseContent">
-                    <label for="tab2" id="courseTab" class="inactive" onclick="this.classList.remove('inactive'); document.getElementById('overviewTab').classList.add('inactive')">Course Content</label>
-                    <!-- Tab 3 -->
-                    <div class="tab-panels">
-                        <section id="overview" class="tab-panel">
-                            <div id="overviewContainer">
-                                
-                            </div>
-                        </section>
-                        <section id="courseContent" class="tab-panel">
-                            <div class="" id="playlistContainer"></div>
-                        </section>
+                <div class="tab-content" id="myTabContent">
+                  <div
+                    class="tab-pane fade show active"
+                    id="overview"
+                    role="tabpanel"
+                    aria-labelledby="overview-tab"
+                  >
+                    <div class="overview-description">
+                      <p id="course-description" >
+                        By taking this free microeconomics course, you will be
+                        exposed to the economics in your live and, ultimately,
+                        see the word differently.
+                      </p>
                     </div>
-
+                    <div class="overview-description">
+                      <p>Marginal Revolution University</p>
+                    </div>
+                  </div>
+                  <div
+                    class="tab-pane fade"
+                    id="course-content"
+                    role="tabpanel"
+                    aria-labelledby="course-content-tab"
+                  >
+                    <div id="main">
+                      <div class="accordion" id="faq">
+                      </div>
+                    </div>
+                  </div>
                 </div>
+              </div>
             </div>
+          </div>
+          <div class="col-12">
+            <div class="alert-message-box">
+              <div class="alert-wrap update">
+                <div class="alert-icon">
+                  <img src="img/update-icon.svg" /> Update
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
-
-    <div id="myModalDownload" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>   
-            </div>
-            <div class="modal-body">
-                <p>Your Project has been downloaded successfully! Please visit "My Course" to view this Project.</p>     
-            </div>
-            <div class="modal-footer">
-                <button type="button" id="btn_ok_1" class="btn btn-primary" onclick="$('#myModalDownload').modal('hide')">OK</button>
-            </div>
-        </div>
-    </div>
-    
-    <footer>
-        <div class="footer-wrapper">
-            <div class="profile">
-                <i class="fas fa-user"></i>
-                <span><a href="dashboard.html">Catalog</a></span>
-            </div>
-            <div class="profile">
-                <i class="fas fa-download"></i>
-                <span><a href="offline-project.html">My Course</a></span>
-            </div>
-            <div class="profile">
-                <i class="fas fa-trophy"></i>
-                <span>Achievement</span>
-            </div>
-        </div>
-    </footer>
     <script src="js/jquery.min.js"></script>
-    <script src="js/config.js"></script>
     <script src="cordova.js"></script>
     <script src="js/bootstrap/bootstrap.min.js"></script>
+    <script src="js/api.js"></script>
     <script src="js/online-playlist.js"></script>
-    <script>
-        $("#logout").on("click", () => {
-            localStorage.removeItem("token");
-            window.location.href = "index.html";
-        });
-    </script>
-</body>
-
+  </body>
 </html>

@@ -18,9 +18,8 @@
     under the License.
 -->
 <html>
-
-<head>
-    <meta charset="utf-8">
+  <head>
+    <meta charset="utf-8" />
     <!--
         Customize this policy to fit your own app's needs. For more guidance, see:
             https://github.com/apache/cordova-plugin-whitelist/blob/master/README.md#content-security-policy
@@ -30,105 +29,93 @@
             * Disables use of inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
                 * Enable inline JS: add 'unsafe-inline' to default-src
         -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'unsafe-inline' 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval' https: cdvfile: http:; 
-            style-src 'unsafe-inline' 'self' https: *; media-src *; img-src 'self' data: content: cdvfile: https: http:;">
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'unsafe-inline' 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval' https: cdvfile: http:; 
+            style-src 'unsafe-inline' 'self' https: *; media-src *; img-src 'self' data: content: cdvfile: https: http:;"
+    />
     <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' cdvfile: file: https:"> -->
     <!-- <meta http-equiv="Content-Security-Policy" content="* * 'self' default-src 'unsafe-inline' 'unsafe-eval' http://* https://* data: cdvfile://* file:///* content://*;"> -->
 
-    <meta name="format-detection" content="telephone=no">
-    <meta name="msapplication-tap-highlight" content="no">
-    <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
-    <meta name="color-scheme" content="light dark">
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    <meta
+      name="viewport"
+      content="initial-scale=1, width=device-width, viewport-fit=cover"
+    />
+    <meta name="color-scheme" content="light dark" />
 
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/index.css">
-    <link rel="stylesheet" href="css/all.css">
-    <link rel="stylesheet" href="css/app.css">
-    <title>Login Page</title>
-</head>
+    <link rel="stylesheet" href="css/bootstrap.min.css">	
+    <link rel="stylesheet" href="css/style.css">
+    <title>Course Page</title>
+  </head>
 
-<body>
-    <div class="header">
-        <nav role="navigation">
-            <div id="menuToggle">
-                <input type="checkbox" />
-                <span></span>
-                <span></span>
-                <span></span>
-                <ul id="menu">
-                    <a href="dashboard.html">
-                        <li>Home</li>
-                    </a>
-                    <a href="" onclick="localStorage.removeItem('USER_TOKEN');window.location.href = 'index.html';">
-                        <li>Logout</li>
-                    </a>
-                    <a href="#">
-                        <li>Info</li>
-                    </a>
-                    <a href="#">
-                        <li>Contact</li>
-                    </a>
-                </ul>
+  <body>
+    <div class="main-wrapper">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="page-header">
+            <div class="header-title">
+              <h4>My Courses</h4>
             </div>
-        </nav>
-        <div class="header-menus">
-            <span>COURSE CATALOG</span>
+            <div class="header-menu">
+              <ul>
+                <li>
+                  <a href="#"><img src="img/username-icon-white.svg" /></a>
+                </li>
+                <li>
+                  <a href="#"><img src="img/burger-menu.svg" /></a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="main-wrap">
+            <div class="explore-course">
+              <h5>
+                Explore the courses your<br />
+                are suscribed to
+              </h5>
+              <button class="btn primary-btn">
+                <img src="img/time-icon.svg" /> Explore courses
+              </button>
+            </div>
+            <div class="download-course">
+              <h5>My Downloaded Courses</h5>
+              <p>
+                You have not downloads, start by selecting one of the available
+                courses below.
+              </p>
+            </div>
+            <div class="sperator"></div>
+            <div class="available-course">
+              <div class="course-title">
+                <h5>My Available Courses</h5>
+                <a class="see-all-txt" href="#">See all</a>
+              </div>
+              <div class="see-course">
+                <span>See available courses</span>
+                <img src="img/see-course.svg" />
+              </div>
+            </div>
+            <div class="course-list">
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="alert-message-box">
+              <div class="alert-wrap update">
+                <div class="alert-icon">
+                  <img src="img/update-icon.svg" /> Update
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="search-bar">
-            <i class="fas fa-user"></i>
-        </div>
+      </div>
     </div>
-    <div class="main-login profile-page">
-        <div class="container-fluid">
-            <div class="course--cont-cls" id="courseContainer">
-             
-                 <center style="margin-top: 2rem;">
-                    <span class="loader-1"> </span>
-                 </center>
-
-            </div>
-
-        </div>
-    </div>
-    <div id="myModalDownload" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>   
-            </div>
-            <div class="modal-body">
-                <p>Your Project has been downloaded successfully! Please visit "My Course" to view this Project.</p>     
-            </div>
-            <div class="modal-footer">
-                <button type="button" id="btn_ok_1" class="btn btn-primary" onclick="$('#myModalDownload').modal('hide')">OK</button>
-            </div>
-        </div>
-    </div>
-    
-    <footer>
-        <div class="footer-wrapper">
-            <div class="profile">
-                <i class="fas fa-user"></i>
-                <span><a href="dashboard.html">Catalog</a></span>
-            </div>
-            <div class="profile">
-                <i class="fas fa-download"></i>
-                <span><a href="offline-project.html">My Course</a></span>
-            </div>
-            <div class="profile">
-                <i class="fas fa-trophy"></i>
-                <a href="activity.html"><span>Achievement</span></a>
-            </div>
-        </div>
-    </footer>
-
-    
-
-    <script src="js/config.js"></script>
     <script src="cordova.js"></script>
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap/bootstrap.min.js"></script>
+    <script src="js/api.js"></script>
     <script src="js/dashboard.js"></script>
-   
-</body>
-
+  </body>
 </html>
