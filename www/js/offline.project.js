@@ -1,6 +1,6 @@
 document.addEventListener('deviceready', onDeviceReady, false);
 function onDeviceReady() {
-    var fileSystem = '';
+   var fileSystem = '';
     switch (device.platform) {
         case "iOS":
             fileSystem = cordova.file.dataDirectory;
@@ -58,27 +58,26 @@ function onDeviceReady() {
                                                     offlineCoursesProgress.push({'id': projectJSON.id, progress : 0, activities : [], completed_activities : []});
                                                     localStorage.setItem("offlineCoursesProgress", JSON.stringify(offlineCoursesProgress));
                                                 }
-                                                counter++;
-                                                if (counter == 1) {
-                                                    offlineProjectHTML += `<div class="grid-card-block">
-                                                    <div class="grid-wrapper">`;
-                                                }
                                                 offlineProjectHTML += `
-                                                <div class="grid-card-box">
-                                                    <img src="${projectJSON.thumb_url}">
-                                                    <div class="description">
-                                                        <a href="offline-playlist.html?playlistPath=${path}&courseId=${projectJSON.id}">
-                                                            <h5>${projectJSON.name}</h5>
-                                                        </a>
-                                                        <div class="progress mt-0 mb-2" style="width: 100% !important; height:8px !important">
-                                                            <div class="progress-bar" role="progressbar" style="width: ${progress}%" aria-valuenow="${progress}" aria-valuemin="0" aria-valuemax="100"></div>
-                                                        </div>  
+                                                <div class="course-card">
+                                                    <div class="card-head-wrap">
+                                                        <img src="${projectJSON.thumb_url}">
+                                                        <p style="background:transparent !important">
+                                                            <a href="offline-playlist.html?projectId=${projectJSON.id}">${projectJSON.name}</a>
+                                                        </p>
+                                                    </div>
+                                                    <div class="card-footer-wrap">
+                                                        <div class="text-list">
+                                                            <ul>
+                                                                <li><a href="#">4 Playlists</a></li>
+                                                                <li><a href="#">30 Activities</a></li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="card-btn">
+                                                            <button class="btn red-btn"><img src="img/delete-btn.svg"> Remove</button>
+                                                        </div>
                                                     </div>
                                                 </div>`;
-                                                if (counter == 2) {
-                                                    offlineProjectHTML += '</div></div>';
-                                                    counter = 0;
-                                                }
                                                 $("#offlineProjectContainer").html(offlineProjectHTML);
                                             };
                                             reader.readAsText(file);
