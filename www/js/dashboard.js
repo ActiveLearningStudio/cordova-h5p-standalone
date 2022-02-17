@@ -155,6 +155,7 @@ function onDeviceReady() {
       projectJson.isFile && offlineProjectSection(projectJson.nativeURL, path)
     }
   }
+
   const offlineProjectSection = (projectJsonPath, path) => {
     let offlineProjectHTML = '';
     window.resolveLocalFileSystemURL(projectJsonPath, (fileEntry) => {
@@ -179,7 +180,7 @@ function onDeviceReady() {
                         </ul>
                     </div>
                     <div class="card-btn">
-                        <button class="btn red-btn"><img src="img/delete-btn.svg"> Remove</button>
+                        <button class="btn red-btn remove-project" id="${path}"><img src="img/delete-btn.svg"> Remove</button>
                     </div>
                 </div>
             </div>`;
@@ -188,4 +189,14 @@ function onDeviceReady() {
       })
     })
   }
+
+  $(document).on('click', ".remove-project", (evt) => {
+    console.log("id", evt.target.id);
+    let projectPath = evt.target.id.replace("playlists", "");
+    window.resolveLocalFileSystemURL(projectPath, (entry) => {
+      entry.removeRecursively(() => {
+        alert("remoed");
+      })
+    }, (err) => {console.log(err)});
+  })
 }
