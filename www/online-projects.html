@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="Content-Security-Policy" content="default-src 'unsafe-inline' 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval' https: cdvfile:; 
-            style-src 'self' https: 'unsafe-inline'; media-src *; img-src 'self' data: content: cdvfile:;">
+            style-src 'self' https:; media-src *; img-src 'self' data: content: cdvfile: http: https:;">
 	<meta name="format-detection" content="telephone=no">
 	<meta name="msapplication-tap-highlight" content="no">
 	<meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
@@ -19,8 +19,8 @@
 			<div class="row">
 				<div class="page-header">
 					<div class="header-title" onclick="history.back()">
-						<img src="img/left-white-icon.svg" />
-					</div>
+                        <img src="img/left-white-icon.svg" />
+                    </div>
 					<div class="header-menu">
 						<ul>
 							<li><a href="#"><img src="img/username-icon-white.svg"></a></li>
@@ -30,8 +30,8 @@
 				</div>
 				<div class="main-wrap">				
 					<div class="">
-						<h5>My Downloaded Courses</h5>
-                        <div class="download-projects-list" id="offlineProjectContainer">
+						<h5>My Available Courses</h5>
+                        <div class="download-projects-list" id="online-project-container">
 						</div>
 					</div>
 					<div class="sperator"></div>
@@ -51,6 +51,8 @@
 	<script src="js/jquery.min.js"></script>
 	<script src="js/bootstrap/bootstrap.min.js"></script>	
 	<script src="cordova.js"></script>
-    <script src="js/offline.project.js"></script>	
+    <script src="js/api.js"></script>
+    <script src="js/online.project.js"></script>
+    <script src="js/classes.js"></script>	
 </body>
 </html>

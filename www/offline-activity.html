@@ -41,61 +41,13 @@
     <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
     <meta name="color-scheme" content="light dark">
     <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/app.css">
-    <link rel="stylesheet" href="css/index.css">
-    <link rel="stylesheet" href="css/all.css">
-    <title>Hello World</title>
+    <link rel="stylesheet" href="css/style.css">
+    <title>Activity</title>
 </head>
 
 <body>
-    <div class="header">
-        <nav role="navigation">
-            <div id="menuToggle">
-                <input type="checkbox" />
-                <span></span>
-                <span></span>
-                <span></span>
-                <ul id="menu">
-                    <a href="dashboard.html">
-                        <li>Home</li>
-                    </a>
-                    <a href="" onclick="localStorage.removeItem('USER_TOKEN');window.location.href = 'index.html';">
-                        <li>Logout</li>
-                    </a>
-                    <a href="#">
-                        <li>Info</li>
-                    </a>
-                    <a href="#">
-                        <li>Contact</li>
-                    </a>
-                </ul>
-            </div>
-        </nav>
-        <div class="header-menus">
-            <span>COURSE CATALOG</span>
-        </div>
-        <div class="search-bar-block">
-            <a href="javascript: history.back()"><i class="fa fa-arrow-left"></i></a>
-        </div>
-    </div>
     <div id="offlineactiveButton" style="margin-top: 50px;"></div>
     <div id="h5p-container" class="activity-page mt-0"></div>
-    <footer>
-        <div class="footer-wrapper">
-            <div class="profile">
-                <i class="fas fa-user"></i>
-                <span><a href="dashboard.html">Catalog</a></span>
-            </div>
-            <div class="profile">
-                <i class="fas fa-download"></i>
-                <span><a href="offline-project.html">My Course</a></span>
-            </div>
-            <div class="profile">
-                <i class="fas fa-trophy"></i>
-                <span>Achievement</span>
-            </div>
-        </div>
-    </footer>
     <script src="cordova.js"></script>
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap/bootstrap.min.js"></script>

@@ -74,13 +74,9 @@ const getAssignedProjectIds = (idsArray) => {
   });
 };
 
-const getProjects = (projects) => {
+const getProjects = (mode, projects) => {
   getAssignedProjectIds((data) => {
-    console.log(
-      "🚀 ~ file: api.js ~ line 75 ~ getAssignedProjectIds ~ data",
-      data
-    );
-    var tempData = { project_id: ["3024", "3025"] };
+    if (mode == 'dashboard') shuffle(data.project_id), data.project_id.length = 3;
     $.ajax({
       url: `${currikiBaseURL}suborganization/1/projects/by-ids`, //'http://127.0.0.1:8000/api/v1/suborganization/1/projects/by-ids',
       headers: {
@@ -164,4 +160,8 @@ const deleteProject = (projectName, project) => {
       project(res);
     },
   });
+}
+
+function shuffle(array) {
+  array.sort(() => Math.random() - 0.5);
 }

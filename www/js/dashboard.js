@@ -13,48 +13,13 @@ function onDeviceReady() {
   const localStorage = window.localStorage,
     imageBaseUrl = localStorage.getItem("CURRIKI_BASE_IMAGE_URL");
 
-  class CourseHtml {
-    constructor(allCourses) {
-      this.courseWrapper = "";
-      allCourses.forEach((course) => {
-        this.courseWrapper += `<div class="course-card">
-            <div class="card-head-wrap">
-              <img src="${imageBaseUrl}/${course.thumb_url}" />
-              <p><a href="playlist.html?projectId=${course.id}">${course.name}</a></p>
-            </div>
-            <div class="card-footer-wrap">
-              <div class="text-list">
-                <ul>
-                  <li><a href="#">4 Playlists</a></li>
-                  <li><a href="#">30 Activities</a></li>
-                </ul>
-              </div>
-              <div class="card-btn">
-                <button class="btn green-btn download-project" id="${course.id}">
-                  <img src="img/download-vector.svg" /> Download
-                </button>
-              </div>
-            </div>
-          </div>`;
-      });
-    }
-  }
-
-  getProjects((projects) => {
+  getProjects('dashboard', (projects) => {
     const coursesHtml = new CourseHtml(projects);
-    $(".course-list").html(coursesHtml.courseWrapper);
+    $(".online-course-list").html(coursesHtml.courseWrapper);
   });
 
   $(document).on("click", ".download-project", (evt) => {
     let projectId = evt.target.id;
-    // processZip("file:///storage/emulated/0/Android/data/com.curriki.reader/files/projects/projects-620b7d5e451af.zip", "file:///storage/emulated/0/Android/data/com.curriki.reader/files/projects/projects-620b7d5e451af", "projects-620b7d5e451af");
-    // window.resolveLocalFileSystemURL("file:///storage/emulated/0/Android/data/com.curriki.reader/files/projects/", (entry) => {
-    //   let subDirectoryReader = entry.createReader();
-    //   subDirectoryReader.readEntries((subEntries) => {
-    //   console.log("🚀 ~ file: dashboard.js ~ line 55 ~ subDirectoryReader.readEntries ~ subEntries", subEntries)
-    //   })
-    // })
-    // return false;
     downloadProject(projectId, (project) => {
       console.log(project);
       downloadProjectZip(project);
@@ -153,5 +118,74 @@ function onDeviceReady() {
       },
       progressHandler
     );
+  }
+
+  // const checkOfflineCourses = () => {
+    window.resolveLocalFileSystemURL(
+      fileSystem + "projects/", (directoryEntry) => {
+        let directoryReader = directoryEntry.createReader();
+        directoryReader.readEntries(entryHandler, errorHandler);
+        function entryHandler(entries) {
+          if (entries.length > 0) {
+            for (let i = 0; i < 2; i++) {
+              window.resolveLocalFileSystemURL(entries[i].nativeURL, (project) => {
+                let projectReader = project.createReader();
+                projectReader.readEntries((projectsHandler) => {
+                  getProjectsJson(projectsHandler);
+                  
+                  if (projectsHandler.isFile) {
+                    console.log("🚀 ~ file: dashboard.js ~ line 161 ~ projectReader.readEntries ~ projectsHandler", projectsHandler)
+                    let path = projectsHandler.nativeURL.replace(projectsHandler.name, "playlists");
+                    offlineProjectSection(projectsHandler, path)
+                  }
+                }, (projectsErrorHandler) => {console.log(projectsErrorHandler)});
+              })
+            }
+          }
+        }
+        function errorHandler(error) {
+          console.log(error);
+        }
+      })
+  // }
+
+  const getProjectsJson = (projectsFolder) => {
+    for (const projectJson of projectsFolder) {
+      let path = projectJson.nativeURL.replace(projectJson.name, "playlists");
+      projectJson.isFile && offlineProjectSection(projectJson.nativeURL, path)
+    }
+  }
+  const offlineProjectSection = (projectJsonPath, path) => {
+    let offlineProjectHTML = '';
+    window.resolveLocalFileSystemURL(projectJsonPath, (fileEntry) => {
+      fileEntry.file((file) => {
+        var reader = new FileReader();
+        reader.readAsText(file);
+        reader.onloadend = function (evt) {
+          let projectJSON = JSON.parse(evt.target.result);
+          offlineProjectHTML += `
+            <div class="course-card">
+                <div class="card-head-wrap">
+                    <img src="${projectJSON.thumb_url}">
+                    <p style="background:transparent !important">
+                        <a href="offline-playlist.html?playlistPath=${path}">${projectJSON.name}</a>
+                    </p>
+                </div>
+                <div class="card-footer-wrap">
+                    <div class="text-list">
+                        <ul>
+                            <li><a href="#">4 Playlists</a></li>
+                            <li><a href="#">30 Activities</a></li>
+                        </ul>
+                    </div>
+                    <div class="card-btn">
+                        <button class="btn red-btn"><img src="img/delete-btn.svg"> Remove</button>
+                    </div>
+                </div>
+            </div>`;
+          $(".offline-course-list").append(offlineProjectHTML);
+        }
+      })
+    })
   }
 }

@@ -40,105 +40,110 @@
     <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
     <meta name="color-scheme" content="light dark">
     <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/all.css">
-    <link rel="stylesheet" href="css/index.css">
-    <link rel="stylesheet" href="css/app.css">
+    <link rel="stylesheet" href="css/style.css">
     <title>Hello World</title>
 </head>
 
 <body>
-    <div class="header">
-        <nav role="navigation">
-            <div id="menuToggle">
-                <input type="checkbox" />
-                <span></span>
-                <span></span>
-                <span></span>
-                <ul id="menu">
-                    <a href="dashboard.html">
-                        <li>Home</li>
-                    </a>
-                    <a href="" onclick="localStorage.removeItem('USER_TOKEN');window.location.href = 'index.html';">
-                        <li>Logout</li>
-                    </a>
-                    <a href="#">
-                        <li>Info</li>
-                    </a>
-                    <a href="#">
-                        <li>Contact</li>
-                    </a>
-                </ul>
-            </div>
-        </nav>
-        <div class="header-menus">
-            <span>COURSE CATALOG</span>
-        </div>
-        <div class="search-bar-block">
-            <a href="javascript: history.back()"><i class="fa fa-arrow-left"></i></a>
-        </div>
-    </div>
-    <div class="profile-page">
+    <div class="main-wrapper">
         <div class="container-fluid">
-            <div id="onlineImageShow"></div>
-            <div>
-                <div class="grid-card-box main-bnnr">
-                    <img src="https://reactnativecode.com/wp-content/uploads/2018/02/Default_Image_Thumbnail.png" id="thumb_url">
-                </div>
+          <div class="row">
+            <div class="page-header">
+              <div class="header-title" onclick="history.back()">
+                <img src="img/left-white-icon.svg" />
+              </div>
+              <div class="header-menu">
+                <ul>
+                  <li>
+                    <a href="#"><img src="img/username-icon-white.svg" /></a>
+                  </li>
+                  <li>
+                    <a href="#"><img src="img/burger-menu.svg" /></a>
+                  </li>
+                </ul>
+              </div>
             </div>
-            <div class="social-share">
-                <div class="share-count">
-                    <a href="#"><i class="fas fa-users"></i>60k</a>
+            <div class="main-wrap">
+              <div class="course-detail-wrap">
+                <div class="thumb-content">
+                  <p id="course-title">
+                    Introduction to microeconomics for students in rural towns and
+                    villages
+                  </p>
+                  <img src="img/course-main-img.png" id="course-image" />
                 </div>
-                <div class="like-count">
-                    <a href="#"><i class="fas fa-heart"></i>60k</a>
-                </div>
-            </div>
-            <div id="tabs" class="tabs">
-                <div class="tabset">
-                    <!-- Tab 1 -->
-                    <input type="radio" name="tabset" id="tab1" aria-controls="overview" checked>
-                    <label for="tab1" id="overviewTab" onclick="this.classList.remove('inactive'); document.getElementById('courseTab').classList.add('inactive')">Overview</label>
-                    <!-- Tab 2 -->
-                    <input type="radio" name="tabset" id="tab2" aria-controls="courseContent">
-                    <label for="tab2" id="courseTab" class="inactive" onclick="this.classList.remove('inactive'); document.getElementById('overviewTab').classList.add('inactive')">Course Content</label>
-                    <div class="tab-panels">
-                        <section id="overview_tab" class="tab-panel">
-                            <!-- <h3>Introduction to<br> Microeconomics</h3>
-                            <p>By taking this free microeconomics course. you'll be exposed to the economic way of thinking You'll understand how to use economics in your life and, ultimately, see the world differently</p>
-                            <a href="#">Read more</a>
-                            <div class="tab-profile-block">
-                                <img src="img/logo.png">
-                                <span>Marginal Revolution University</span>
-                            </div>
-                            <div class="send-btn">
-                                <button><i class="far fa-envelope"></i> Send a Message</button>
-                            </div> -->
-                        </section>
-                        <section id="contentCourse_tab" class="tab-panel">
-                            <div class="" id="offlinePlaylistContainer">
-                            </div>
-                        </section>
+                <div class="tab-content">
+                  <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item">
+                      <a
+                        class="nav-link active"
+                        id="overview-tab"
+                        data-toggle="tab"
+                        href="#overview"
+                        role="tab"
+                        aria-controls="overview"
+                        aria-selected="true"
+                        >Overview</a
+                      >
+                    </li>
+                    <li class="nav-item">
+                      <a
+                        class="nav-link"
+                        id="course-content-tab"
+                        data-toggle="tab"
+                        href="#course-content"
+                        role="tab"
+                        aria-controls="course-content"
+                        aria-selected="false"
+                        >Course Content</a
+                      >
+                    </li>
+                  </ul>
+                  <div class="tab-content" id="myTabContent">
+                    <div
+                      class="tab-pane fade show active"
+                      id="overview"
+                      role="tabpanel"
+                      aria-labelledby="overview-tab"
+                    >
+                      <div class="overview-description">
+                        <p id="course-description" >
+                          By taking this free microeconomics course, you will be
+                          exposed to the economics in your live and, ultimately,
+                          see the word differently.
+                        </p>
+                      </div>
+                      <div class="overview-description">
+                        <p>Marginal Revolution University</p>
+                      </div>
                     </div>
+                    <div
+                      class="tab-pane fade"
+                      id="course-content"
+                      role="tabpanel"
+                      aria-labelledby="course-content-tab"
+                    >
+                      <div id="main">
+                        <div class="accordion" id="faq">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
+              </div>
             </div>
+            <div class="col-12">
+              <div class="alert-message-box">
+                <div class="alert-wrap update">
+                  <<div class="alert-icon" onclick="window.location.reload()">
+                    <img src="img/update-icon.svg" /> Update
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-    </div>
-    <footer>
-        <div class="footer-wrapper">
-            <div class="profile">
-                <i class="fas fa-user"></i>
-                <span><a href="dashboard.html">Catalog</a></span>
-            </div>
-            <div class="profile">
-                <i class="fas fa-download"></i>
-                <span><a href="offline-project.html">My Course</a></span>
-            </div>
-            <div class="profile">
-                <i class="fas fa-trophy"></i>
-                <span>Achievement</span>
-            </div>
-        </div>
-    </footer>
+      </div>
     <script src="js/config.js"></script>
     <script src="cordova.js"></script>
     <script src="js/jquery.min.js"></script>

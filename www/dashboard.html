@@ -73,32 +73,35 @@
                 Explore the courses your<br />
                 are suscribed to
               </h5>
-              <button class="btn primary-btn">
+              <a href="online-projects.html" class="btn primary-btn">
                 <img src="img/time-icon.svg" /> Explore courses
-              </button>
+              </a>
             </div>
             <div class="download-course">
-              <h5>My Downloaded Courses</h5>
-              <a href="offline-project.html">Download Projects</a>
+              <div class="course-title pb-3">
+                <h5>My Downloaded Courses</h5>
+                <a class="see-all-txt" href="offline-project.html">See all</a>
+              </div>
+              <div class="course-list offline-course-list"></div>
             </div>
             <div class="sperator"></div>
             <div class="available-course">
               <div class="course-title">
                 <h5>My Available Courses</h5>
-                <a class="see-all-txt" href="#">See all</a>
+                <a class="see-all-txt" href="online-projects.html">See all</a>
               </div>
-              <div class="see-course">
+              <!-- <div class="see-course">
                 <span>See available courses</span>
                 <img src="img/see-course.svg" />
-              </div>
+              </div> -->
             </div>
-            <div class="course-list">
+            <div class="course-list online-course-list">
             </div>
           </div>
           <div class="col-12">
             <div class="alert-message-box">
               <div class="alert-wrap update">
-                <div class="alert-icon">
+                <div class="alert-icon" onclick="window.location.reload()">
                   <img src="img/update-icon.svg" /> Update
                 </div>
               </div>
@@ -112,5 +115,6 @@
     <script src="js/bootstrap/bootstrap.min.js"></script>
     <script src="js/api.js"></script>
     <script src="js/dashboard.js"></script>
+    <script src="js/classes.js"></script>
   </body>
 </html>
