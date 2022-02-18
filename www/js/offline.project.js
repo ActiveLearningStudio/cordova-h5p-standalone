@@ -23,7 +23,6 @@ function onDeviceReady() {
         }
         var offlineProjectHTML = "";
         entries.forEach(function (entry) {
-          console.log("Entriess>>>>", entry);
           if (entry.isDirectory) {
             var projectDirectoryReader = entry.createReader();
             projectDirectoryReader.readEntries(
@@ -59,7 +58,6 @@ function onDeviceReady() {
                               var progress = isRecordExist
                                 ? isRecordExist.progress
                                 : 0;
-                              console.log("JSON >>>>>>>", projectJSON);
                               if (
                                 offlineCoursesProgress[
                                   offlineCoursesProgress.findIndex(
@@ -94,7 +92,7 @@ function onDeviceReady() {
                                             </ul>
                                         </div>
                                         <div class="card-btn">
-                                            <button class="btn red-btn"><img src="img/delete-btn.svg"> Remove</button>
+                                            <button class="btn transparent-red-btn"><img src="img/delete-btn.svg"> Remove</button>
                                         </div>
                                     </div>
                                 </div>`;

@@ -33,11 +33,15 @@ function onDeviceReady() {
       password = $("#PWD").val();
     if (userName || password) {
       userLogin(userName, password, (data) => {
-        console.log(data);
+        console.log("data-->", data);
         if (data.token) window.location.href = "dashboard.html";
-        if (data.error) $(".error-message").addClass("d-inline");
+        if (data.error) {
+          console.log("error while login");
+          $(".error-message").addClass("d-inline");
+        }
       });
     } else {
+      console.log("error while login 2");
       $(".error-message").addClass("d-inline");
     }
   });
