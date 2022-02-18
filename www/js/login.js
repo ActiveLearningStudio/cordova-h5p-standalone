@@ -6,21 +6,14 @@ function onDeviceReady() {
   console.log("token: " + token);
   if(token != null) window.location.href = 'dashboard.html';
 
-  document.addEventListener(
-    "offline",
-    () => {
-      $("#network-warning").removeClass("d-none");
-    },
-    false
-  );
-  document.addEventListener(
-    "online",
-    function () {
+  document.addEventListener("offline",() => {
+    $("#network-warning").removeClass("d-none");
+  },false);
+
+  document.addEventListener("online",() => {
       // device went online
-      $("#network-warning").addClass("d-none");
-    },
-    false
-  );
+    $("#network-warning").addClass("d-none");
+  },false);
 
   $("#username").on("blur", () => {
     if ($(".error-message").hasClass("d-inline"))

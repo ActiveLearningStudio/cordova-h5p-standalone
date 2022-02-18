@@ -43,8 +43,9 @@ function onDeviceReady() {
     }
   }
   const overviewHtml = (project) => {
+    let imgURL = project.thumb_url.includes("http") && project.thumb_url || imageBaseUrl + project.thumb_url;
     $("#course-title").html(project.name);
-    $("#course-image").attr("src", imageBaseUrl + project.thumb_url);
+    $("#course-image").attr("src", imgURL);
     $("#course-description").html(project.description);
   };
 

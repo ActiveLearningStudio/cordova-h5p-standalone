@@ -7,7 +7,7 @@ function onDeviceReady() {
   getActivity(activityId, (activity) => {
     console.log("activity ----> ", activity);
     let embededCode = activity.activity.h5p.embed_code;
-    $("#mainBody").html(embededCode);
+    $("#mainBody").append(embededCode);
     const scripts = `<script src="js/h5p/h5p-core/js/jquery.js"></script>
                 <script src="js/h5p/h5p-core/js/h5p.js"></script>
                 <script src="js/h5p/h5p-event-dispatcher.js"></script>

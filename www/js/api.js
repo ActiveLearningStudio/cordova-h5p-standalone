@@ -85,19 +85,10 @@ const getProjects = (mode, projects) => {
       type: "POST",
       data: data,
       success: (response) => {
-        console.log(
-          "🚀 ~ file: api.js ~ line 84 ~ getAssignedProjectIds ~ response",
-          response
-        );
         projects(response);
       },
       error: (xhr, status, err) => {
-        console.log(
-          "🚀 ~ file: api.js ~ line 88 ~ getAssignedProjectIds ~ status",
-          status,
-          xhr,
-          err
-        );
+        console.log("getAssignedProjectIds ~ status",status,xhr,err);
       },
     });
   });

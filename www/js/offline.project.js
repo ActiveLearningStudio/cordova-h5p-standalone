@@ -25,97 +25,13 @@ function onDeviceReady() {
         entries.forEach(function (entry) {
           if (entry.isDirectory) {
             var projectDirectoryReader = entry.createReader();
-            projectDirectoryReader.readEntries(
-              projectEntryHandler,
-              projectErrorHandler
-            );
-
-            function projectEntryHandler(projectEntries) {
-              playlistPath = "";
-              projectEntries.forEach(function (entry) {
-                console.log(entry);
-                if (entry.isDirectory) {
-                  if (entry.name == "playlists") {
-                    playlistPath = entry;
+            projectDirectoryReader.readEntries((projectEntryHandler) => {
+              getProjectsJson(projectEntryHandler);
+                  if (projectEntryHandler.isFile) {
+                    let path = projectEntryHandler.nativeURL.replace(projectEntryHandler.name, "playlists");
+                    offlineProjectSection(projectEntryHandler, path)
                   }
-                } else {
-                  if (entry.name == "project.json") {
-                    var path = entry.nativeURL.replace(entry.name, "playlists");
-                    window.resolveLocalFileSystemURL(
-                      entry.nativeURL,
-                      function success(fileEntry) {
-                        fileEntry.file(
-                          function (file) {
-                            var reader = new FileReader();
-                            reader.onloadend = function (evt) {
-                              var projectJSON = JSON.parse(evt.target.result);
-                              var isRecordExist =
-                                offlineCoursesProgress[
-                                  offlineCoursesProgress.findIndex(
-                                    (obj) => obj.id == projectJSON.id
-                                  )
-                                ];
-                              var progress = isRecordExist
-                                ? isRecordExist.progress
-                                : 0;
-                              if (
-                                offlineCoursesProgress[
-                                  offlineCoursesProgress.findIndex(
-                                    (obj) => obj.id == projectJSON.id
-                                  )
-                                ] == undefined
-                              ) {
-                                offlineCoursesProgress.push({
-                                  id: projectJSON.id,
-                                  progress: 0,
-                                  activities: [],
-                                  completed_activities: [],
-                                });
-                                localStorage.setItem(
-                                  "offlineCoursesProgress",
-                                  JSON.stringify(offlineCoursesProgress)
-                                );
-                              }
-                              offlineProjectHTML += `
-                                <div class="course-card">
-                                    <div class="card-head-wrap">
-                                        <img src="${projectJSON.thumb_url}">
-                                        <p style="background:transparent !important">
-                                            <a href="offline-playlist.html?playlistPath=${path}">${projectJSON.name}</a>
-                                        </p>
-                                    </div>
-                                    <div class="card-footer-wrap">
-                                        <div class="text-list">
-                                            <ul>
-                                                <li><a href="#">4 Playlists</a></li>
-                                                <li><a href="#">30 Activities</a></li>
-                                            </ul>
-                                        </div>
-                                        <div class="card-btn">
-                                            <button class="btn transparent-red-btn"><img src="img/delete-btn.svg"> Remove</button>
-                                        </div>
-                                    </div>
-                                </div>`;
-                              $("#offlineProjectContainer").html(
-                                offlineProjectHTML
-                              );
-                            };
-                            reader.readAsText(file);
-                          },
-                          (onErrorReadFile = (err) => {
-                            console.log(err);
-                          })
-                        );
-                      }
-                    );
-                  }
-                }
-              });
-            }
-            function projectErrorHandler(error) {
-              console.log("ERROR", error);
-            }
-            //   -------- Sub Directory of Projects Folder ---------
+            });
           }
         });
       }
@@ -128,6 +44,30 @@ function onDeviceReady() {
       console.log(e);
     }
   );
+
+  $(document).on('click', ".remove-project", (evt) => {
+    console.log("id", evt.target.id);
+    let projectPath = evt.target.id.replace("playlists", "");
+    window.resolveLocalFileSystemURL(projectPath, (entry) => {
+      entry.removeRecursively(() => {
+        alert("removed");
+        window.location.reload();
+      })
+    }, (err) => {console.log(err)});
+  })
+
+  const getProjectsJson = (projectsFolder) => {
+    for (const projectJson of projectsFolder) {
+      let path = projectJson.nativeURL.replace(projectJson.name, "playlists");
+      projectJson.isFile && offlineProjectSection(projectJson.nativeURL, path)
+    }
+  }
+
+  const offlineProjectSection = (projectJsonPath, path) => {
+    new DownloadCourseHtml(projectJsonPath, path, (offlineHtml) => {
+      $("#offlineProjectContainer").append(offlineHtml);
+    });
+  }
 
   function moveFile(fileUri, name) {
     window.resolveLocalFileSystemURL(
@@ -364,13 +304,4 @@ function onDeviceReady() {
       })
     );
   }
-
-  // const offlineElement = document.getElementById('h5p-container');
-  // const options = {
-  //     h5pJsonPath:  fileSystem+ "h5p-libraries/35382",
-  //     frameJs: '../plugins/h5p-standalone/dist/mod.frame.bundle.js',
-  //     frameCss: '../plugins/h5p-standalone/dist/styles/h5p.css',
-  // }
-  // new H5PStandalone.H5P(offlineElement, options);
-  // }
 }

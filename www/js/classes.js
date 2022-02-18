@@ -11,8 +11,8 @@ class CourseHtml {
             <div class="card-footer-wrap">
               <div class="text-list">
                 <ul>
-                  <li><a href="#">4 Playlists</a></li>
-                  <li><a href="#">30 Activities</a></li>
+                  <li><a href="#">${course.playlist_count} Playlists</a></li>
+                  <li><a href="#">${course.activities_count} Activities</a></li>
                 </ul>
               </div>
               <div class="card-btn">
@@ -84,6 +84,8 @@ class CourseHtml {
         setTimeout(() => {
           deleteProject(projectNameArr[0], (response) => {
             console.log(response);
+            alert("Downloaded")
+            window.location.reload();
           })
         }, 200);
       }
@@ -121,14 +123,14 @@ class CourseHtml {
 
   class DownloadCourseHtml {
     constructor(projectJsonPath, path, offlineHtml) {
-      this.offlineProjectHTML = "";
+      // this.offlineProjectHTML;
       window.resolveLocalFileSystemURL(projectJsonPath, (fileEntry) => {
         fileEntry.file((file) => {
           var reader = new FileReader();
           reader.readAsText(file);
           reader.onloadend = function (evt) {
             let projectJSON = JSON.parse(evt.target.result);
-            this.offlineProjectHTML += `
+            this.offlineProjectHTML = `
               <div class="course-card">
                   <div class="card-head-wrap">
                       <img src="${projectJSON.thumb_url}">
@@ -139,8 +141,8 @@ class CourseHtml {
                   <div class="card-footer-wrap">
                       <div class="text-list">
                           <ul>
-                              <li><a href="#">4 Playlists</a></li>
-                              <li><a href="#">30 Activities</a></li>
+                              <li><a href="#">${projectJSON.playlist_count} Playlists</a></li>
+                              <li><a href="#">${projectJSON.activities_count} Activities</a></li>
                           </ul>
                       </div>
                       <div class="card-btn">
