@@ -11,7 +11,7 @@ function onDeviceReady() {
     }
     
     getProjects('preview', (project) => {
-        const courseWrapper = new CourseHtml(project);
+        const courseWrapper = new CourseHtml(project.projects);
         $("#online-project-container").html(courseWrapper.courseWrapper)
     })
 

@@ -601,3 +601,8 @@ a{
     z-index: 9;
     top: 5px;
 }
+.prv-next-btn {
+    position: relative;
+    z-index: 1;
+    float: left;
+}
