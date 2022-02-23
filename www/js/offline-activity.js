@@ -39,6 +39,8 @@ function onDeviceReady() {
                 <script src="js/h5p/h5p-content-type.js"></script>
                 <script src="js/handle-xapi.js"></script>`;
                 $("body").append(scripts);
+                var loading = $(".loading");
+                loading.delay(200).slideUp();
             }
             reader.readAsText(file);
         })

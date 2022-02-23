@@ -43,8 +43,8 @@
     />
     <meta name="color-scheme" content="light dark" />
 
-    <link rel="stylesheet" href="css/bootstrap.min.css">	
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/style.css" />
     <title>Course Page</title>
   </head>
 
@@ -95,12 +95,21 @@
                 <img src="img/see-course.svg" />
               </div> -->
             </div>
-            <div class="course-list online-course-list pt-3"></div>
+            <div class="course-list online-course-list pt-3">
+              <div class="d-flex justify-content-center pt-3">
+                <div class="spinner-border text-primary" role="status">
+                  <span class="sr-only">Loading...</span>
+                </div>
+              </div>
+            </div>
             <div class="alert-wrap course-network-alert d-none">
               <div class="alert-icon" onclick="window.location.reload()">
                 <img src="img/wifi-not-connected.svg" />
               </div>
-              <p>Please connect to wifi to see and download your available courses.</p>
+              <p>
+                Please connect to wifi to see and download your available
+                courses.
+              </p>
             </div>
           </div>
           <div class="col-12">

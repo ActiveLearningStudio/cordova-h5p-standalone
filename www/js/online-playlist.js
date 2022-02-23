@@ -34,9 +34,9 @@ function onDeviceReady() {
                       <ul>`;
         for (const activity of playlist.activities) {
           this.playlistsWrapper += `
-                        <li>
-                          <a href="online-activity.html?activityId=${activity.id}"><img src="img/play.png" />${activity.title}</a>
-                        </li>`;
+            <li>
+              <a href="online-activity.html?activityId=${activity.id}"><img src="img/play.png" />${activity.title}</a>
+            </li>`;
         }
         this.playlistsWrapper += `</ul> </div> </div>`;
       }
@@ -52,5 +52,7 @@ function onDeviceReady() {
   getPlaylists(projectId, (playlists) => {
     const playlistsHTML = new PlaylistHtml(playlists);
     $(".accordion").html(playlistsHTML.playlistsWrapper);
+    var loading = $(".loading");
+    loading.delay(200).slideUp();
   });
 }

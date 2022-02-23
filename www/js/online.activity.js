@@ -40,6 +40,8 @@ function onDeviceReady() {
                 <script src="js/h5p/h5p-content-type.js"></script>
                 <script src="js/h5p/DocumentsUpload.js"></script>`;
     $("body").append(scripts);
+    var loading = $(".loading");
+    loading.delay(200).slideUp();
   });
   var current = 0;
   $(document).on("click", '.nxt-btn', (evt) => {
