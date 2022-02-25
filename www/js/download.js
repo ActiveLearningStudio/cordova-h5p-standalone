@@ -274,7 +274,6 @@ function onDeviceReady() {
         dirEntry.getFile(fileName, {create: true, exclusive: false}, function(fileEntry) {
             writeFile(fileEntry, data);
         }, onErrorCreateFile = (err) => {console.log(err)});
-    
     }
 
     function writeFile(fileEntry, dataObj) {

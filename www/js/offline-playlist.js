@@ -12,7 +12,6 @@ function onDeviceReady() {
   const overview_tab = document.getElementById("course-title");
   const descriptionTab = document.getElementById("course-description");
   const thumb_url = document.getElementById("course-image");
-  console.log(playlistPath);
 
   courseId = getUrlParams.get("courseId");
   localStorage.setItem("activeOfflineCourse", courseId);
@@ -27,9 +26,6 @@ function onDeviceReady() {
       projectReader.readEntries((projectFolders) => {
         projectFolders.forEach((projectItem) => {
           if (projectItem.isDirectory == false) {
-            console.log({ projectItem });
-            console.log({ native_url: projectItem.nativeURL });
-
             /**
              * TODO: Read Project.Json file
              */
@@ -63,8 +59,6 @@ function onDeviceReady() {
   window.resolveLocalFileSystemURL(playlistPath, function success(playlist) {
     var playlistReader = playlist.createReader();
 
-    console.log({ playlistReader });
-
     playlistReader.readEntries(
       (getPlaylists = (playlistFolders) => {
         playlistFolders.forEach((playlistFolder) => {
@@ -76,27 +70,13 @@ function onDeviceReady() {
                 var playlistContainerReader = playlistContainer.createReader();
                 playlistContainerReader.readEntries(
                   (getplaylistContainer = (allPlaylists) => {
-                    console.log({ allPlaylists });
-                    var offlineCoursesProgress = JSON.parse(
-                      localStorage.getItem("offlineCoursesProgress")
-                    );
                     var activities = [];
                     allPlaylists.forEach((allPlaylist) => {
                       if (allPlaylist.isDirectory) {
                         // --------- Playlist Folder ---------
-                        console.log("allPlaylist", allPlaylist);
                         activitiesPath = allPlaylist;
                       } else {
-                        // --------- If any file inside sub project folder address here. ---------
-                        // variable = allPlaylist
-                        var playlistFolderPath = allPlaylist.nativeURL,
-                          getPlaylistPath = playlistFolderPath.split("/");
-                        getPlaylistPath.pop();
-                        var newPlaylistFolderPath = getPlaylistPath.join("/");
-                        // console.log("getPlaylistPath", newPlaylistFolderPath);
-                        // console.log("activitiesPath >>>>>>", activitiesPath.nativeURL);
-                        // console.log("filePath >>>>>>", allPlaylist.nativeURL);
-                        // console.log("file>>>>>>", allPlaylist);
+                        console.log(" allPlaylist.nativeURL",  allPlaylist.nativeURL);
                         window.resolveLocalFileSystemURL(
                           allPlaylist.nativeURL,
                           function success(fileEntry) {
@@ -109,29 +89,10 @@ function onDeviceReady() {
                                   var playlistJSON = JSON.parse(
                                     evt.target.result
                                   );
-                                  console.log(playlistJSON);
-                                  playlistJSON.activities.forEach(
-                                    (activity) => {
+
+                                  playlistJSON.activities.forEach((activity) => {
                                       activities.push(activity.h5p_content_id);
-                                    }
-                                  );
-                                  if (
-                                    offlineCoursesProgress[
-                                      offlineCoursesProgress.findIndex(
-                                        (obj) => obj.id == courseId
-                                      )
-                                    ] != null
-                                  ) {
-                                    offlineCoursesProgress[
-                                      offlineCoursesProgress.findIndex(
-                                        (obj) => obj.id == courseId
-                                      )
-                                    ].activities = activities;
-                                    localStorage.setItem(
-                                      "offlineCoursesProgress",
-                                      JSON.stringify(offlineCoursesProgress)
-                                    );
-                                  }
+                                    });
                                   counter++;
                                   offlinePlaylistHTML += `<div class="card">
                                     <div class="card-header" id="faqhead${counter}">

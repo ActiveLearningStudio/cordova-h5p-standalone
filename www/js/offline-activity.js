@@ -46,25 +46,23 @@ function onDeviceReady() {
         })
     }, (err) => {console.log("error>>>", err)});
 
-    // ------------------------------------------------------------------------
-    $(document).on('load', '.h5p-iframe', () => {
-        console.log("hello")
+    window.resolveLocalFileSystemURL(allPlaylist.nativeURL,function success(fileEntry){
+        
     })
+
+    // ------------------------------------------------------------------------
+    // $(document).on('load', '.h5p-iframe', () => {
+    //     console.log("hello")
+    // })
 
     function offlinereadFile(fileEntry) {
         fileEntry.file(function(file) {
             var reader = new FileReader();
-            // console.log("reader", reader);
             reader.onloadend = function() {
-                // console.log("blob>>>>", this.result)
                 activityIdObj = this.result.split(",")
-                    // console.log("activity id object...", activityIdObj)
-                    // console.log("activity path...", activityPath)
-                    // console.log("new activity...", newActivityPath)
                 var generateNewActivityPath = newActivityPath + "/",
                     indexno = activityIdObj.indexOf(generateNewActivityPath)
                     currentActivity = getKeyByValue(activityIdObj, generateNewActivityPath),
-                    // console.log("currentActivity >>> ", currentActivity);
                     countActivity = Object.keys(activityIdObj).length,
                     totalActivity = countActivity - 1,
                     buttonsHTML = `
@@ -129,7 +127,7 @@ function onDeviceReady() {
                     })
                 })
             })
-        })
+    })
         // handlePlayActivity(activityIdObj[nextActivityId])  })
 
     function getKeyByValue(object, value) {

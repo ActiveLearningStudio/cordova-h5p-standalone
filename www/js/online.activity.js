@@ -2,35 +2,36 @@ document.addEventListener("deviceready", onDeviceReady, false);
 function onDeviceReady() {
   const getUrlParams = location.search.split("activityId="),
     activityId = getUrlParams[1];
-  console.log(activityId);
   const buttons = `<div class="prv-next-btn">
-    <div style="margin-top:37px !important; margin-left:42px !important" class="btn green-btn prv-btn">Previous</div>
-    <div style="margin-top:37px !important; margin-left:42px !important" class="btn green-btn nxt-btn">Next</div>
+    <button id= "prvBtn" style="margin-top:37px !important; margin-left:42px !important" class="btn green-btn prv-btn">
+      Previous
+    </button>
+    <button id= "nxtBtn" style="margin-top:37px !important; margin-left:42px !important" class="btn green-btn nxt-btn">
+      Next
+    </button>
    </div>`;
 
   let allIds = [];
+  let current;
   getActivity(activityId, (activity) => {
-    console.log("activity ----> ", activity);
     let embededCode = activity.activity.h5p.embed_code;
     let allActivitites = activity.playlist.activities;
-    allActivitites.forEach(element => {
-      allIds.push(element.id);
-    });
     $("#mainBody").append(embededCode);
     $("#mainBody").append(buttons);
 
-    // $(document).on("click",  (evt) => {
-    //     for(let i = 0; i < allIds.length; i++){
-    //       if(allIds.length == i + 1){
-    //         console.log("last element of array");
-    //       }
-    //       else{
-    //         console.log("still there are more elements");
-    //         let newUrl = `file://${window.location.pathname}?activityId=${allIds[i]}`
-    //         window.location.assign(newUrl);
-    //       }
-    //     }
-    // });
+    allActivitites.forEach((element,i) => {
+      allIds.push({key: i,id:element.id});
+      if(element.id == activityId){
+        current = i;
+      }
+    });
+    
+    if(current == allIds.length - 1){
+      document.getElementById('nxtBtn').disabled = true;;
+    }
+    else if(current == allIds[0].key){
+      document.getElementById('prvBtn').disabled = true;;
+    }
 
     const scripts = `<script src="js/h5p/h5p-core/js/jquery.js"></script>
                 <script src="js/h5p/h5p-core/js/h5p.js"></script>
@@ -43,14 +44,22 @@ function onDeviceReady() {
     var loading = $(".loading");
     loading.delay(200).slideUp();
   });
-  var current = 0;
+  
   $(document).on("click", '.nxt-btn', (evt) => {
-    console.log("next",allIds);
-    
-    // let newUrl = `file://${window.location.pathname}?activityId=${allIds++}`
-    // window.location.assign(newUrl);
+    let newUrl ; 
+    if(allIds[current].key == 0){
+      current = current + 1;
+    }
+    newUrl = `online-activity.html?activityId=${allIds[current].id}`;
+    window.location.assign(newUrl); 
   });
+  
   $(document).on("click", '.prv-btn', (evt) => {
-    console.log("next",allIds);
+    let newUrl ; 
+    if(allIds[current].key !== 0){
+      current = current - 1;
+    }
+    newUrl = `online-activity.html?activityId=${allIds[current].id}`;
+    window.location.assign(newUrl);
   });
 }
