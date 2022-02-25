@@ -654,3 +654,7 @@ a{
       transform: rotate(360deg);
     }
   }
+
+  .download-complete-icon{
+      height: 65px !important;
+  }

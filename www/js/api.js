@@ -13,7 +13,7 @@ const localStorage = window.localStorage,
 const userLogin = (userName, password, callback) => {
   $.ajax({
     url: moodleLoginURL,
-    dataType: "json",
+    // dataType: "json",
     data: {
       username: userName,
       password: password,
