@@ -16,7 +16,7 @@ function onDeviceReady() {
   document.addEventListener(
     "offline",
     () => {
-      $(".online-course-list").html('');
+      $(".online-course-list").html("");
       $(".course-network-alert").removeClass("d-none");
     },
     false
@@ -34,7 +34,7 @@ function onDeviceReady() {
     false
   );
 
-  if(navigator.connection.type !== 'none') {
+  if (navigator.connection.type !== "none") {
     getProjects("dashboard", (projects) => {
       const coursesHtml = new CourseHtml(projects.projects);
       $(".online-course-list").html(coursesHtml.courseWrapper);
@@ -44,8 +44,15 @@ function onDeviceReady() {
   $(document).on("click", ".download-project", (evt) => {
     let projectId = evt.target.id;
     downloadProject(projectId, (project) => {
-      console.log(project);
-      downloadProjectZip(project, fileSystem);
+      downloadProjectZip(project, fileSystem, (filePath) => {
+        setTimeout(() => {
+          deleteProject(filePath, (response) => {
+            let downloadMessage = new DownloadCourseAlertHtml();
+            $(".remove-course-alert").html(downloadMessage.alertContent);
+            // window.location.reload();
+          });
+        }, 200);
+      });
     });
   });
 
@@ -57,6 +64,7 @@ function onDeviceReady() {
       directoryReader.readEntries(entryHandler, errorHandler);
       function entryHandler(entries) {
         if (entries.length > 0) {
+          $("#offline-see-all-link").removeClass("d-none");
           let length = entries.length >= 2 ? 2 : entries.length;
           for (let i = 0; i < length; i++) {
             window.resolveLocalFileSystemURL(
@@ -86,11 +94,19 @@ function onDeviceReady() {
           $(".offline-course-list").html(
             "<p>You have not downloads, start by selecting one of the available course below</p>"
           );
+          $("#offline-see-all-link").addClass("d-none");
         }
       }
       function errorHandler(error) {
         console.log(error);
       }
+    },
+    (error) => {
+      error &&
+        $(".offline-course-list").html(
+          "<p>You have not downloads, start by selecting one of the available course below</p>"
+        ),
+        $("#offline-see-all-link").addClass("d-none");
     }
   );
   // }
@@ -110,18 +126,27 @@ function onDeviceReady() {
 
   $(document).on("click", ".remove-project", (evt) => {
     console.log("id", evt.target.id);
-    let projectPath = evt.target.id.replace("playlists", "");
-    window.resolveLocalFileSystemURL(
-      projectPath,
-      (entry) => {
-        entry.removeRecursively(() => {
-          alert("removed");
-          window.location.reload();
-        });
-      },
-      (err) => {
-        console.log(err);
-      }
-    );
+    let resetMessage = new RemoveCourseAlertHtml();
+    $(".remove-course-alert").append(resetMessage.alertContent);
+    const projectPath = evt.target.id.replace("playlists", "");
+
+    $(document).on("click", ".confirm-remove", () => {
+      window.resolveLocalFileSystemURL(
+        projectPath,
+        (entry) => {
+          entry.removeRecursively(() => {
+            $(".remove-course-alert").html("");
+            window.location.reload();
+          });
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
+    });
+
+    $(document).on("click", ".cancel-remove", () => {
+      $(".remove-course-alert").html("");
+    });
   });
 }

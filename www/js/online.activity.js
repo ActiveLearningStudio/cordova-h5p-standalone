@@ -2,14 +2,7 @@ document.addEventListener("deviceready", onDeviceReady, false);
 function onDeviceReady() {
   const getUrlParams = location.search.split("activityId="),
     activityId = getUrlParams[1];
-  const buttons = `<div class="prv-next-btn">
-    <button id= "prvBtn" style="margin-top:37px !important; margin-left:42px !important" class="btn green-btn prv-btn">
-      Previous
-    </button>
-    <button id= "nxtBtn" style="margin-top:37px !important; margin-left:42px !important" class="btn green-btn nxt-btn">
-      Next
-    </button>
-   </div>`;
+  let buttons = `<div class="prv-next-btn mt-5">`;
 
   let allIds = [];
   let current;
@@ -17,49 +10,47 @@ function onDeviceReady() {
     let embededCode = activity.activity.h5p.embed_code;
     let allActivitites = activity.playlist.activities;
     $("#mainBody").append(embededCode);
-    $("#mainBody").append(buttons);
 
     allActivitites.forEach((element,i) => {
       allIds.push({key: i,id:element.id});
       if(element.id == activityId){
         current = i;
+        if (i !== 0 && i !== allActivitites.length - 1) {
+          buttons += `<button id="${allActivitites[i - 1].id}" 
+            class="btn green-btn prv-btn">Previous
+          </button>
+          <button id= "${allActivitites[i + 1].id}" 
+            class="btn green-btn nxt-btn">Next
+          </button>
+          </div>`;
+        } else if (i === 0 && allActivitites.length !== 1) {
+          buttons += `<button id="${allActivitites[i + 1].id}" class="btn green-btn">
+          Next</button></div>`;
+        } else if (i !== 0 && i == allActivitites.length - 1 ) {
+          buttons += `<button id="${allActivitites[i - 1].id}" class="btn green-btn">
+          Prev</button></div>`;
+        } else if (i === 0 && allActivitites.length === 1) {
+          buttons += `</div>`;
+        }
       }
     });
+    $("#mainBody").append(buttons);
     
-    if(current == allIds.length - 1){
-      document.getElementById('nxtBtn').disabled = true;;
-    }
-    else if(current == allIds[0].key){
-      document.getElementById('prvBtn').disabled = true;;
-    }
-
     const scripts = `<script src="js/h5p/h5p-core/js/jquery.js"></script>
-                <script src="js/h5p/h5p-core/js/h5p.js"></script>
-                <script src="js/h5p/h5p-event-dispatcher.js"></script>
-                <script src="js/h5p/h5p-x-api.js"></script>
-                <script src="js/h5p/h5p-x-api-event.js"></script>
-                <script src="js/h5p/h5p-content-type.js"></script>
-                <script src="js/h5p/DocumentsUpload.js"></script>`;
+      <script src="js/h5p/h5p-core/js/h5p.js"></script>
+      <script src="js/h5p/h5p-event-dispatcher.js"></script>
+      <script src="js/h5p/h5p-x-api.js"></script>
+      <script src="js/h5p/h5p-x-api-event.js"></script>
+      <script src="js/h5p/h5p-content-type.js"></script>
+      <script src="js/h5p/DocumentsUpload.js"></script>`;
     $("body").append(scripts);
     var loading = $(".loading");
     loading.delay(200).slideUp();
   });
   
-  $(document).on("click", '.nxt-btn', (evt) => {
-    let newUrl ; 
-    if(allIds[current].key == 0){
-      current = current + 1;
-    }
-    newUrl = `online-activity.html?activityId=${allIds[current].id}`;
+  $(document).on("click", '.green-btn', (evt) => {
+    newUrl = `online-activity.html?activityId=${evt.target.id}`;
     window.location.assign(newUrl); 
   });
-  
-  $(document).on("click", '.prv-btn', (evt) => {
-    let newUrl ; 
-    if(allIds[current].key !== 0){
-      current = current - 1;
-    }
-    newUrl = `online-activity.html?activityId=${allIds[current].id}`;
-    window.location.assign(newUrl);
-  });
+
 }

@@ -89,10 +89,13 @@ function onDeviceReady() {
                                   var playlistJSON = JSON.parse(
                                     evt.target.result
                                   );
-
-                                  playlistJSON.activities.forEach((activity) => {
-                                      activities.push(activity.h5p_content_id);
-                                    });
+                                  playlistJSON.activities.forEach((activity, key) => {
+                                      activities.push({key: key, id: activity.h5p_content_id});
+                                  });
+                                  window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function (fs) {
+                                    console.log('file system open: ' + fs.name);
+                                    createFile(fs.root, "offlineActivitiesCount.json", false, activities);  
+                                  }, onErrorLoadFs = (err) => {console.log(err)});
                                   counter++;
                                   offlinePlaylistHTML += `<div class="card">
                                     <div class="card-header" id="faqhead${counter}">
@@ -124,6 +127,8 @@ function onDeviceReady() {
                                   }
                                   offlinePlaylistHTML += `</ul> </div> </div>`;
                                   $(".accordion").html(offlinePlaylistHTML);
+                                  var loading = $(".loading");
+                                  loading.delay(200).slideUp();
                                 };
                                 reader.readAsText(file);
                               },

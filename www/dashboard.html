@@ -57,12 +57,15 @@
               <h4>My Courses</h4>
             </div>
             <div class="header-menu">
-              <ul>
+              <ul class="nav nav-pills">
                 <li>
                   <a href="#"><img src="img/username-icon-white.svg" /></a>
                 </li>
-                <li>
-                  <a href="#"><img src="img/burger-menu.svg" /></a>
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#"><img src="img/burger-menu.svg" /></a>
+                  <div class="dropdown-menu">
+                    <a class="dropdown-item" href="#" onclick="window.localStorage.clear(), window.location.href='index.html';">Logout</a>
+                  </div>
                 </li>
               </ul>
             </div>
@@ -80,7 +83,7 @@
             <div class="download-course">
               <div class="course-title pb-3">
                 <h5>My Downloaded Courses</h5>
-                <a class="see-all-txt" href="offline-project.html">See all</a>
+                <a class="see-all-txt d-none" id="offline-see-all-link" href="offline-project.html">See all</a>
               </div>
               <div class="course-list offline-course-list"></div>
             </div>
@@ -121,12 +124,14 @@
               </div>
             </div>
           </div>
+          <div class="col-12 remove-course-alert">
+          </div>
         </div>
       </div>
     </div>
     <script src="cordova.js"></script>
     <script src="js/jquery.min.js"></script>
-    <script src="js/bootstrap/bootstrap.min.js"></script>
+    <script src="js/bootstrap/bootstrap.bundle.js"></script>
     <script src="js/api.js"></script>
     <script src="js/dashboard.js"></script>
     <script src="js/classes.js"></script>

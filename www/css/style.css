@@ -633,7 +633,7 @@ a{
     animation: loading .75s linear infinite;
   }
   .loading:before {
-    font-family: 'Lobster', cursive;
+    font-family: Rubik;
     font-size: 20px;
     letter-spacing: 1px;
     color: white;

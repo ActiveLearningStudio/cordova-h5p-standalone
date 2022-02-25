@@ -20,6 +20,7 @@
     "cordova-plugin-downloader": "^0.0.4",
     "cordova-plugin-fetch": "git+https://github.com/aporat/cordova-plugin-fetch.git",
     "cordova-plugin-file": "^6.0.2",
+    "cordova-plugin-inappbrowser": "^5.0.0",
     "cordova-plugin-network-information": "^3.0.0",
     "cordova-plugin-pdialog": "^2.0.1",
     "cordova-plugin-spinner": "github:Justin-Credible/cordova-plugin-spinner",
@@ -38,7 +39,8 @@
       "cordova-plugin-network-information": {},
       "cordova-sqlite-storage": {},
       "cordova-plugin-wkwebview-file-xhr": {},
-      "cordova-plugin-fetch": {}
+      "cordova-plugin-fetch": {},
+      "cordova-plugin-inappbrowser": {}
     },
     "platforms": [
       "ios",

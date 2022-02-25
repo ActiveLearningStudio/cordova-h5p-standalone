@@ -7,12 +7,13 @@ function onDeviceReady() {
   if(token != null) window.location.href = 'dashboard.html';
 
   document.addEventListener("offline",() => {
-    $("#network-warning").removeClass("d-none");
+    let networkWarning = new NetworkWarnings();
+    $("#network-warning").html(networkWarning.alertContent);
   },false);
 
   document.addEventListener("online",() => {
       // device went online
-    $("#network-warning").addClass("d-none");
+    $("#network-warning").html("");
   },false);
 
   $("#username").on("blur", () => {
@@ -38,4 +39,9 @@ function onDeviceReady() {
       $(".error-message").addClass("d-inline");
     }
   });
+
+  $("#reset-password-text").on('click', () => {
+    let resetAlert = new ResetPasswordAlertHtml();
+    $("#reset-alert").html(resetAlert.alertContent);
+  })
 }

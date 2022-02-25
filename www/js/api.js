@@ -20,11 +20,15 @@ const userLogin = (userName, password, callback) => {
       service: "moodle_mobile_app",
     },
     success: (response) => {
-      getUserId(userName, (userId) => {
-        localStorage.setItem("USER_ID", userId);
-        localStorage.setItem("USER_TOKEN", response.token);
+      if (response.token) {
+        getUserId(userName, (userId) => {
+          localStorage.setItem("USER_ID", userId);
+          localStorage.setItem("USER_TOKEN", response.token);
+          callback(response);
+        });
+      } else {
         callback(response);
-      });
+      }
     },
     error: (xhr, status, err) => {
       callback(status);

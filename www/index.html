@@ -116,34 +116,15 @@
                   </div>
                   <div class="col-12">
                     <div class="reset-text">
-                      <span>Reset password?</span>
+                      <span id="reset-password-text">Reset password?</span>
                     </div>
                   </div>
                 </div>
               </form>
             </div>
-            <div class="col-12 d-none" id="network-warning">
-              <div class="mask"></div>
-              <div
-                class="alert-message-box"
-                style="
-                  position: fixed;
-                  left: 0;
-                  bottom: 0;
-                  z-index: 1;
-                  width: 100%;
-                  background: #ffffff;
-                  border-radius: 10px 10px 0px 0px;
-                "
-              >
-                <div class="alert-wrap">
-                  <div class="alert-icon" onclick="window.location.reload()">
-                    <img src="img/wifi-not-connected.svg" />
-                  </div>
-                  <p>Please connect to wifi to Login in your account.</p>
-                  <button class="btn primary-btn">I understand</button>
-                </div>
-              </div>
+            <div class="col-12" id="network-warning">
+            </div>
+            <div class="col-12" id="reset-alert">
             </div>
           </div>
         </div>
@@ -154,6 +135,7 @@
     <script src="js/bootstrap/bootstrap.min.js"></script>
     <script src="js/index.js"></script>
     <script src="js/api.js"></script>
+    <script src="js/classes.js"></script>
     <script src="js/login.js"></script>
   </body>
 </html>

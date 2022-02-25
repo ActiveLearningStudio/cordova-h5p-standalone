@@ -22,7 +22,6 @@ function onDeviceReady() {
             var reader = new FileReader();
             reader.onloadend = function(evt) {
                 var playlistJSON = JSON.parse(evt.target.result);
-                console.log("JOSN????", playlistJSON);
                 var setting = playlistJSON.settings,
                 html = playlistJSON.embed_code,
                 width = 'width=100%',
@@ -45,10 +44,6 @@ function onDeviceReady() {
             reader.readAsText(file);
         })
     }, (err) => {console.log("error>>>", err)});
-
-    window.resolveLocalFileSystemURL(allPlaylist.nativeURL,function success(fileEntry){
-        
-    })
 
     // ------------------------------------------------------------------------
     // $(document).on('load', '.h5p-iframe', () => {

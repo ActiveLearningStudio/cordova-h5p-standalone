@@ -45,16 +45,31 @@ function onDeviceReady() {
     }
   );
 
-  $(document).on('click', ".remove-project", (evt) => {
+  $(document).on("click", ".remove-project", (evt) => {
     console.log("id", evt.target.id);
-    let projectPath = evt.target.id.replace("playlists", "");
-    window.resolveLocalFileSystemURL(projectPath, (entry) => {
-      entry.removeRecursively(() => {
-        alert("removed");
-        window.location.reload();
-      })
-    }, (err) => {console.log(err)});
-  })
+    let resetMessage = new RemoveCourseAlertHtml();
+    $(".remove-course-alert").html(resetMessage.alertContent);
+    const projectPath = evt.target.id.replace("playlists", "");
+
+    $(document).on("click", ".confirm-remove", () => {
+      window.resolveLocalFileSystemURL(
+        projectPath,
+        (entry) => {
+          entry.removeRecursively(() => {
+            $(".remove-course-alert").html('');
+            window.location.reload();
+          });
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
+    })
+
+    $(document).on("click", ".cancel-remove", () => {
+      $(".remove-course-alert").html('');
+    })
+  });
 
   const getProjectsJson = (projectsFolder) => {
     for (const projectJson of projectsFolder) {
