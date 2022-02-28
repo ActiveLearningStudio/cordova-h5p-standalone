@@ -143,10 +143,11 @@ class DownloadCourseHtml {
         reader.readAsText(file);
         reader.onloadend = function (evt) {
           let projectJSON = JSON.parse(evt.target.result);
+          let imgURL = projectJSON.thumb_url;
           this.offlineProjectHTML = `
               <div class="course-card">
                   <div class="card-head-wrap">
-                      <img src="${projectJSON.thumb_url}">
+                      <img src="${imgURL.includes("https://") ? 'img/course-main-img.png' : imgURL}">
                       <p style="background:transparent !important">
                           <a href="offline-playlist.html?playlistPath=${path}">${projectJSON.name}</a>
                       </p>
@@ -202,7 +203,7 @@ class RemoveCourseAlertHtml extends AlertHeader {
           This action will remove the downloaded course from your device but your progress will be saved in the Moodle Platform.
         </p>
         <p>Do you want to continue removing this course?</p>
-        <button class="btn primary-btn confirm-remove mb-1">
+        <button class="btn primary-btn confirm-remove mb-1 confirm-remove-btn">
           Yes, remove
         </button>
         <div></div>

@@ -92,7 +92,7 @@ function onDeviceReady() {
           }
         } else {
           $(".offline-course-list").html(
-            "<p>You have not downloads, start by selecting one of the available course below</p>"
+            "<p class='no-project-message'>You have not downloads, start by selecting one of the available course below</p>"
           );
           $("#offline-see-all-link").addClass("d-none");
         }
@@ -104,7 +104,7 @@ function onDeviceReady() {
     (error) => {
       error &&
         $(".offline-course-list").html(
-          "<p>You have not downloads, start by selecting one of the available course below</p>"
+          "<p class='no-project-message'>You have not downloads, start by selecting one of the available course below</p>"
         ),
         $("#offline-see-all-link").addClass("d-none");
     }

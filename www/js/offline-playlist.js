@@ -37,9 +37,10 @@ function onDeviceReady() {
                   reader.readAsText(file);
                   reader.onloadend = function (evt) {
                     var projectJSON = JSON.parse(evt.target.result);
+                    let imgURL = projectJSON.thumb_url
                     overview_tab.innerHTML = `${projectJSON.name}`;
                     descriptionTab.innerHTML = `${projectJSON.description}`;
-                    thumb_url.src = projectJSON.thumb_url;
+                    thumb_url.src = imgURL.includes("https://") ? 'img/course-list-img.png' : imgURL;
                   };
                 });
               },
@@ -120,8 +121,8 @@ function onDeviceReady() {
                                   for (const activity of playlistJSON.activities) {
                                       let activityRoute = `${activitiesRoute}/${activity.title}/${activity.h5p_content_id}-h5p.json`
                                     offlinePlaylistHTML += `
-                                    <li>
-                                        <a href="offline-activity.html?activityPath=${activityRoute}"><img src="img/play.png" />${activity.title}</a>
+                                    <li class='activities-list-items'>
+                                        <a href="offline-activity.html?activityPath=${activityRoute}"><img src="img/Vector.svg" />${activity.title}</a>
                                     </li>`;
                                   }
                                   offlinePlaylistHTML += `</ul> </div> </div>`;

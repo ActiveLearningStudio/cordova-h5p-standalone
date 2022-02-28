@@ -34,8 +34,8 @@ function onDeviceReady() {
                       <ul>`;
         for (const activity of playlist.activities) {
           this.playlistsWrapper += `
-            <li>
-              <a href="online-activity.html?activityId=${activity.id}"><img src="img/play.png" />${activity.title}</a>
+            <li class='activities-list-items'>
+              <a href="online-activity.html?activityId=${activity.id}"><img src="img/Vector.svg" />${activity.title}</a>
             </li>`;
         }
         this.playlistsWrapper += `</ul> </div> </div>`;

@@ -6,6 +6,12 @@ function onDeviceReady() {
 
   let allIds = [];
   let current;
+
+  if (device.platform === "iOS") {
+    $(".activity-page").css({"margin-top": "40px"})
+    $(".close-btn").css({"top": "40px"});
+  }
+
   getActivity(activityId, (activity) => {
     let embededCode = activity.activity.h5p.embed_code;
     let allActivitites = activity.playlist.activities;

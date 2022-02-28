@@ -38,6 +38,11 @@ function onDeviceReady() {
         }, onErrorCreateFile = (err) => { console.log(err) });
     }, onErrorLoadFs = (err) => { console.log("err------> ",err) })
 
+    if (device.platform === "iOS") {
+        $(".activity-page").css({"margin-top": "40px"})
+        $(".close-btn").css({"top": "40px"});
+    }
+
     window.resolveLocalFileSystemURL(activityPath, function success(fileEntry) {
         fileEntry.file(function (file) {
             var reader = new FileReader();
