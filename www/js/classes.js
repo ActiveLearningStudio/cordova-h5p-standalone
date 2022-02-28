@@ -196,16 +196,17 @@ class RemoveCourseAlertHtml extends AlertHeader {
     this.alertContent = `${this.alertHeader}
       <div class="alert-wrap">
         <div class="alert-icon" onclick="window.location.reload()">
-          <img src="img/wifi-not-connected.svg" />
+          <img src="img/Frame.svg" />
         </div>
         <p>
           This action will remove the downloaded course from your device but your progress will be saved in the Moodle Platform.
         </p>
         <p>Do you want to continue removing this course?</p>
-        <button class="btn primary-btn confirm-remove">
+        <button class="btn primary-btn confirm-remove mb-1">
           Yes, remove
         </button>
-        <button class="btn primary-btn cancel-remove">
+        <div></div>
+        <button class="btn primary-btn cancel-remove mt-1">
           No, cancel
         </button>
       </div>
@@ -219,7 +220,7 @@ class DownloadCourseAlertHtml extends AlertHeader {
     this.alertContent = `${this.alertHeader}
       <div class="alert-wrap">
         <div class="alert-icon" onclick="window.location.reload()">
-          <img src="img/wifi-not-connected.svg" />
+          <img class="download-complete-icon" src="img/downloadcomplete.png" />
         </div>
         <p>
           The course has been downloaded please check in the downloaded courses section
@@ -239,7 +240,7 @@ class ResetPasswordAlertHtml extends AlertHeader {
     this.alertContent = `${this.alertHeader}
     <div class="alert-wrap">
       <div class="alert-icon" onclick="window.location.reload()">
-        <img src="img/wifi-not-connected.svg" />
+        <img src="img/reset-lock.svg" />
       </div>
       <p>
         To reset your password please go to
