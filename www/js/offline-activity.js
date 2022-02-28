@@ -1,12 +1,7 @@
 document.addEventListener('deviceready', onDeviceReady, false);
 
 function onDeviceReady() {
-    window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(fs) {
-        fs.root.getFile("offlineactivity.txt", { create: false, exclusive: false }, function(fileEntry) {
-            console.log("file", fileEntry)
-            offlinereadFile(fileEntry);
-        }, onErrorCreateFile = (err) => { console.log(err) });
-    }, onErrorLoadFs = (err) => { console.log(err) })
+    
     var getUrlParams = location.search.split("activityPath="),
         activityPath = getUrlParams[1],
         activityId = "",
@@ -45,37 +40,21 @@ function onDeviceReady() {
         })
     }, (err) => {console.log("error>>>", err)});
 
-    // ------------------------------------------------------------------------
-    // $(document).on('load', '.h5p-iframe', () => {
-    //     console.log("hello")
-    // })
+    window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(fs) {
+        fs.root.getFile("offlineActivitiesCount.json", { create: false, exclusive: false }, function(fileEntry) {
+            readLoacalJsonFile(fileEntry, (file) => { 
+                console.log("🚀 ~ file: offline-activity.js ~ line 46 ~ readLoacalJsonFile ~ file", file)
+                let activities = JSON.parse(file);
+                console.log("readLoacalJsonFile", activities);
 
-    function offlinereadFile(fileEntry) {
-        fileEntry.file(function(file) {
-            var reader = new FileReader();
-            reader.onloadend = function() {
-                activityIdObj = this.result.split(",")
-                var generateNewActivityPath = newActivityPath + "/",
-                    indexno = activityIdObj.indexOf(generateNewActivityPath)
-                    currentActivity = getKeyByValue(activityIdObj, generateNewActivityPath),
-                    countActivity = Object.keys(activityIdObj).length,
-                    totalActivity = countActivity - 1,
-                    buttonsHTML = `
-                <div class="d-flex justify-content-between btn-wrap pb-3">
-                    <button class="btn btn-info" id="prevButton" ${currentActivity == 0 ? "disabled" : ""}>Prev</button>
-                    <button class="btn btn-info" id="nextButton" ${currentActivity == totalActivity ? "disabled" : ""}>Next</button>
-                </div>`;
-                // console.log("index no", indexno)
-                // console.log("current activity", currentActivity)
-                // console.log("count...", countActivity)
-                // console.log("total", totalActivity)
-                // console.log("genetate new activity is", generateNewActivity)
-                $("#offlineactiveButton").append(buttonsHTML);
-            };
-            reader.readAsText(file);
+            });
+        }, onErrorCreateFile = (err) => { console.log(err) });
+    }, onErrorLoadFs = (err) => { console.log("err------> ",err) })
 
-        }, onErrorReadFile = (err) => { console.log(err) });
-    }
+
+
+
+
     $(document).on("click", "#prevButton", () => {
         var currentActivityId = getKeyByValue(activityIdObj, generateNewActivityPath),
             prevActivityId = parseInt(currentActivityId) - 1;

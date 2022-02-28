@@ -295,7 +295,7 @@ function writeFile(fileEntry, dataObj) {
           console.log("Successful file write...");
       };
       fileWriter.onerror = function (e) {
-          console.log("Failed file write: " + e.toString());
+          console.log("Failed file write: ", e);
       };
       // If data object is not passed in,
       // create a new Blob instead.
@@ -306,11 +306,12 @@ function writeFile(fileEntry, dataObj) {
   });
 }
 
-function readLoacalJsonFile(fileEntry) {
+function readLoacalJsonFile(fileEntry, jsonData) {
   fileEntry.file(function(file) {
       var reader = new FileReader();
       reader.onloadend = function() {
-        console.log("Successful file", this.result)
+        console.log("Successful file", this.result);
+        jsonData(this.result);
       };
       reader.readAsText(file);
 
