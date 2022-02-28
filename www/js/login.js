@@ -22,12 +22,15 @@ function onDeviceReady() {
   });
 
   $("#loginButton").on("click", function (e) {
+    $(".main-wrapper").append('<div class="loading"></div>')
     e.preventDefault();
     var userName = $("#username").val(),
       password = $("#PWD").val();
     if (userName || password) {
       userLogin(userName, password, (data) => {
         console.log("data-->", data);
+        var loading = $(".loading");
+        loading.delay(200).slideUp();
         if (data.token) window.location.href = "dashboard.html";
         if (data.error) {
           console.log("error while login");
