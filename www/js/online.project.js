@@ -16,6 +16,7 @@ function onDeviceReady() {
   });
 
   $(document).on("click", ".download-project", (evt) => {
+    $(".main-wrap").append('<div class="loading"></div>')
     let projectId = evt.target.id;
     downloadProject(projectId, (project) => {
       downloadProjectZip(project, fileSystem, (filePath) => {
@@ -25,6 +26,8 @@ function onDeviceReady() {
             if (response == 1) {
               let downloadMessage = new DownloadCourseAlertHtml()
               $(".remove-course-alert").html(downloadMessage.alertContent);
+              var loading = $(".loading");
+              loading.delay(200).slideUp();
             }
             // window.location.reload();
           });
