@@ -1,19 +1,45 @@
 document.addEventListener('deviceready', onDeviceReady, false);
 
 function onDeviceReady() {
+    let activities = [];
+    let current;
+    let buttons = `<div class="prv-next-btn mt-5">`;
+    var getUrlParams = location.search.split("activityPath="), activityPath = getUrlParams[1], splitActivitypath = activityPath.split("/");;
     
-    var getUrlParams = location.search.split("activityPath="),
-        activityPath = getUrlParams[1],
-        activityId = "",
-        splitActivitypath = activityPath.split("/");
-    splitActivitypath.splice(splitActivitypath.length - 1, 1),
-        newActivityPath = splitActivitypath.join('/');
-    var generateNewActivityPath = newActivityPath + "/";
+    window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(fs) {
+        fs.root.getFile("offlineActivitiesCount.json", { create: false, exclusive: false }, function(fileEntry) {
+            readLoacalJsonFile(fileEntry, (file) => {
+                activities = JSON.parse(file);
+                activities.forEach((element,i)=>{
+                    if(element.id == splitActivitypath[16]){
+                        current = i;
+                        if (i !== 0 && i !== activities.length - 1) {
+                            buttons += `<button id="${activities[i - 1].path}" 
+                              class="btn green-btn prv-btn">Previous
+                            </button>
+                            <button id= "${activities[i + 1].path}" 
+                              class="btn green-btn nxt-btn">Next
+                            </button>
+                            </div>`;
+                        } else if (i === 0 && activities.length !== 1) {
+                        buttons += `<button id="${activities[i + 1].path}" class="btn green-btn">
+                        Next</button></div>`;
+                        } else if (i !== 0 && i == activities.length - 1 ) {
+                        buttons += `<button id="${activities[i - 1].path}" class="btn green-btn">
+                        Prev</button></div>`;
+                        } else if (i === 0 && activities.length === 1) {
+                        buttons += `</div>`;
+                        }
+                    }
+                })
+                $("#offlineactiveButton").append(buttons);
+
+            });
+        }, onErrorCreateFile = (err) => { console.log(err) });
+    }, onErrorLoadFs = (err) => { console.log("err------> ",err) })
 
     window.resolveLocalFileSystemURL(activityPath, function success(fileEntry) {
-        console.log("fileEntry", fileEntry);
         fileEntry.file(function (file) {
-            // console.log("im here>>>>", file);
             var reader = new FileReader();
             reader.onloadend = function(evt) {
                 var playlistJSON = JSON.parse(evt.target.result);
@@ -24,7 +50,6 @@ function onDeviceReady() {
                 iframeHTML = splitHTML[0] + "<iframe " + width + splitHTML[1];
                 window.H5PIntegration = {...setting}
                 $('#h5p-container').append(iframeHTML);
-                // console.log("setting>>>>", window.H5PIntegration);
                 var scripts = `<script src="js/h5p/jquery.js"></script>
                 <script src="js/h5p/offline-h5p.js"></script>
                 <script src="js/h5p/h5p-event-dispatcher.js"></script>
@@ -40,69 +65,10 @@ function onDeviceReady() {
         })
     }, (err) => {console.log("error>>>", err)});
 
-    window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(fs) {
-        fs.root.getFile("offlineActivitiesCount.json", { create: false, exclusive: false }, function(fileEntry) {
-            readLoacalJsonFile(fileEntry, (file) => { 
-                console.log("🚀 ~ file: offline-activity.js ~ line 46 ~ readLoacalJsonFile ~ file", file)
-                let activities = JSON.parse(file);
-                console.log("readLoacalJsonFile", activities);
-
-            });
-        }, onErrorCreateFile = (err) => { console.log(err) });
-    }, onErrorLoadFs = (err) => { console.log("err------> ",err) })
-
-
-
-
-
-    $(document).on("click", "#prevButton", () => {
-        var currentActivityId = getKeyByValue(activityIdObj, generateNewActivityPath),
-            prevActivityId = parseInt(currentActivityId) - 1;
-        window.resolveLocalFileSystemURL(activityIdObj[prevActivityId], function success(activities) {
-            // console.log("activity object--", activityIdObj)
-            var activitiesReader = activities.createReader();
-            activitiesReader.readEntries(getPlaylists = (activitiesFiles) => {
-                activitiesFiles.forEach((activitiesFile) => {
-
-
-                    if (activitiesFile.isFile) {
-                        if (activitiesFile.name.includes('h5p.json')) {
-                            console.log("file", activitiesFile);
-                            window.location.href = `offline-activity.html?activityPath=${activitiesFile.nativeURL}`;
-                            //console.log("location---", window.location.href)
-                            //console.log("file", activitiesFile);
-                            window.location.href = `offline-activity.html?activityPath=${activitiesFile.nativeURL}`;
-                            console.log("location---", window.location.href)
-                        }
-                    }
-                })
-            })
-        })
-
-    })
-    $(document).on("click", "#nextButton", () => {
-            // console.log(">>>>>>>>>>", activityIdObj)
-            // console.log(">>>>>>>>>>", newActivityPath)
-            var currentActivityId = getKeyByValue(activityIdObj, generateNewActivityPath),
-                nextActivityId = parseInt(currentActivityId) + 1;
-
-            window.resolveLocalFileSystemURL(activityIdObj[nextActivityId], function success(activities) {
-                var activitiesReader = activities.createReader();
-                activitiesReader.readEntries(getPlaylists = (activitiesFiles) => {
-                    activitiesFiles.forEach((activitiesFile) => {
-                        // console.log("activities files==", activitiesFile)
-                        if (activitiesFile.isFile) {
-                            if (activitiesFile.name.includes('h5p.json')) {
-                                // console.log("file", activitiesFile);
-                                window.location.href = `offline-activity.html?activityPath=${activitiesFile.nativeURL}`;
-                                // console.log("location---", window.location.href)
-                            }
-                        }
-                    })
-                })
-            })
-    })
-        // handlePlayActivity(activityIdObj[nextActivityId])  })
+    $(document).on("click", '.green-btn', (evt) => {
+        let newUrl = `offline-activity.html?activityPath=${evt.target.id}`
+        window.location.href = newUrl; 
+    });
 
     function getKeyByValue(object, value) {
         return Object.keys(object).find(key => object[key] == value);
@@ -125,11 +91,10 @@ function onOnline() {
 function onOffline() {
     // Handle the offline event
     var data;
-    console.log("lost connection");
     var getOpenedTime = {};
     H5P.externalDispatcher.on('xAPI', function(event) {
         var contentId = event.getVerifiedStatementValue(['object', 'definition', 'extensions', 'http://h5p.org/x-api/h5p-local-content-id']);
-        // console.log("contentID", contentId);
+        
         if (event.getVerb() === 'attempted') {
             getOpenedTime[contentId] = new Date();
         }
@@ -159,10 +124,8 @@ function onOffline() {
                 time: "",
                 email: email
             };
-            console.log("dddddd", data);
                 // const stringData = JSON.stringify(data);
             window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(fs) {
-                console.log('file system open: ' + fs.name);
                 createFile(fs.root, "user-response-offline.txt", false, data);
             }, onErrorLoadFs = (err) => { console.log(err) });
         }
@@ -181,10 +144,8 @@ function writeFile(fileEntry, dataObj) {
     // Create a FileWriter object for our FileEntry (log.txt).
     fileEntry.createWriter(function(fileWriter) {
         fileWriter.onwriteend = function() {
-            console.log("Successful file write..." + this.result);
         };
         fileWriter.onerror = function(e) {
-            console.log("Failed file write: " + e.toString());
         };
         // If data object is not passed in,
         // create a new Blob instead.
@@ -202,10 +163,7 @@ function readFile(fileEntry) {
     fileEntry.file(function(file) {
         var reader = new FileReader();
         reader.onloadend = function() {
-            console.log("Successful file read: " + this.result);
-            // console.log(fileEntry.fullPath + ": " + this.result);
             var data = JSON.parse(this.result)
-            console.log(data)
             $.ajax({
                 url: `${currikiBaseURL}h5p/ajax/reader/finish`,
                 type: "POST",
@@ -214,7 +172,6 @@ function readFile(fileEntry) {
                 },
                 data: data,
                 success: function(result) {
-                    console.log(result)
                 }
             });
         };

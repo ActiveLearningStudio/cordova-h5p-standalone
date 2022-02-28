@@ -2873,7 +2873,7 @@ H5P.createTitle = function (rawTitle, maxLength) {
     // since events may be fired on initialization.
     if (H5P.isFramed && H5P.externalEmbed === false) {
       H5P.externalDispatcher.on('*', function (event) {
-        window.parent.H5P.externalDispatcher.trigger.call(this, event);
+        // window.parent.H5P.externalDispatcher.trigger.call(this, event);
       });
     }
 

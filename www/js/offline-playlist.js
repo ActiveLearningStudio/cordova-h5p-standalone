@@ -76,7 +76,6 @@ function onDeviceReady() {
                         // --------- Playlist Folder ---------
                         activitiesPath = allPlaylist;
                       } else {
-                        console.log(" allPlaylist.nativeURL",  allPlaylist.nativeURL);
                         window.resolveLocalFileSystemURL(
                           allPlaylist.nativeURL,
                           function success(fileEntry) {
@@ -90,10 +89,10 @@ function onDeviceReady() {
                                     evt.target.result
                                   );
                                   playlistJSON.activities.forEach((activity, key) => {
-                                      activities.push({key: key, id: activity.h5p_content_id});
+                                    let activityRoute = `${activitiesRoute}/${activity.title}/${activity.h5p_content_id}-h5p.json`
+                                    activities.push({key: key, id:`${activity.h5p_content_id}-h5p.json`, path: activityRoute});
                                   });
                                   window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function (fs) {
-                                    console.log('file system open: ' + fs.name);
                                     createFile(fs.root, "offlineActivitiesCount.json", false, activities);  
                                   }, onErrorLoadFs = (err) => {console.log(err)});
                                   counter++;

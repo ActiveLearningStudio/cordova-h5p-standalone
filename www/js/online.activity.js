@@ -10,7 +10,6 @@ function onDeviceReady() {
     let embededCode = activity.activity.h5p.embed_code;
     let allActivitites = activity.playlist.activities;
     $("#mainBody").append(embededCode);
-
     allActivitites.forEach((element,i) => {
       allIds.push({key: i,id:element.id});
       if(element.id == activityId){
