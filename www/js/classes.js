@@ -22,7 +22,7 @@ class CourseHtml {
                 </ul>
               </div>
               <div class="card-btn">
-                <button class="btn green-btn download-project" id="${
+                <button class="btn green-btn download-project" name="${course.name}" id="${
                   course.id
                 }">
                   <img src="img/download-vector.svg" /> Download
@@ -312,10 +312,9 @@ function readLoacalJsonFile(fileEntry, jsonData) {
   fileEntry.file(function(file) {
       var reader = new FileReader();
       reader.onloadend = function() {
-        console.log("Successful file", this.result);
+        // console.log("Successful file", this.result);
         jsonData(this.result);
       };
       reader.readAsText(file);
-
   }, onErrorReadFile = (err) => { console.log(err) });
 }

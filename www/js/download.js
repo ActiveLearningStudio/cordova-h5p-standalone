@@ -1,4 +1,5 @@
 document.addEventListener('deviceready', onDeviceReady, false);
+var H5P = window.H5P = window.H5P || {};
 function onDeviceReady() {
     // if (externalDirectory) {
   //     let json = '';
@@ -246,6 +247,7 @@ function onDeviceReady() {
 
     function onOffline() {
         // Handle the offline event
+        console.log("download");
         var data;
         console.log("lost connection");
         H5P.externalDispatcher.on('xAPI', function (event) {
