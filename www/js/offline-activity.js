@@ -1,5 +1,5 @@
 document.addEventListener('deviceready', onDeviceReady, false);
-
+var H5P = window.H5P = window.H5P || {};
 function onDeviceReady() {
     let activities = [];
     let current;
@@ -87,7 +87,7 @@ function onOnline() {
     // Handle the online event
     var networkState = navigator.connection.type;
     window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(fs) {
-        fs.root.getFile("user-response-offline.txt", { create: false, exclusive: false }, function(fileEntry) {
+        fs.root.getFile("user-response-offline.json", { create: false, exclusive: false }, function(fileEntry) {
             readFile(fileEntry);
         }, onErrorCreateFile = (err) => { console.log(err) });
     }, onErrorLoadFs = (err) => { console.log(err) })
@@ -98,6 +98,7 @@ function onOffline() {
     var data;
     var getOpenedTime = {};
     H5P.externalDispatcher.on('xAPI', function(event) {
+        console.log("Api hit");
         var contentId = event.getVerifiedStatementValue(['object', 'definition', 'extensions', 'http://h5p.org/x-api/h5p-local-content-id']);
         
         if (event.getVerb() === 'attempted') {
@@ -106,20 +107,24 @@ function onOffline() {
         if ((event.getVerb() === 'completed' || event.getVerb() === 'answered') && !event.getVerifiedStatementValue(['context', 'contextActivities', 'parent'])) {
             var score = event.getScore(),
             maxScore = event.getMaxScore(),
-            contentId = event.getVerifiedStatementValue(['object', 'definition', 'extensions', 'http://h5p.org/x-api/h5p-local-content-id']),
-            offlineCoursesProgress = JSON.parse(localStorage.getItem('offlineCoursesProgress'));
-            activeOfflineCourse = offlineCoursesProgress[offlineCoursesProgress.findIndex((obj => obj.id == localStorage.getItem('activeOfflineCourse')))],
-            completed_activities = activeOfflineCourse.completed_activities;
-            if(completed_activities.indexOf(contentId) === -1) {
-                completed_activities.push(contentId);
-            }
-            activeOfflineCourse.progress = ((completed_activities.length)*100)/activeOfflineCourse.activities.length;
-            localStorage.setItem('offlineCoursesProgress', JSON.stringify(offlineCoursesProgress));
+            contentId = event.getVerifiedStatementValue(['object', 'definition', 'extensions', 'http://h5p.org/x-api/h5p-local-content-id']);
+            
+            // offlineCoursesProgress = JSON.parse(localStorage.getItem('offlineCoursesProgress'));
+            // console.log("maxScore", maxScore, score, contentId);
+            // console.log("offlineCoursesProgress", offlineCoursesProgress);
+            // activeOfflineCourse = offlineCoursesProgress[offlineCoursesProgress.findIndex((obj => obj.id == localStorage.getItem('activeOfflineCourse')))],
+            // completed_activities = activeOfflineCourse.completed_activities;
+            // if(completed_activities.indexOf(contentId) === -1) {
+            //     completed_activities.push(contentId);
+            // }
+            // activeOfflineCourse.progress = ((completed_activities.length)*100)/activeOfflineCourse.activities.length;
+            // localStorage.setItem('offlineCoursesProgress', JSON.stringify(offlineCoursesProgress));
             email = event.data.statement.actor.mbox,
             toUnix = function (date) {
                 return Math.round(date.getTime() / 1000);
             };
-              // Post the results
+            
+            //   // Post the results
             const data = {
                 contentId: contentId,
                 score: score,
@@ -129,9 +134,10 @@ function onOffline() {
                 time: "",
                 email: email
             };
-                // const stringData = JSON.stringify(data);
+            console.log("data", data);
+            const stringData = JSON.stringify(data);
             window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(fs) {
-                createFile(fs.root, "user-response-offline.txt", false, data);
+                createFile(fs.root, "user-response-offline.json", false, data);
             }, onErrorLoadFs = (err) => { console.log(err) });
         }
     });
@@ -164,8 +170,7 @@ function writeFile(fileEntry, dataObj) {
 function readFile(fileEntry) {
     const currikiToken = localStorage.getItem("CURRIKI_TOKEN"),
     currikiBaseURL = localStorage.getItem("CURRIKI_BASE_API_URL");
-    // const CurrikiToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxMzMiLCJqdGkiOiJlNGUyZTgyZDM4ODkwOGUyOTcyZGUxMzEwOTc4MWJiYzcyZTAwMmEwM2JjZjY5NGNjNzhhZTgyZWU2NThhZGY3MzcyNjRlYTk5YzZlN2Y2MyIsImlhdCI6MTYzMjgwNDQwMCwibmJmIjoxNjMyODA0NDAwLCJleHAiOjE2NjQzNDA0MDAsInN1YiI6IjE0MzciLCJzY29wZXMiOltdfQ.ANU71Nl9syFSa7zKN4XIzEX5rnJ6cJ1g8SsFSz5EDActwpVwuxzpgf_HdpsdOcCwzTwPdy-18kx0HAHKsXE0tsbYY8Ncyf9tYuTlxcKXxXTA4YI29y7-ACAjLHpdTi29hwsTxYltwYYx-TxUYrEjOSrBOPOhluhn56F3DvdGw3JPS40aHZ7bpnJojLw8Ysv5Kpm4wFCjLQewoNpLfu7p53wYQ3jjusR4UDFE3M6I1nrmj3Pfsik4q9uKhimas0nm8PXhGSRbfaJPzTlNOVAcNdZuOMMnLIQt8ENThNZ_9z0HLLSvPc0jjzHEDRyu-khPGEPeFH56Kjm6GUYXwxl3LRPxTMWRcRP6q-JcphfOXkUaUfWilNRJ3jndzvta1vTqmgVUTO6xH3EoNGo_oYhA56b1Gm4UVc50Z3K2jG3Q4omzdkZlufLN9JB5H6eH6cQEEEP9rrSOX_lDRUchbqLDbBC9dghMr7E5R6uDlA9PAT5pcsPsydEvjTcPbv3aa5jRfvO31oixkR2JXGlHi3mTIAxI60eB_3NcgUEehtSwyx7o-epMDE6T6FL2fsBo5Kz_Bi4Cb-2Mem0umbD92kgFny1RBF7Vxj7eosMZXkdI6US6lIiC0bLVwr4bUnOVJ2lR5MNboIqw9IFT7JTLR8qaVfyUs4kTxi4que8JXmmYyDU';
-    fileEntry.file(function(file) {
+   fileEntry.file(function(file) {
         var reader = new FileReader();
         reader.onloadend = function() {
             var data = JSON.parse(this.result)

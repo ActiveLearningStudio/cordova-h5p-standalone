@@ -73,6 +73,7 @@ function onDeviceReady() {
             window.resolveLocalFileSystemURL(
               entries[i].nativeURL,
               (project) => {
+                // console.log("project", project);
                 let projectReader = project.createReader();
                 projectReader.readEntries(
                   (projectsHandler) => {

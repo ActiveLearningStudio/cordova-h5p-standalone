@@ -210,7 +210,6 @@ H5P.init = function (target) {
 
     // Keep track of when we started
     H5P.opened[contentId] = new Date();
-
     // Handle events when the user finishes the content. Useful for logging exercise results.
     H5P.on(instance, 'finish', function (event) {
       if (event.data !== undefined) {
@@ -220,7 +219,6 @@ H5P.init = function (target) {
 
     // Listen for xAPI events.
     H5P.on(instance, 'xAPI', H5P.xAPICompletedListener);
-
     // Auto save current state if supported
     if (H5PIntegration.saveFreq !== false && (
         instance.getCurrentState instanceof Function ||
@@ -442,17 +440,14 @@ H5P.getHeadTags = function (contentId) {
 
   var createScriptTags = function (scripts) {
     var networkState = navigator.connection.type;
-  // console.log("networkState", networkState, " ", Connection.NONE)
     var tags = '';
     var tagUrl = [];
     for (var i = 0; i < scripts.length; i++) {
-      // console.log("online>>", scripts[i]);
       // if (networkState == Connection.NONE) {
         if (scripts[i].includes("libraries")) {
           tagUrl = scripts[i].split("libraries");
           tags += '<script src="activities' + tagUrl[1] + '"></script>';
         } else if (scripts[i].includes("storage")) {
-          console.log(scripts[i]);
           if (scripts[i].includes("storage/h5p/h5p-core/js/h5p.js")) {
             tags += '<script src="js/h5p/offline-h5p.js"></script>'
           } else {
@@ -2251,7 +2246,7 @@ H5P.setFinished = function (contentId, score, maxScore, time) {
       finished: toUnix(new Date()),
       time: time
     };
-    console.log("data", data);
+    console.log("data1", data);
     // H5P.jQuery.post(H5PIntegration.ajax.setFinished, data)
     //   .fail(function () {
     //     H5P.offlineRequestQueue.add(H5PIntegration.ajax.setFinished, data);
@@ -2873,7 +2868,7 @@ H5P.createTitle = function (rawTitle, maxLength) {
     // since events may be fired on initialization.
     if (H5P.isFramed && H5P.externalEmbed === false) {
       H5P.externalDispatcher.on('*', function (event) {
-        // window.parent.H5P.externalDispatcher.trigger.call(this, event);
+        window.parent.H5P.externalDispatcher.trigger.call(this, event);
       });
     }
 
