@@ -133,20 +133,30 @@ function onDeviceReady() {
     let resetMessage = new RemoveCourseAlertHtml();
     $(".remove-course-alert").append(resetMessage.alertContent);
     const projectPath = evt.target.id.replace("playlists", "");
-
+    let projectPathArray = projectPath.split("/");
+    console.log("log", projectPathArray.at(-1))
+    return false;
     $(document).on("click", ".confirm-remove", () => {
-      window.resolveLocalFileSystemURL(
-        projectPath,
-        (entry) => {
-          entry.removeRecursively(() => {
-            $(".remove-course-alert").html("");
-            window.location.reload();
-          });
-        },
-        (err) => {
-          console.log(err);
-        }
-      );
+      window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(fs) {
+        fs.root.getFile("all-downloads-activity.json", { create: false, exclusive: false }, function(fileEntry) {
+          readLoacalJsonFile(fileEntry, (file) => {
+            activities = JSON.parse(file);
+            const inArray = new Promise((resolve, reject) => {
+              activities.some(element => {
+                if (element.projectId === projectId) {
+                  getProjectPath = element.projectPath
+                  resolve(getProjectPath);
+                }
+              });
+            });
+            inArray.then(path => {
+              getFullProjectPath = `${fileSystem}projects/${path}`;
+              removeCourse(getFullProjectPath);
+            })
+          })
+        })
+      })
+      removeCourse(projectPath);
     });
 
     $(document).on("click", ".cancel-remove", () => {

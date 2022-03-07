@@ -55,13 +55,11 @@ const downloadProjectZip = (path, fileSystem, filePath) => {
       (entry) => {
         var reader = entry.createReader();
         reader.readEntries((listProjects) => {
-          console.log("list>>", listProjects);
         });
         entry.getDirectory(
           name,
           { create: true },
           (dirEntry) => {
-            console.log(dirEntry);
             processZip(
               fileSystem + "projects/" + fileName[1],
               dirEntry.nativeURL,
@@ -72,7 +70,6 @@ const downloadProjectZip = (path, fileSystem, filePath) => {
             );
           },
           (onErrorGetDir = (err) => {
-            console.log("dir creating >>", err);
           })
         );
       },
@@ -106,7 +103,6 @@ function processZip(zipSource, destination, projectName, zipExtracted) {
     zipSource,
     destination,
     (status) => {
-      console.log("zip", zipSource, destination);
       if (status == 0) {
         console.log("Files succesfully decompressed");
         window.resolveLocalFileSystemURL(
@@ -117,7 +113,7 @@ function processZip(zipSource, destination, projectName, zipExtracted) {
                 console.log("File is removed.");
               },
               function (error) {
-                alert("Unable to remove file.");
+                console.log("Unable to remove file.", error);
               }
             );
           },
@@ -317,4 +313,81 @@ function readLoacalJsonFile(fileEntry, jsonData) {
       };
       reader.readAsText(file);
   }, onErrorReadFile = (err) => { console.log(err) });
+}
+
+const removeCourse = (projectPath) => {
+  window.resolveLocalFileSystemURL(
+    projectPath,
+    (entry) => {
+      entry.removeRecursively(() => {
+        $(".remove-course-alert").html("");
+        window.location.reload();
+      });
+    },
+    (err) => {
+      console.log(err);
+    }
+  );
+}
+
+const updateAddCourse = (projectId, projectName, fileSystem) => {
+  let getProjectPath, getFullProjectPath;
+  window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(fs) {
+    fs.root.getFile("all-downloads-activity.json", { create: false, exclusive: false }, function(fileEntry) {
+      readLoacalJsonFile(fileEntry, (file) => {
+        activities = JSON.parse(file);
+        const inArray = new Promise((resolve, reject) => {
+          activities.some(element => {
+            if (element.projectId === projectId) {
+              getProjectPath = element.projectPath
+              resolve(getProjectPath);
+            }
+          });
+        });
+        inArray.then(path => {
+          getFullProjectPath = `${fileSystem}projects/${path}`;
+          removeCourse(getFullProjectPath);
+        })
+        handleDownloadProject(projectId, fileSystem, (projectPath) => {
+          activities.push({
+            projectId: projectId, 
+            projectName: projectName,
+            projectPath: projectPath
+          })
+          writeFile(fileEntry, activities)
+        });
+      })
+    }, onErrorReadFile = (err) => {
+      console.log(err)
+      window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(fs) {
+        handleDownloadProject(projectId, fileSystem, (projectPath) => {
+          let data = [{
+            projectId: projectId, 
+            projectName: projectName,
+            projectPath: projectPath
+          }];
+          createFile(fs.root, "all-downloads-activity.json", false, data);
+        });
+      }, onErrorLoadFs = (err) => { console.log(err) });
+    })
+  })
+}
+
+const handleDownloadProject = (projectId, fileSystem, projectPath) => {
+  downloadProject(projectId, (project) => {
+    downloadProjectZip(project, fileSystem, (filePath) => {
+      setTimeout(() => {
+        deleteProject(filePath, (response) => {
+          if (response == 1) {
+            let downloadMessage = new DownloadCourseAlertHtml()
+            $(".remove-course-alert").html(downloadMessage.alertContent);
+            var loading = $(".loading");
+            loading.delay(200).slideUp();
+            projectPath(filePath);
+          }
+          // window.location.reload();
+        });
+      }, 200);
+    });
+  });
 }
