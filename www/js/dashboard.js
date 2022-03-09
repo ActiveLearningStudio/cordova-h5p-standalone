@@ -41,24 +41,6 @@ function onDeviceReady() {
     });
   }
 
-  $(document).on("click", ".download-project", (evt) => {
-    $(".main-wrap").append('<div class="loading"></div>')
-    let projectId = evt.target.id;
-    downloadProject(projectId, (project) => {
-      downloadProjectZip(project, fileSystem, (filePath) => {
-        setTimeout(() => {
-          deleteProject(filePath, (response) => {
-            let downloadMessage = new DownloadCourseAlertHtml();
-            $(".remove-course-alert").html(downloadMessage.alertContent);
-            // window.location.reload();
-            var loading = $(".loading");
-            loading.delay(200).slideUp();
-          });
-        }, 200);
-      });
-    });
-  });
-
   // const checkOfflineCourses = () => {
   window.resolveLocalFileSystemURL(
     fileSystem + "projects/",
@@ -152,5 +134,12 @@ function onDeviceReady() {
     $(document).on("click", ".cancel-remove", () => {
       $(".remove-course-alert").html("");
     });
+  });
+
+  $(document).on("click", ".download-project", (evt) => {
+    $(".main-wrap").append('<div class="loading"></div>')
+    let projectId = evt.target.id,
+    projectName = evt.target.name;
+    updateAddCourse(projectId, projectName, fileSystem);
   });
 }

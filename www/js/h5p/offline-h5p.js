@@ -2234,7 +2234,10 @@ H5P.setFinished = function (contentId, score, maxScore, time) {
      * @returns {Number}
      */
     var toUnix = function (date) {
-      return Math.round(date.getTime() / 1000);
+      console.log("datee", date);
+      if(date){
+        return Math.round(date.getTime() / 1000);
+      }
     };
 
     // Post the results
