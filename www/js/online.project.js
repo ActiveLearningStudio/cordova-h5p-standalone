@@ -10,16 +10,16 @@ function onDeviceReady() {
       break;
   }
 
-  window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(fs) {
-    fs.root.getFile("all-downloads-activity.json", { create: false, exclusive: false }, function(fileEntry) {
-      readLoacalJsonFile(fileEntry, (file) => {
-        // console.log("🚀 ~ file: online.project.js ~ line 16 ~ readLoacalJsonFile ~ file", file)
-        activities = JSON.parse(file);
-        console.log("🚀 ~ file: online.project.js ~ line 17 ~ readLoacalJsonFile ~ activities", activities)
-      });
-    })
+//   window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(fs) {
+//     fs.root.getFile("all-downloads-activity.json", { create: false, exclusive: false }, function(fileEntry) {
+//       readLoacalJsonFile(fileEntry, (file) => {
+//         // console.log("🚀 ~ file: online.project.js ~ line 16 ~ readLoacalJsonFile ~ file", file)
+//         activities = JSON.parse(file);
+//         console.log("🚀 ~ file: online.project.js ~ line 17 ~ readLoacalJsonFile ~ activities", activities)
+//       });
+//     })
 
-}, (onErrorLoadFs) => {console.error(onErrorLoadFs)});
+// }, (onErrorLoadFs) => {console.error(onErrorLoadFs)});
 
   getProjects("preview", (project) => {
     const courseWrapper = new CourseHtml(project.projects);
@@ -30,7 +30,6 @@ function onDeviceReady() {
     $(".main-wrap").append('<div class="loading"></div>')
     let projectId = evt.target.id,
     projectName = evt.target.name;
-
     updateAddCourse(projectId, projectName, fileSystem);
   });
 }

@@ -321,7 +321,8 @@ const removeCourse = (projectPath) => {
     (entry) => {
       entry.removeRecursively(() => {
         $(".remove-course-alert").html("");
-        window.location.reload();
+        // return true;
+        // window.location.reload();
       });
     },
     (err) => {
@@ -337,18 +338,24 @@ const updateAddCourse = (projectId, projectName, fileSystem) => {
       readLoacalJsonFile(fileEntry, (file) => {
         activities = JSON.parse(file);
         const inArray = new Promise((resolve, reject) => {
-          activities.some(element => {
-            if (element.projectId === projectId) {
-              getProjectPath = element.projectPath
+          activities.some((element,i) => {
+            if (element.projectId == projectId) {
+              getProjectPath = element.projectPath;
+              getFullProjectPath = `${fileSystem}projects/${getProjectPath}`;
               resolve(getProjectPath);
+              activities.splice(i, 1);               
             }
           });
-        });
-        inArray.then(path => {
-          getFullProjectPath = `${fileSystem}projects/${path}`;
-          removeCourse(getFullProjectPath);
         })
-        handleDownloadProject(projectId, fileSystem, (projectPath) => {
+
+        // inArray.then(path => {
+        //   console.log('path==', path);
+        //   getFullProjectPath = `${fileSystem}projects/${path}`;
+        //   removeCourse(getFullProjectPath);
+        // })
+        
+        handleDownloadProject(getFullProjectPath, projectId, fileSystem, (projectPath) => {
+          
           activities.push({
             projectId: projectId, 
             projectName: projectName,
@@ -360,7 +367,8 @@ const updateAddCourse = (projectId, projectName, fileSystem) => {
     }, onErrorReadFile = (err) => {
       console.log(err)
       window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(fs) {
-        handleDownloadProject(projectId, fileSystem, (projectPath) => {
+        handleDownloadProject(getFullProjectPath, projectId, fileSystem, (projectPath) => {
+          
           let data = [{
             projectId: projectId, 
             projectName: projectName,
@@ -373,7 +381,10 @@ const updateAddCourse = (projectId, projectName, fileSystem) => {
   })
 }
 
-const handleDownloadProject = (projectId, fileSystem, projectPath) => {
+const handleDownloadProject = (getFullProjectPath,projectId, fileSystem, projectPath) => {
+  if(getFullProjectPath){
+    removeCourse(getFullProjectPath)
+  }
   downloadProject(projectId, (project) => {
     downloadProjectZip(project, fileSystem, (filePath) => {
       setTimeout(() => {
@@ -387,7 +398,7 @@ const handleDownloadProject = (projectId, fileSystem, projectPath) => {
           }
           // window.location.reload();
         });
-      }, 200);
+      }, 500);
     });
   });
 }

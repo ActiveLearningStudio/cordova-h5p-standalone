@@ -41,24 +41,6 @@ function onDeviceReady() {
     });
   }
 
-  $(document).on("click", ".download-project", (evt) => {
-    $(".main-wrap").append('<div class="loading"></div>')
-    let projectId = evt.target.id;
-    downloadProject(projectId, (project) => {
-      downloadProjectZip(project, fileSystem, (filePath) => {
-        setTimeout(() => {
-          deleteProject(filePath, (response) => {
-            let downloadMessage = new DownloadCourseAlertHtml();
-            $(".remove-course-alert").html(downloadMessage.alertContent);
-            // window.location.reload();
-            var loading = $(".loading");
-            loading.delay(200).slideUp();
-          });
-        }, 200);
-      });
-    });
-  });
-
   // const checkOfflineCourses = () => {
   window.resolveLocalFileSystemURL(
     fileSystem + "projects/",
@@ -133,34 +115,31 @@ function onDeviceReady() {
     let resetMessage = new RemoveCourseAlertHtml();
     $(".remove-course-alert").append(resetMessage.alertContent);
     const projectPath = evt.target.id.replace("playlists", "");
-    let projectPathArray = projectPath.split("/");
-    console.log("log", projectPathArray.at(-1))
-    return false;
+
     $(document).on("click", ".confirm-remove", () => {
-      window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(fs) {
-        fs.root.getFile("all-downloads-activity.json", { create: false, exclusive: false }, function(fileEntry) {
-          readLoacalJsonFile(fileEntry, (file) => {
-            activities = JSON.parse(file);
-            const inArray = new Promise((resolve, reject) => {
-              activities.some(element => {
-                if (element.projectId === projectId) {
-                  getProjectPath = element.projectPath
-                  resolve(getProjectPath);
-                }
-              });
-            });
-            inArray.then(path => {
-              getFullProjectPath = `${fileSystem}projects/${path}`;
-              removeCourse(getFullProjectPath);
-            })
-          })
-        })
-      })
-      removeCourse(projectPath);
+      window.resolveLocalFileSystemURL(
+        projectPath,
+        (entry) => {
+          entry.removeRecursively(() => {
+            $(".remove-course-alert").html("");
+            window.location.reload();
+          });
+        },
+        (err) => {
+          console.log(err);
+        }
+      );
     });
 
     $(document).on("click", ".cancel-remove", () => {
       $(".remove-course-alert").html("");
     });
+  });
+
+  $(document).on("click", ".download-project", (evt) => {
+    $(".main-wrap").append('<div class="loading"></div>')
+    let projectId = evt.target.id,
+    projectName = evt.target.name;
+    updateAddCourse(projectId, projectName, fileSystem);
   });
 }

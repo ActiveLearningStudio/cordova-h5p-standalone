@@ -45,14 +45,17 @@ function onDeviceReady() {
 
     window.resolveLocalFileSystemURL(activityPath, function success(fileEntry) {
         fileEntry.file(function (file) {
+            console.log("activityPath 1", activityPath);
             var reader = new FileReader();
             reader.onloadend = function(evt) {
                 var playlistJSON = JSON.parse(evt.target.result);
+                console.log("playlistJSON", playlistJSON);
                 var setting = playlistJSON.settings,
                 html = playlistJSON.embed_code,
                 width = 'width=100%',
                 splitHTML = html.split("<iframe"),
                 iframeHTML = splitHTML[0] + "<iframe " + width + splitHTML[1];
+                console.log("iframeHTML",iframeHTML);
                 window.H5PIntegration = {...setting}
                 $('#h5p-container').append(iframeHTML);
                 var scripts = `<script src="js/h5p/jquery.js"></script>
@@ -68,7 +71,23 @@ function onDeviceReady() {
             }
             reader.readAsText(file);
         })
-    }, (err) => {console.log("error>>>", err)});
+    }, (err) => {
+        console.log("activityPath 2", activityPath);
+
+        let json = JSON.stringify(activityPath);
+        const blob = new Blob([json], {type:"application/json"});
+        console.log("blob", blob);
+        let fileUploaded = new FileReader();
+        // fileUploaded.addEventListener("load", e => {
+        //     console.log(e.target.result, JSON.parse(fileUploaded.result))
+        //   });
+        fileUploaded.readAsText(blob);
+        
+        console.log("My File--",fileUploaded);
+        console.log("error>>>", err);
+        var loading = $(".loading");
+        loading.delay(200).slideUp();
+    });
 
     $(document).on("click", '.green-btn', (evt) => {
         let newUrl = `offline-activity.html?activityPath=${evt.target.id}`
