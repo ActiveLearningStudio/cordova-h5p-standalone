@@ -1,4 +1,5 @@
 document.addEventListener("deviceready", onDeviceReady, false);
+moodleLoginURL = localStorage.getItem("MOODLE_LOGIN_URL");
 function onDeviceReady() {
   // Get Global varibales
   var localStorage = window.localStorage,

@@ -12,7 +12,7 @@ const localStorage = window.localStorage,
 
 const userLogin = (userName, password, callback) => {
   $.ajax({
-    url: moodleLoginURL,
+    url: 'https://map-lms.curriki.org/login/token.php',
     dataType: "json",
     data: {
       username: userName,
@@ -31,6 +31,7 @@ const userLogin = (userName, password, callback) => {
       }
     },
     error: (xhr, status, err) => {
+      console.log('bye 222', status,err, xhr);
       callback(status);
     },
   });
@@ -38,14 +39,14 @@ const userLogin = (userName, password, callback) => {
 
 const getUserId = (userName, userId) => {
   $.ajax({
-    url: moodleBaseURL,
+    url: 'https://map-lms.curriki.org/webservice/rest/server.php',
     dataType: "json",
     data: {
       moodlewsrestformat: "json",
       "criteria[0][key]": "username",
       "criteria[0][value]": userName,
       wsfunction: "core_user_get_users",
-      wstoken: additionalToken,
+      wstoken: localStorage.getItem("ADITIONAL_TOKEN"),
     },
     success: (response) => {
       userId(response.users[0].id);

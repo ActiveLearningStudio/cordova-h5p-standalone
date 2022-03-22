@@ -1,10 +1,15 @@
 document.addEventListener('deviceready', onDeviceReady, false);
 var H5P = window.H5P = window.H5P || {};
+var getUrlParams = location.search.split("activityPath="), 
+    activityPath = getUrlParams[1], 
+    splitActivitypath = activityPath.split("/");;
 function onDeviceReady() {
     let activities = [];
     let current;
     let buttons = `<div class="prv-next-btn mt-5">`;
-    var getUrlParams = location.search.split("activityPath="), activityPath = getUrlParams[1], splitActivitypath = activityPath.split("/");;
+    var getUrlParams = location.search.split("activityPath="), 
+    activityPath = getUrlParams[1], 
+    splitActivitypath = activityPath.split("/");;
     
     window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(fs) {
         fs.root.getFile("offlineActivitiesCount.json", { create: false, exclusive: false }, function(fileEntry) {
@@ -45,17 +50,14 @@ function onDeviceReady() {
 
     window.resolveLocalFileSystemURL(activityPath, function success(fileEntry) {
         fileEntry.file(function (file) {
-            console.log("activityPath 1", activityPath);
             var reader = new FileReader();
             reader.onloadend = function(evt) {
                 var playlistJSON = JSON.parse(evt.target.result);
-                console.log("playlistJSON", playlistJSON);
                 var setting = playlistJSON.settings,
                 html = playlistJSON.embed_code,
                 width = 'width=100%',
                 splitHTML = html.split("<iframe"),
                 iframeHTML = splitHTML[0] + "<iframe " + width + splitHTML[1];
-                console.log("iframeHTML",iframeHTML);
                 window.H5PIntegration = {...setting}
                 $('#h5p-container').append(iframeHTML);
                 var scripts = `<script src="js/h5p/jquery.js"></script>
@@ -72,8 +74,6 @@ function onDeviceReady() {
             reader.readAsText(file);
         })
     }, (err) => {
-        console.log("activityPath 2", activityPath);
-
         let json = JSON.stringify(activityPath);
         const blob = new Blob([json], {type:"application/json"});
         console.log("blob", blob);
@@ -127,37 +127,27 @@ function onOffline() {
             var score = event.getScore(),
             maxScore = event.getMaxScore(),
             contentId = event.getVerifiedStatementValue(['object', 'definition', 'extensions', 'http://h5p.org/x-api/h5p-local-content-id']);
-            
-            // offlineCoursesProgress = JSON.parse(localStorage.getItem('offlineCoursesProgress'));
-            // console.log("maxScore", maxScore, score, contentId);
-            // console.log("offlineCoursesProgress", offlineCoursesProgress);
-            // activeOfflineCourse = offlineCoursesProgress[offlineCoursesProgress.findIndex((obj => obj.id == localStorage.getItem('activeOfflineCourse')))],
-            // completed_activities = activeOfflineCourse.completed_activities;
-            // if(completed_activities.indexOf(contentId) === -1) {
-            //     completed_activities.push(contentId);
-            // }
-            // activeOfflineCourse.progress = ((completed_activities.length)*100)/activeOfflineCourse.activities.length;
-            // localStorage.setItem('offlineCoursesProgress', JSON.stringify(offlineCoursesProgress));
             email = event.data.statement.actor.mbox,
             toUnix = function (date) {
                 return Math.round(date.getTime() / 1000);
             };
-            
+            console.log('maxScore', maxScore);
+            storeActivityScore(contentId, score, maxScore, toUnix(getOpenedTime[contentId]), toUnix(new Date()), email)
             //   // Post the results
-            const data = {
-                contentId: contentId,
-                score: score,
-                maxScore: maxScore,
-                opened: toUnix(getOpenedTime[contentId]),
-                finished: toUnix(new Date()),
-                time: "",
-                email: email
-            };
-            console.log("data", data);
-            const stringData = JSON.stringify(data);
-            window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(fs) {
-                createFile(fs.root, "user-response-offline.json", false, data);
-            }, onErrorLoadFs = (err) => { console.log(err) });
+            // const data = {
+            //     contentId: contentId,
+            //     score: score,
+            //     maxScore: maxScore,
+            //     opened: toUnix(getOpenedTime[contentId]),
+            //     finished: toUnix(new Date()),
+            //     time: "",
+            //     email: email
+            // };
+            // console.log("data", data);
+            // const stringData = JSON.stringify(data);
+            // window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(fs) {
+            //     createFile(fs.root, "user-response-offline.json", false, data);
+            // }, onErrorLoadFs = (err) => { console.log(err) });
         }
     });
 }
