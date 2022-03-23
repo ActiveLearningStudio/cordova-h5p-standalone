@@ -696,3 +696,29 @@ a {
   border-radius: 4px;
   color: #D60C0C;
 }
+
+/* modal css */
+/* The Modal (background) */
+.activity-modal {
+  position: relative;
+  top: 180px;
+  left: 30px;
+  z-index: 1050;
+  width: 81%;
+  height: 100%;
+  overflow: hidden;
+  outline: 0;
+}
+.activity-modal-content {
+  position: relative;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid rgba(0,0,0,.2);
+  border-radius: 0.3rem;
+  outline: 0;
+}
+.activity-modal-content p {
+  font-size: 19px;
+  font-family: fantasy;
+  padding: 10px 0px 10px 30px;
+}

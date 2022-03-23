@@ -2,15 +2,16 @@ document.addEventListener('deviceready', onDeviceReady, false);
 var H5P = window.H5P = window.H5P || {};
 var getUrlParams = location.search.split("activityPath="), 
     activityPath = getUrlParams[1], 
-    splitActivitypath = activityPath.split("/");;
+    splitActivitypath = activityPath.split("/");
+    let id = splitActivitypath[16];
+    let activity_id = id.split('-');
 function onDeviceReady() {
     let activities = [];
     let current;
     let buttons = `<div class="prv-next-btn mt-5">`;
     var getUrlParams = location.search.split("activityPath="), 
     activityPath = getUrlParams[1], 
-    splitActivitypath = activityPath.split("/");;
-    
+    splitActivitypath = activityPath.split("/");
     window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(fs) {
         fs.root.getFile("offlineActivitiesCount.json", { create: false, exclusive: false }, function(fileEntry) {
             readLoacalJsonFile(fileEntry, (file) => {
@@ -58,8 +59,45 @@ function onDeviceReady() {
                 width = 'width=100%',
                 splitHTML = html.split("<iframe"),
                 iframeHTML = splitHTML[0] + "<iframe " + width + splitHTML[1];
+                window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(fs) { 
+                fs.root.getFile("user-response-offline.json", { create: false, exclusive: false }, function(fileEntry) { 
+                    readLoacalJsonFile(fileEntry, (file) => { 
+                        activities = JSON.parse(file);
+                        var activity = activities.filter(activities => activities.contentId == activity_id[0])
+                        console.log('activity', activity);
+                        if(activity.length > 0){
+                            $('#h5p-container').append(`<div class="activity-modal">
+                                <div class="activity-modal-content">
+                                    <p>Max Score: ${activity[0].score}/${activity[0].maxScore}</p>
+                                </div>
+                            </div>`);
+                        }else{
+                            $('#h5p-container').append(iframeHTML);
+                            window.H5PIntegration = {...setting}
+                            var scripts = `<script src="js/h5p/jquery.js"></script>
+                            <script src="js/h5p/offline-h5p.js"></script>
+                            <script src="js/h5p/h5p-event-dispatcher.js"></script>
+                            <script src="js/h5p/h5p-x-api.js"></script>
+                            <script src="js/h5p/h5p-x-api-event.js"></script>
+                            <script src="js/h5p/h5p-content-type.js"></script>
+                            <script src="js/handle-xapi.js"></script>`;
+                            $("body").append(scripts);
+                        }
+                    })
+                }, onErrorReadFile = (err) =>{
+                    $('#h5p-container').append(iframeHTML);
+                    window.H5PIntegration = {...setting}
+                    var scripts = `<script src="js/h5p/jquery.js"></script>
+                    <script src="js/h5p/offline-h5p.js"></script>
+                    <script src="js/h5p/h5p-event-dispatcher.js"></script>
+                    <script src="js/h5p/h5p-x-api.js"></script>
+                    <script src="js/h5p/h5p-x-api-event.js"></script>
+                    <script src="js/h5p/h5p-content-type.js"></script>
+                    <script src="js/handle-xapi.js"></script>`;
+                    $("body").append(scripts);
+                })
+                })
                 window.H5PIntegration = {...setting}
-                $('#h5p-container').append(iframeHTML);
                 var scripts = `<script src="js/h5p/jquery.js"></script>
                 <script src="js/h5p/offline-h5p.js"></script>
                 <script src="js/h5p/h5p-event-dispatcher.js"></script>
@@ -78,11 +116,7 @@ function onDeviceReady() {
         const blob = new Blob([json], {type:"application/json"});
         console.log("blob", blob);
         let fileUploaded = new FileReader();
-        // fileUploaded.addEventListener("load", e => {
-        //     console.log(e.target.result, JSON.parse(fileUploaded.result))
-        //   });
         fileUploaded.readAsText(blob);
-        
         console.log("My File--",fileUploaded);
         console.log("error>>>", err);
         var loading = $(".loading");
@@ -122,18 +156,26 @@ function onOffline() {
         
         if (event.getVerb() === 'attempted') {
             getOpenedTime[contentId] = new Date();
+            console.log('getOpenedTime[contentId]', getOpenedTime[contentId]);
         }
         if ((event.getVerb() === 'completed' || event.getVerb() === 'answered') && !event.getVerifiedStatementValue(['context', 'contextActivities', 'parent'])) {
             var score = event.getScore(),
             maxScore = event.getMaxScore(),
-            contentId = event.getVerifiedStatementValue(['object', 'definition', 'extensions', 'http://h5p.org/x-api/h5p-local-content-id']);
+            contentId = contentId
             email = event.data.statement.actor.mbox,
             toUnix = function (date) {
-                return Math.round(date.getTime() / 1000);
+                if(date){
+                    return Math.round(date.getTime() / 1000);
+                }else{
+                    return new Date()
+                }
+                
             };
             console.log('maxScore', maxScore);
-            storeActivityScore(contentId, score, maxScore, toUnix(getOpenedTime[contentId]), toUnix(new Date()), email)
-            //   // Post the results
+            if(maxScore > 0) {
+                storeActivityScore(contentId, score, maxScore, toUnix(getOpenedTime[contentId]), toUnix(new Date()), email)
+            }
+             //   // Post the results
             // const data = {
             //     contentId: contentId,
             //     score: score,

@@ -380,7 +380,6 @@ const storeActivityScore = (contentId, score, maxScore, opened, finished, email)
     fs.root.getFile("user-response-offline.json", { create: false, exclusive: false }, function(fileEntry) {
       readLoacalJsonFile(fileEntry, (file) => {
         activities = JSON.parse(file);
-        console.log('file', activities);
         const inArray = new Promise((resolve, reject) => {
           activities.some((element,i) => {
             if (element.contentId === contentId) {
@@ -396,9 +395,9 @@ const storeActivityScore = (contentId, score, maxScore, opened, finished, email)
                 time: "",
                 email: email
               })
+              return true;
              }
           });
-          console.log('file 2', activities);
           window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(fs) {
             createFile(fs.root, "user-response-offline.json", false, activities);
           }, onErrorLoadFs = (err) => { console.log(err) });
@@ -406,7 +405,6 @@ const storeActivityScore = (contentId, score, maxScore, opened, finished, email)
       })
     }, onErrorReadFile = (err) => {
       console.log(err)
-      console.log('file not created yet going to download now');
       window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(fs) {
         let data = [{
           contentId: contentId,
