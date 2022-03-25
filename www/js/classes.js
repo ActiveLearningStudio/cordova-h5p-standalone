@@ -287,6 +287,7 @@ function createFile(dirEntry, fileName, isAppend, data) {
 }
 
 function writeFile(fileEntry, dataObj) {
+  console.log('fileEntry', fileEntry,dataObj);
   // Create a FileWriter object for our FileEntry (log.txt).
   fileEntry.createWriter(function (fileWriter) {
       fileWriter.onwriteend = function() {
@@ -439,6 +440,20 @@ const handleDownloadProject = (getFullProjectPath,projectId, fileSystem, project
           // window.location.reload();
         });
       }, 500);
+    });
+  });
+}
+
+//delete any file
+const deleteFile = (fileName) => {
+  console.log('fileName',fileName);
+  window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function (fs) {
+    fs.root.getFile("user-response-offline.json", { create: false }, function(fileEntry) {
+      fileEntry.remove(function() {
+        console.log("file deleted successfully");
+      }, function(error) {
+        console.log(`Could not delete ${fileName} file. ` + JSON.stringify( error ));
+      });
     });
   });
 }

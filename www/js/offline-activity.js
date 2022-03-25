@@ -60,52 +60,47 @@ function onDeviceReady() {
                 splitHTML = html.split("<iframe"),
                 iframeHTML = splitHTML[0] + "<iframe " + width + splitHTML[1];
                 window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(fs) { 
-                fs.root.getFile("user-response-offline.json", { create: false, exclusive: false }, function(fileEntry) { 
-                    readLoacalJsonFile(fileEntry, (file) => { 
-                        activities = JSON.parse(file);
-                        var activity = activities.filter(activities => activities.contentId == activity_id[0])
-                        console.log('activity', activity);
-                        if(activity.length > 0){
-                            $('#h5p-container').append(`<div class="activity-modal">
-                                <div class="activity-modal-content">
-                                    <p>Max Score: ${activity[0].score}/${activity[0].maxScore}</p>
-                                </div>
-                            </div>`);
-                        }else{
-                            $('#h5p-container').append(iframeHTML);
-                            window.H5PIntegration = {...setting}
-                            var scripts = `<script src="js/h5p/jquery.js"></script>
-                            <script src="js/h5p/offline-h5p.js"></script>
-                            <script src="js/h5p/h5p-event-dispatcher.js"></script>
-                            <script src="js/h5p/h5p-x-api.js"></script>
-                            <script src="js/h5p/h5p-x-api-event.js"></script>
-                            <script src="js/h5p/h5p-content-type.js"></script>
-                            <script src="js/handle-xapi.js"></script>`;
-                            $("body").append(scripts);
-                        }
-                    })
-                }, onErrorReadFile = (err) =>{
-                    $('#h5p-container').append(iframeHTML);
-                    window.H5PIntegration = {...setting}
-                    var scripts = `<script src="js/h5p/jquery.js"></script>
-                    <script src="js/h5p/offline-h5p.js"></script>
-                    <script src="js/h5p/h5p-event-dispatcher.js"></script>
-                    <script src="js/h5p/h5p-x-api.js"></script>
-                    <script src="js/h5p/h5p-x-api-event.js"></script>
-                    <script src="js/h5p/h5p-content-type.js"></script>
-                    <script src="js/handle-xapi.js"></script>`;
-                    $("body").append(scripts);
+                    fs.root.getFile("user-response-offline.json", { create: false, exclusive: false }, function(fileEntry) { 
+                        readLoacalJsonFile(fileEntry, (file) => { 
+                            activities = JSON.parse(file);
+                            console.log('activities', activities);
+                            var activity = activities.filter(activities => activities.contentId == activity_id[0])
+                            console.log('activity 1', activity);
+                            if(activity.length > 0){
+                                console.log('activity.length');
+                                $('#h5p-container').append(`<div class="activity-modal">
+                                    <div class="activity-modal-content">
+                                        <p>Max Score: ${activity[0].score}/${activity[0].maxScore}</p>
+                                        <button id="${activity[0].contentId}" class="btn green-btn1 remove-activityId">Retry</button>
+                                    </div>
+                                </div>`);
+                            }else{
+                                console.log('activity.length 22');
+                                $('#h5p-container').append(iframeHTML);
+                                window.H5PIntegration = {...setting}
+                                var scripts = `<script src="js/h5p/jquery.js"></script>
+                                <script src="js/h5p/offline-h5p.js"></script>
+                                <script src="js/h5p/h5p-event-dispatcher.js"></script>
+                                <script src="js/h5p/h5p-x-api.js"></script>
+                                <script src="js/h5p/h5p-x-api-event.js"></script>
+                                <script src="js/h5p/h5p-content-type.js"></script>
+                                <script src="js/handle-xapi.js"></script>`;
+                                $("body").append(scripts);
+                            }
+                        })
+                    }, onErrorReadFile = (err) =>{
+                        $('#h5p-container').append(iframeHTML);
+                        window.H5PIntegration = {...setting}
+                        var scripts = `<script src="js/h5p/jquery.js"></script>
+                        <script src="js/h5p/offline-h5p.js"></script>
+                        <script src="js/h5p/h5p-event-dispatcher.js"></script>
+                        <script src="js/h5p/h5p-x-api.js"></script>
+                        <script src="js/h5p/h5p-x-api-event.js"></script>
+                        <script src="js/h5p/h5p-content-type.js"></script>
+                        <script src="js/handle-xapi.js"></script>`;
+                        $("body").append(scripts);
+                    })    
                 })
-                })
-                window.H5PIntegration = {...setting}
-                var scripts = `<script src="js/h5p/jquery.js"></script>
-                <script src="js/h5p/offline-h5p.js"></script>
-                <script src="js/h5p/h5p-event-dispatcher.js"></script>
-                <script src="js/h5p/h5p-x-api.js"></script>
-                <script src="js/h5p/h5p-x-api-event.js"></script>
-                <script src="js/h5p/h5p-content-type.js"></script>
-                <script src="js/handle-xapi.js"></script>`;
-                $("body").append(scripts);
                 var loading = $(".loading");
                 loading.delay(200).slideUp();
             }
@@ -128,8 +123,36 @@ function onDeviceReady() {
         window.location.href = newUrl; 
     });
 
+    $(document).on("click", ".remove-activityId", (evt) => {
+        window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(fs) { 
+            fs.root.getFile("user-response-offline.json", { create: false, exclusive: false }, function(fileEntry) { 
+                readLoacalJsonFile(fileEntry, (file) => { 
+                    activities = JSON.parse(file);
+                    var activity = activities.filter(activities => activities.contentId == activity_id[0])
+                    console.log('activity111', activity);
+                    if(activity.length > 0){
+                        removeByAttr(activities, activity[0].contentId);
+                    }else{ }
+                })
+            }, onErrorReadFile = (err) =>{ })
+        })
+    });
+
     function getKeyByValue(object, value) {
         return Object.keys(object).find(key => object[key] == value);
+    }
+
+    function removeByAttr(arr, value) {
+        console.log("remove object", arr, value);
+        arr = arr.filter(item => item.contentId != value);
+        console.log("remove object arr1", arr);
+        if(arr.length > 0){
+            window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(fs) {
+                createFile(fs.root, "user-response-offline.json", false, arr);
+              }, onErrorLoadFs = (err) => { console.log('err', err) });
+        }else{
+            deleteFile("user-response-offline.json");
+        }
     }
 }
 document.addEventListener("offline", onOffline, false);
@@ -169,27 +192,11 @@ function onOffline() {
                 }else{
                     return new Date()
                 }
-                
             };
             console.log('maxScore', maxScore);
             if(maxScore > 0) {
                 storeActivityScore(contentId, score, maxScore, toUnix(getOpenedTime[contentId]), toUnix(new Date()), email)
             }
-             //   // Post the results
-            // const data = {
-            //     contentId: contentId,
-            //     score: score,
-            //     maxScore: maxScore,
-            //     opened: toUnix(getOpenedTime[contentId]),
-            //     finished: toUnix(new Date()),
-            //     time: "",
-            //     email: email
-            // };
-            // console.log("data", data);
-            // const stringData = JSON.stringify(data);
-            // window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(fs) {
-            //     createFile(fs.root, "user-response-offline.json", false, data);
-            // }, onErrorLoadFs = (err) => { console.log(err) });
         }
     });
 }
@@ -202,21 +209,21 @@ function createFile(dirEntry, fileName, isAppend, data) {
 
 }
 
-function writeFile(fileEntry, dataObj) {
-    // Create a FileWriter object for our FileEntry (log.txt).
-    fileEntry.createWriter(function(fileWriter) {
-        fileWriter.onwriteend = function() {
-        };
-        fileWriter.onerror = function(e) {
-        };
-        // If data object is not passed in,
-        // create a new Blob instead.
-        if (!dataObj) {
-            dataObj = new Blob([stringData], { type: 'text/plain' });
-        }
-        fileWriter.write(dataObj);
-    });
-}
+// function writeFile(fileEntry, dataObj) {
+//     // Create a FileWriter object for our FileEntry (log.txt).
+//     fileEntry.createWriter(function(fileWriter) {
+//         fileWriter.onwriteend = function() {
+//         };
+//         fileWriter.onerror = function(e) {
+//         };
+//         // If data object is not passed in,
+//         // create a new Blob instead.
+//         if (!dataObj) {
+//             dataObj = new Blob([stringData], { type: 'text/plain' });
+//         }
+//         fileWriter.write(dataObj);
+//     });
+// }
 
 function readFile(fileEntry) {
     const currikiToken = localStorage.getItem("CURRIKI_TOKEN"),
@@ -240,3 +247,4 @@ function readFile(fileEntry) {
 
     }, onErrorReadFile = (err) => { console.log(err) });
 }
+
