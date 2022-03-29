@@ -63,11 +63,9 @@ function onDeviceReady() {
                     fs.root.getFile("user-response-offline.json", { create: false, exclusive: false }, function(fileEntry) { 
                         readLoacalJsonFile(fileEntry, (file) => { 
                             activities = JSON.parse(file);
-                            console.log('activities', activities);
                             var activity = activities.filter(activities => activities.contentId == activity_id[0])
-                            console.log('activity 1', activity);
+                            
                             if(activity.length > 0){
-                                console.log('activity.length');
                                 $('#h5p-container').append(`<div class="activity-modal">
                                     <div class="activity-modal-content">
                                         <p>Max Score: ${activity[0].score}/${activity[0].maxScore}</p>
@@ -75,7 +73,6 @@ function onDeviceReady() {
                                     </div>
                                 </div>`);
                             }else{
-                                console.log('activity.length 22');
                                 $('#h5p-container').append(iframeHTML);
                                 window.H5PIntegration = {...setting}
                                 var scripts = `<script src="js/h5p/jquery.js"></script>
@@ -129,9 +126,17 @@ function onDeviceReady() {
                 readLoacalJsonFile(fileEntry, (file) => { 
                     activities = JSON.parse(file);
                     var activity = activities.filter(activities => activities.contentId == activity_id[0])
-                    console.log('activity111', activity);
                     if(activity.length > 0){
-                        removeByAttr(activities, activity[0].contentId);
+                        activities = activities.filter(item => item.contentId != activity[0].contentId);
+                        if(activities.length > 0){
+                            appendFile("user-response-offline.json", activities, (res)=> {
+                                window.location.reload();
+                            });
+                        }else{
+                            deleteFile("user-response-offline.json", (res)=> {
+                                window.location.reload();
+                            });
+                        }
                     }else{ }
                 })
             }, onErrorReadFile = (err) =>{ })
@@ -140,19 +145,6 @@ function onDeviceReady() {
 
     function getKeyByValue(object, value) {
         return Object.keys(object).find(key => object[key] == value);
-    }
-
-    function removeByAttr(arr, value) {
-        console.log("remove object", arr, value);
-        arr = arr.filter(item => item.contentId != value);
-        console.log("remove object arr1", arr);
-        if(arr.length > 0){
-            window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(fs) {
-                createFile(fs.root, "user-response-offline.json", false, arr);
-              }, onErrorLoadFs = (err) => { console.log('err', err) });
-        }else{
-            deleteFile("user-response-offline.json");
-        }
     }
 }
 document.addEventListener("offline", onOffline, false);

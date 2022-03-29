@@ -280,10 +280,13 @@ class NetworkWarnings extends AlertHeader {
 }
 
 function createFile(dirEntry, fileName, isAppend, data) {
+  console.log('hiii',dirEntry, fileName, data);
   // Creates a new file or returns the file if it already exists.
   dirEntry.getFile(fileName, {create: true, exclusive: false}, function(fileEntry) {
       writeFile(fileEntry, data);
-  }, onErrorCreateFile = (err) => {console.log(err)});
+  }, onErrorCreateFile = (err) => {
+      console.log(err);
+    });
 }
 
 function writeFile(fileEntry, dataObj) {
@@ -445,15 +448,27 @@ const handleDownloadProject = (getFullProjectPath,projectId, fileSystem, project
 }
 
 //delete any file
-const deleteFile = (fileName) => {
-  console.log('fileName',fileName);
+const deleteFile = (fileName, callback) => {
   window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function (fs) {
     fs.root.getFile("user-response-offline.json", { create: false }, function(fileEntry) {
       fileEntry.remove(function() {
         console.log("file deleted successfully");
+        callback(true)
       }, function(error) {
         console.log(`Could not delete ${fileName} file. ` + JSON.stringify( error ));
       });
     });
   });
+}
+//append file data
+const appendFile = (fileName, data, callback) => {
+  window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(fs) {
+    fs.root.getFile(fileName, {create: true, exclusive: false}, function(fileEntry) {
+        writeFile(fileEntry, data);
+        callback(true)
+    }, onErrorCreateFile = (err) => {
+        console.log(err);
+        callback(false)
+    });
+}, onErrorLoadFs = (err) => { console.log('err', err) });
 }
