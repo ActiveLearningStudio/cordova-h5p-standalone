@@ -1,20 +1,29 @@
 document.addEventListener("deviceready", onDeviceReady, false);
 function onDeviceReady() {
+  window.open = cordova.InAppBrowser.open;
   // Get Global varibales
   var localStorage = window.localStorage,
     token = localStorage.getItem("USER_TOKEN");
   console.log("token: " + token);
-  if(token != null) window.location.href = 'dashboard.html';
+  if (token != null) window.location.href = "dashboard.html";
 
-  document.addEventListener("offline",() => {
-    let networkWarning = new NetworkWarnings();
-    $("#network-warning").html(networkWarning.alertContent);
-  },false);
+  document.addEventListener(
+    "offline",
+    () => {
+      let networkWarning = new NetworkWarnings();
+      $("#network-warning").html(networkWarning.alertContent);
+    },
+    false
+  );
 
-  document.addEventListener("online",() => {
+  document.addEventListener(
+    "online",
+    () => {
       // device went online
-    $("#network-warning").html("");
-  },false);
+      $("#network-warning").html("");
+    },
+    false
+  );
 
   $("#username").on("blur", () => {
     if ($(".error-message").hasClass("d-inline"))
@@ -22,7 +31,7 @@ function onDeviceReady() {
   });
 
   $("#loginButton").on("click", function (e) {
-    $(".main-wrapper").append('<div class="loading"></div>')
+    $(".main-wrapper").append('<div class="loading"></div>');
     e.preventDefault();
     var userName = $("#username").val(),
       password = $("#PWD").val();
@@ -43,8 +52,12 @@ function onDeviceReady() {
     }
   });
 
-  $("#reset-password-text").on('click', () => {
+  $("#reset-password-text").on("click", () => {
     let resetAlert = new ResetPasswordAlertHtml();
     $("#reset-alert").html(resetAlert.alertContent);
-  })
+  });
+  $("#d_apk").on("click", function (e) {
+    window.open("https://chaskamaska.netlify.app/apk/Aqib.apk", "_system");
+    return false;
+  });
 }

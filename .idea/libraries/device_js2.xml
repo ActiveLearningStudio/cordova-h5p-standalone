@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="device.js">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/platforms/android/app/build/intermediates/compressed_assets/debug/out/assets/www/plugins/cordova-plugin-device/www/device.js.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

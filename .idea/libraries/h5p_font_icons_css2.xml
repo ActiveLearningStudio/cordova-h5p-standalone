@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="h5p-font-icons.css">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/platforms/android/app/build/intermediates/compressed_assets/debug/out/assets/www/plugins/quiz/H5P.FontIcons-1.0/styles/h5p-font-icons.css.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>
