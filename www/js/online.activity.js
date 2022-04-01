@@ -6,6 +6,7 @@ function onDeviceReady() {
 
   let allIds = [];
   let current;
+  console.log('activityId', activityId);
 
   if (device.platform === "iOS") {
     $(".activity-page").css({"margin-top": "40px"})
@@ -16,6 +17,22 @@ function onDeviceReady() {
     let embededCode = activity.activity.h5p.embed_code;
     let allActivitites = activity.playlist.activities;
     $("#mainBody").append(embededCode);
+    // getScore(activityId, (data) => {
+    //   console.log("data-->", data);
+    //   if(data[0].content_id == activityId){
+    //     $("#mainBody").append(`<div class="activity-modal">
+    //         <div class="activity-modal-content">
+    //             <p>Max Score: 0</p>
+    //             <button class="btn green-btn1 remove-activityId">Retry</button>
+    //         </div>
+    //     </div>`);
+    //   }else{
+    //     $("#mainBody").append(embededCode);
+    //   }
+    //   var loading = $(".loading");
+    //   loading.delay(200).slideUp();
+    // });
+
     allActivitites.forEach((element,i) => {
       allIds.push({key: i,id:element.id});
       if(element.id == activityId){

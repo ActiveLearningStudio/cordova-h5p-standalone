@@ -20,6 +20,7 @@ const userLogin = (userName, password, callback) => {
       service: "moodle_mobile_app",
     },
     success: (response) => {
+      console.log('response 111', response);
       if (response.token) {
         getUserId(userName, (userId) => {
           localStorage.setItem("USER_ID", userId);
@@ -49,6 +50,7 @@ const getUserId = (userName, userId) => {
       wstoken: localStorage.getItem("ADITIONAL_TOKEN"),
     },
     success: (response) => {
+      localStorage.setItem("LOGGED_USER_EMAIL", response.users[0].email);
       userId(response.users[0].id);
     },
     error: (xhr, status, err) => {
@@ -160,4 +162,25 @@ const deleteProject = (projectName, project) => {
 
 function shuffle(array) {
   array.sort(() => Math.random() - 0.5);
+}
+
+//get Activity Score
+const getScore = (contentId, callback) => {
+  var email = localStorage.getItem("LOGGED_USER_EMAIL")
+  $.ajax({
+    url:  `${currikiBaseURL}/h5p/ajax/reader/getScore`,
+    dataType: "json",
+    data: {
+      contentId: contentId,
+      email: email
+    },
+    success: (response) => {
+      console.log('response ...', response);
+      callback(response)
+    },
+    error: (err) => {
+      console.log('err ...', err);
+      callback(response)
+    },
+  });
 }
