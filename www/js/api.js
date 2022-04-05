@@ -169,17 +169,18 @@ const getScore = (contentId, callback) => {
   var email = localStorage.getItem("LOGGED_USER_EMAIL")
   $.ajax({
     url:  `${currikiBaseURL}/h5p/ajax/reader/getScore`,
+    headers: {
+      Authorization: "Bearer " + currikiToken,
+    },
     dataType: "json",
     data: {
       contentId: contentId,
       email: email
     },
     success: (response) => {
-      console.log('response ...', response);
       callback(response)
     },
     error: (err) => {
-      console.log('err ...', err);
       callback(response)
     },
   });

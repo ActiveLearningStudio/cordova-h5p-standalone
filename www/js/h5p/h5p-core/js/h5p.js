@@ -61,6 +61,7 @@ H5P.opened = {};
  * @param {Object} target DOM Element
  */
 H5P.init = function (target) {
+  console.log('here', target);
   // Useful jQuery object.
   if (H5P.$body === undefined) {
     H5P.$body = H5P.jQuery(document.body);
@@ -91,6 +92,7 @@ H5P.init = function (target) {
 
   // H5Ps added in normal DIV.
   H5P.jQuery('.h5p-content:not(.h5p-initialized)', target).each(function () {
+    console.log('this--', this);
     var $element = H5P.jQuery(this).addClass('h5p-initialized');
     var $container = H5P.jQuery('<div class="h5p-container"></div>').appendTo($element);
     var contentId = $element.data('content-id');
@@ -374,9 +376,10 @@ H5P.init = function (target) {
       H5P.externalDispatcher.trigger('initialized');
     }
   });
-
+  console.log('here 5', H5P.jQuery('iframe.h5p-iframe:not(.h5p-initialized)', target));
   // Insert H5Ps that should be in iframes.
   H5P.jQuery('iframe.h5p-iframe:not(.h5p-initialized)', target).each(function () {
+    console.log('here 2');
     var contentId = H5P.jQuery(this).addClass('h5p-initialized').data('content-id');
     this.contentDocument.open();
     this.contentDocument.write('<!doctype html><html class="h5p-iframe"><head>' + H5P.getHeadTags(contentId) + '</head><body><div class="h5p-content" data-content-id="' + contentId + '"/></body></html>');
