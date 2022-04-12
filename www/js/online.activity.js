@@ -72,8 +72,7 @@ function onDeviceReady() {
               <script src="js/h5p/h5p-x-api-event.js"></script>
               <script src="js/h5p/h5p-content-type.js"></script>
               <script src="js/h5p/DocumentsUpload.js"></script>`;
-              
-            $("body").append(scripts);
+              $("body").append(scripts);
             }
             });
           }else{
