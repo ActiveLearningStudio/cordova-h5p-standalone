@@ -1,3 +1,13 @@
+try {
+  if (window.bcPlayerExternal === undefined) {
+      if (window.parent.brightcoveAccountId) {
+        window.brightcoveAccountId = window.parent.brightcoveAccountId;
+      } else if (window.brightcoveAccountId === undefined && window.parent.brightcoveAccountId === undefined) {
+        window.brightcoveAccountId ='6282550302001';
+      }
+  }  
+} catch (error) {}
+
 /** @namespace H5P */
 H5P.VideoBrightcove = (function ($) {
 
@@ -9,38 +19,54 @@ H5P.VideoBrightcove = (function ($) {
    * @param {Object} options Settings for the player
    * @param {Object} l10n Localization strings
    */
-  function Brightcove(sources, options, l10n) {
-    var self = this;
 
+  function Brightcove(sources, options, l10n) {
+    var loaderEl = null;
+    if (window.bcPlayerExternal === undefined) {
+      try {
+        var loaderEl = H5P.jQuery('#activity-loader-alert', window.parent.document);
+      } catch (error) {}
+      if (!loaderEl) {
+        loaderEl = H5P.jQuery('#activity-loader-alert');
+      }
+      loaderEl.html("<strong>Loading Brightcove Video ...</strong>").show();
+    }
+
+    var self = this;
     var player;
+    self.getPlayer = function() { return player; }
+    self.nullifyPlayer = function() { player = null; }
     var playbackRate = 1;
     var id = 'h5p-brightcove-' + numInstances;
     numInstances++;
 
-    var $wrapper = $('<div/>');
-    var $placeholder = $('<div/>', {
-      id: id,
-      html: '<div id="loading-wrapper">' + l10n.loading + '</div>'
-    });
-
-    var videoId = getId(sources[0].path);
-    window.videoIdGlobal = getId(sources[0].path);
+    var videoId = options.brightcoveVideoID;
+    var $wrapper = $('<div/>').attr('id','curriki-player-wrapper');
+    var brightcoveData = getId({videoId});
     let videoJsTagId = 'curriki-brightcove';
-    if (window.parent.currikiBrightcovePlayerExternal) {
-      videoJsTagId = window.parent.currikiBrightcovePlayerExternal.tagAttributes.id;
-      window.parent.document.getElementById(videoJsTagId).remove();
-      H5P.jQuery('#' + videoJsTagId + '-container .h5p-iframe-wrapper iframe', window.parent.document).show();
-    }
     
-    window.videoJsTagIdGlobal = videoJsTagId;
-    H5P.jQuery('<video-js id="' + videoJsTagId + '" data-account="'+videoId.dataAccount+'" data-player="'+videoId.dataPlayer+'" data-embed="default" controls="" data-video-id="'+videoId.dataVideoId+'" data-playlist-id="" data-application-id=""></video-js>').appendTo($placeholder);
-    $placeholder.appendTo($wrapper);
+    if (window.bcPlayerExternal) {
+      window.bcPlayerExternalDefaultWidth = window.bcPlayerExternal.currentWidth();
+      window.bcPlayerExternalDefaultHeight = window.bcPlayerExternal.currentHeight();
+      let videoJsTagId = window.bcPlayerExternal.tagAttributes.id;
+      window.videoJsTagIdGlobal = videoJsTagId;
+      H5P.jQuery('#' + videoJsTagId).appendTo($wrapper);
+    } else {
+      if (window.videojs) {
+        window.videojs = undefined;
+      }
+      var $placeholder = $('<div/>', {id});
+      H5P.jQuery($placeholder).hide();
+      window.videoJsTagIdGlobal = videoJsTagId;
+      H5P.jQuery('<video-js id="' + videoJsTagId + '" data-account="'+brightcoveData.dataAccount+'" data-player="'+brightcoveData.dataPlayer+'" data-embed="' + brightcoveData.dataEmbed +'" controls="" data-video-id="'+brightcoveData.dataVideoId+'" data-playlist-id="" data-application-id="" class="vjs-fluid"></video-js>').appendTo($placeholder);
+      $placeholder.appendTo($wrapper);
+    }
     
     self.brightcoveUrlParts = null;
     self.isPlayerLoaded = false;
     
     // Optional placeholder
-    // var $placeholder = $('<iframe id="' + id + '" type="text/html" width="640" height="360" src="https://www.brightcove.com/embed/' + getId(sources[0].path) + '?enablejsapi=1&origin=' + encodeURIComponent(ORIGIN) + '&autoplay=' + (options.autoplay ? 1 : 0) + '&controls=' + (options.controls ? 1 : 0) + '&disabledkb=' + (options.controls ? 0 : 1) + '&fs=0&loop=' + (options.loop ? 1 : 0) + '&rel=0&showinfo=0&iv_load_policy=3" frameborder="0"></iframe>').appendTo($wrapper);
+    // var $placeholder = $('<iframe id="' + id + '" type="text/html" width="640" height="360" src="https://www.brightcove.com/embed/' + getId({brightcoveVideoID}) + '?enablejsapi=1&origin=' + encodeURIComponent(ORIGIN) + '&autoplay=' + (options.autoplay ? 1 : 0) + '&controls=' + (options.controls ? 1 : 0) + '&disabledkb=' + (options.controls ? 0 : 1) + '&fs=0&loop=' + (options.loop ? 1 : 0) + '&rel=0&showinfo=0&iv_load_policy=3" frameborder="0"></iframe>').appendTo($wrapper);
 
     /**
      * Use the Brightcove API to create a new player
@@ -48,68 +74,87 @@ H5P.VideoBrightcove = (function ($) {
      * @private
      */
     var create = function () {
-      H5P.jQuery('#loading-wrapper').remove();
-      if (!$placeholder.is(':visible') || player !== undefined) {
+      
+      if (player !== undefined) {
         return;
       }
-      
-      if (window.videojs === undefined) {
-        // Load Bridghtcove library
-        loadAPI(create);
-        //return;
+     
+      if (window.bcPlayerExternal !== undefined) {
+        loadAPI();
+        renderPlayer();
+      } else {
+        loadAPI();
+        player = {};
+        var videojsloadTime = setInterval(function(e) {
+          if (window.videojs) {
+            clearInterval(videojsloadTime);
+            renderPlayer();
+          }
+        }, 300);
       }
       
-      var intervalCount = 0;
-      let cntrStartTime = new Date();
-      var videojsloadTime = setInterval(function(e) {
-        if (window.videojs !== undefined) {
-          var width = $wrapper.width();
-          if (width < 200) {
-            width = 200;
-          }
-          
-          const videoId = getId(sources[0].path);
-          player = window.videojs(window.videoJsTagIdGlobal);
-          // when player has HAVE_ENOUGH_DATA state. https://docs.videojs.com/player#readyState
-          if (player.readyState() === 4 || player.readyState() === 2) {
-            player.on('play', function () {
-              self.trigger('stateChange', H5P.Video.PLAYING);
-            });
-  
-            player.on('pause', function () {
-              self.trigger('stateChange', H5P.Video.PAUSED);
-            });
-  
-            
-            player.on('buffered', function () {
-              self.trigger('stateChange', H5P.Video.BUFFERING);
-            });
-  
-            player.on('ended', function () {
-              self.trigger('stateChange', H5P.Video.ENDED);
-            });
-  
-            player.ready(function() {
-              player.width(width);
-              let height = width * (9/16);
-              player.height(height);
-              player.controls(false);
-              self.trigger('ready');
-              self.trigger('loaded');
-            });
-            clearInterval(videojsloadTime);
-          } else if ( (((new Date().getTime()) - cntrStartTime.getTime()) / 1000) > 60) {
-            console.log("Player could not get ready after waiting for 1 minute.");
-            clearInterval(videojsloadTime);
-          }
-        } else if (intervalCount === 20) {
-          console.log("VideoJS not loaded. or it's taking too much time to load.");
-          clearInterval(videojsloadTime);
-        }
-        intervalCount++;
-      }, 1000);
-      
     };
+
+
+    function renderPlayer() {
+      player = window.bcPlayerExternal ? window.bcPlayerExternal : window.videojs(videoJsTagId);
+      player.tech_.off('dblclick');
+      //************[start full screen]******************
+      player.getChild('controlBar').removeChild('FullscreenToggle');
+      var FullscreenToggle = window.videojs.getComponent('FullscreenToggle');
+      var CurrikiFullScreenButton = window.videojs.extend(FullscreenToggle, {
+        constructor: function() {
+          FullscreenToggle.apply(this, arguments);
+          //this.addClass('vjs-fullscreen-control');
+        },
+        handleClick: function() {
+          H5P.jQuery('.h5p-controls').find('.h5p-fullscreen').trigger('click'); // trigger H5P Fullscreen to display overlay
+        }
+      });
+      window.videojs.registerComponent('CurrikiFullScreenButton', CurrikiFullScreenButton);
+      player.getChild('controlBar').addChild('currikiFullScreenButton', {});
+      //************[end full screen]*********************
+      
+      if (window.bcPlayerExternal) {
+        initializePlayerEvents();
+        self.trigger('ready');
+        self.trigger('loaded');
+      } else {
+        var playerTime = player.setInterval(function(e) {
+          if (player.readyState() > 1) {
+            initializePlayerEvents();
+            H5P.jQuery('.loading-wrapper').remove();
+            self.trigger('ready');
+            self.trigger('loaded');
+            H5P.jQuery($placeholder).show();
+            if (loaderEl) {
+              loaderEl.hide();
+            }
+            player.clearInterval(playerTime);
+          }
+        }, 300);
+      }
+      
+    }
+
+    function initializePlayerEvents() {
+      player.on('play', function () {
+        self.trigger('stateChange', H5P.Video.PLAYING);
+      });
+
+      player.on('pause', function () {
+        self.trigger('stateChange', H5P.Video.PAUSED);
+      });
+
+      
+      player.on('buffered', function () {
+        self.trigger('stateChange', H5P.Video.BUFFERING);
+      });
+
+      player.on('ended', function () {
+        self.trigger('stateChange', H5P.Video.ENDED);
+      });
+    }
 
     /**
      * Indicates if the video must be clicked for it to start playing.
@@ -398,6 +443,7 @@ H5P.VideoBrightcove = (function ($) {
 
     // Respond to resize events by setting the YT player size.
     self.on('resize', function () {
+      
       if (!$wrapper.is(':visible')) {
         return;
       }
@@ -408,23 +454,10 @@ H5P.VideoBrightcove = (function ($) {
         return;
       }
 
-      // Use as much space as possible
       $wrapper.css({
-        width: '100%',
-        height: '100%'
+        width: 'inherit',
+        height: 'inherit'
       });
-
-      var width = $wrapper[0].clientWidth;
-      var height = options.fit ? $wrapper[0].clientHeight : (width * (9/16));
-
-      // Set size
-      $wrapper.css({
-        width: width + 'px',
-        height: height + 'px'
-      });
-
-      player.width(width);
-      player.height(height);
     });
   }
 
@@ -436,9 +469,12 @@ H5P.VideoBrightcove = (function ($) {
    * @param {Array} sources
    * @returns {Boolean}
    */
+
+  /* 
   Brightcove.canPlay = function (sources) {
-    return getId(sources[0].path);
+    return getId({videoId});
   };
+  */
 
   /**
    * Find id of Brightcove video from given URL.
@@ -448,12 +484,19 @@ H5P.VideoBrightcove = (function ($) {
    * @returns {String} Brightcove video identifier
    */
 
-  var getId = function (url) {
+  var getId = function (brightcoveData) {
+    let brightcoveUrlParts = {dataAccount: window.brightcoveAccountId, dataVideoId: brightcoveData.videoId, dataPlayer: 'default', dataEmbed: 'default'};
+    self.brightcoveUrlParts = brightcoveUrlParts;
+    return brightcoveUrlParts;
+  };
+
+  var getIdLegacy = function (url) {
     // Has some false positives, but should cover all regular URLs that people can find
     var matches = url.match(/((?:(?:https?|ftp|file):\/\/|www\.)players.brightcove.net)\/([0-9]*)\/(\w+)\/(index.html)\?(\w+)\=([0-9]*)/i);
     if (matches && matches.length === 7) {
       let dataPlayer = matches[3].split('_').length === 2 ? matches[3].split('_')[0] : 'default';
-      let brightcoveUrlParts = {dataAccount: matches[2], dataVideoId: matches[6], dataPlayer};
+      let dataEmbed = matches[3].split('_')[1];
+      let brightcoveUrlParts = {dataAccount: matches[2], dataVideoId: matches[6], dataPlayer, dataEmbed};
       self.brightcoveUrlParts = brightcoveUrlParts;
       return brightcoveUrlParts;
     }
@@ -462,22 +505,32 @@ H5P.VideoBrightcove = (function ($) {
   /**
    * Load the IFrame Player API asynchronously.
    */
-  var loadAPI = function (loaded) {  
-    if (window.onBrightcoveIframeAPIReady !== undefined) {
-      // Someone else is loading, hook in
-      var original = window.onBrightcoveIframeAPIReady;
-      window.onBrightcoveIframeAPIReady = function (id) {
-        loaded(id);
-        original(id);
-      };
-    }
-    else {
+  var loadAPI = function () { 
+
+    if (window.bcPlayerExternal) {
+      let css = '.h5p-splash-wrapper { opacity: 0; }';
+      css += ' .h5p-content { border: 0px; }';
+      css += ' .h5p-controls { display: none !important; }';
+      css += ' .h5p-actions { display: none !important; }';
+      css += ' .vjs-has-started .vjs-control-bar { z-index: 2 !important; }';
+      let head = document.head || document.getElementsByTagName('head')[0];
+      let style = document.createElement('style');
+      head.appendChild(style);
+      style.type = 'text/css';
+      if (style.styleSheet){
+        // This is required for IE8 and below.
+        style.styleSheet.cssText = css;
+      } else {
+        style.appendChild(document.createTextNode(css));
+      }
+    } else if (!window.videojs) {
       // Load the API our self
-      var tag = document.createElement('script');
-      tag.src = "https://players.brightcove.net/" + self.brightcoveUrlParts.dataAccount + "/" + window.videoIdGlobal.dataPlayer + "_default/index.min.js";
-      var firstScriptTag = document.getElementsByTagName('script')[0];
-      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-      window.onBrightcoveIframeAPIReady = loaded;
+      const script = document.createElement('script');
+      script.src = "https://players.brightcove.net/" + self.brightcoveUrlParts.dataAccount + "/" + self.brightcoveUrlParts.dataPlayer + "_" + self.brightcoveUrlParts.dataEmbed + "/index.min.js";
+      script.async = false;
+      document.body.appendChild(script);
+    } else {
+      console.log("videojs lib found before initializing.");
     }
   };
 

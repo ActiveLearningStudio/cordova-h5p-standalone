@@ -1,7 +1,7 @@
 /**
  * Defines the H5P.ArithmeticQuiz.GamePage class
  */
-H5P.ArithmeticQuiz.GamePage = (function ($, UI, QuizType) {
+ H5P.ArithmeticQuiz.GamePage = (function ($, UI, QuizType) {
 
   /**
    * Creates a new GamePage instance
@@ -57,7 +57,6 @@ H5P.ArithmeticQuiz.GamePage = (function ($, UI, QuizType) {
 
     // Shuffle quizzes:
     self.quizzes = self.questionsGenerator.get();
-    console.log(self.quizzes);
     localStorage.setItem("quizzes",  JSON.stringify(self.quizzes));
     var numQuestions = self.quizzes.length;
     for (var i = 0; i < numQuestions; i++) {
@@ -72,7 +71,7 @@ H5P.ArithmeticQuiz.GamePage = (function ($, UI, QuizType) {
 
     // Add result page:
     
-    self.resultPage = new H5P.ArithmeticQuiz.ResultPage(numQuestions, self.translations);
+    self.resultPage = new H5P.ArithmeticQuiz.ResultPage(numQuestions, self.translations, options);
     self.slider.addSlide(self.resultPage.create());
 
     self.resultPage.on('retry', function () {
@@ -84,11 +83,13 @@ H5P.ArithmeticQuiz.GamePage = (function ($, UI, QuizType) {
     self.slider.on('last-slide', function () {
       self.resultPage.update(self.score, self.timer.pause());
       self.$gamepage.addClass('result-page');
+      localStorage.setItem('userInputwa', JSON.stringify(self.userInputwa));
       self.trigger('last-slide', {
         score: self.score,
-        numQuestions: numQuestions
+        numQuestions: numQuestions,
+        duration: self.timer.getTime()
       });
-      localStorage.setItem('userInputwa', JSON.stringify(self.userInputwa));
+      
     });
 
     self.slider.on('first-slide', function () {
@@ -276,9 +277,8 @@ H5P.ArithmeticQuiz.GamePage = (function ($, UI, QuizType) {
       alternative.on('nextOption', handleNextOption);
       alternative.appendTo($alternatives);
       alternative.on('answered', function () {
-        console.log('278');
         self.userInputwa.push(alternative.number);
-        console.log(self.userInputwa);
+        
         // Ignore clicks if in the middle of something else:
         if (self.sliding) {
           return;

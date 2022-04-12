@@ -17,7 +17,7 @@
 }
 
 .h5p-drag-text button.h5p-drag-button:before {
-  font-family: 'H5PFontAwesome4';
+  font-family: "H5PFontAwesome4";
   padding-right: 0.5em;
 }
 
@@ -56,7 +56,7 @@
 .h5p-drag-text .h5p-drag-correct-feedback:before {
   position: absolute;
   right: 0.5em;
-  font-family: 'H5PFontAwesome4';
+  font-family: "H5PFontAwesome4";
   content: "\f00c";
   color: #255c41;
 }
@@ -64,7 +64,7 @@
 .h5p-drag-text .h5p-drag-wrong-feedback:before {
   position: absolute;
   right: 0.5em;
-  font-family: 'H5PFontAwesome4';
+  font-family: "H5PFontAwesome4";
   content: "\f00d";
   color: #b71c1c;
 }
@@ -76,7 +76,7 @@
   padding-right: 0.1em;
 }
 .h5p-drag-text [aria-dropeffect] {
-  position:relative;
+  position: relative;
   top: -0.1em;
   width: 10em;
   height: 1.25em;
@@ -125,17 +125,17 @@
 
   background: #ddd;
 
-  box-shadow: 0 0 0.3em rgba(0,0,0,0.2);
+  box-shadow: 0 0 0.3em rgba(0, 0, 0, 0.2);
   z-index: 3;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
 }
 
-.h5p-drag-text [aria-grabbed='true'],
+.h5p-drag-text [aria-grabbed="true"],
 .h5p-drag-text [aria-grabbed].h5p-drag-dropped:not(.ui-state-disabled):hover,
 .h5p-drag-text [aria-grabbed]:not(.ui-state-disabled):hover {
-  border: 0.1em solid rgb(212,190,216);
+  border: 0.1em solid rgb(212, 190, 216);
   color: #663366;
   background: #edd6e9;
 }
@@ -149,9 +149,9 @@
   background: #cee0f4;
 }
 
-.h5p-drag-text [aria-grabbed='true'] {
+.h5p-drag-text [aria-grabbed="true"] {
   opacity: 0.5;
-  box-shadow: 0 0 0.8em rgba(0,0,0,0.5);
+  box-shadow: 0 0 0.8em rgba(0, 0, 0, 0.5);
 }
 .h5p-drag-text [aria-grabbed].ui-state-disabled {
   opacity: 1;
@@ -190,12 +190,13 @@
   border-radius: 0.25em;
   margin-left: 0.5em;
 }
-
+/*--custom-css--float-left--property--added--*/
 .h5p-drag-text .h5p-drag-droppable-words {
+  float: left;
   line-height: 1.75;
 }
 
-.h5p-drag-text [aria-grabbed='true'] {
+.h5p-drag-text [aria-grabbed="true"] {
   z-index: 2;
 }
 
@@ -205,9 +206,9 @@
   display: inline-block;
 }
 
-/* Wide Screen css : */
+/* Wide Screen css :  custom-css--float-right--property--removed--*/
 .h5p-drag-text .h5p-drag-wide-screen {
-  float: right;
+  /*float: right;*/
   padding-top: 0;
 }
 
@@ -215,7 +216,8 @@
   display: block;
 }
 
-.h5p-drag-text [aria-dropeffect].ui-droppable.ui-droppable-disabled.ui-state-disabled{
+.h5p-drag-text
+  [aria-dropeffect].ui-droppable.ui-droppable-disabled.ui-state-disabled {
   opacity: 1;
 }
 

@@ -29,7 +29,9 @@ function onDeviceReady() {
   $(document).on("click", ".download-project", (evt) => {
     $(".main-wrap").append('<div class="loading"></div>')
     let projectId = evt.target.id,
-    projectName = evt.target.name;
-    updateAddCourse(projectId, projectName, fileSystem);
+    projectName = evt.target.name,
+    course =  $(evt.target).data('course');
+    // downloadImage(course)
+    updateAddCourse(projectId, projectName,course, fileSystem);
   });
 }

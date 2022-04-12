@@ -19,6 +19,10 @@ H5P.QuestionSet = function (options, contentId, contentData) {
   var $ = H5P.jQuery;
   var self = this;
   this.contentId = contentId;
+  // to set parent in self if present in content data
+  if (self.parent === undefined && contentData && contentData.parent) {
+    self.parent = contentData.parent;
+  }
 
   var defaults = {
     initialQuestion: 0,
@@ -57,6 +61,7 @@ H5P.QuestionSet = function (options, contentId, contentData) {
       finishButtonText: 'Finish',
       solutionButtonText: 'Show solution',
       retryButtonText: 'Retry',
+      submitButtonText: 'Submit',
       showAnimations: false,
       skipButtonText: 'Skip video',
       showSolutionButton: true,
@@ -116,6 +121,10 @@ H5P.QuestionSet = function (options, contentId, contentData) {
     '    <button type="button" class="h5p-joubelui-button h5p-button qs-retrybutton"><%= retryButtonText %></button>':
     '';
 
+  var submitButtonTemplate='';
+    if( typeof self.parent == "undefined")
+      submitButtonTemplate = '<button type="button" class="h5p-joubelui-button h5p-button qs-submitbutton"><%= submitButtonText %></button>';
+
   var resulttemplate =
           '<div class="questionset-results">' +
           '  <div class="greeting"><%= message %></div>' +
@@ -132,6 +141,7 @@ H5P.QuestionSet = function (options, contentId, contentData) {
           '  <div class="buttons">' +
           solutionButtonTemplate +
           retryButtonTemplate +
+           submitButtonTemplate +
           '  </div>' +
           '</div>';
 
@@ -567,6 +577,21 @@ H5P.QuestionSet = function (options, contentId, contentData) {
 
   };
 
+  this.resetTask = function () {
+    resetTask();
+    $myDom.children().hide();
+    var $intro = $('.intro-page', $myDom);
+    if ($intro.length) {
+      // Show intro
+      $('.intro-page', $myDom).show();
+      $('.qs-startbutton', $myDom).focus();
+    } else {
+      // Show first question
+      $('.questionset', $myDom).show();
+      _showQuestion(params.initialQuestion);
+    }
+  };
+
   var rendered = false;
 
   this.reRender = function () {
@@ -752,7 +777,8 @@ H5P.QuestionSet = function (options, contentId, contentData) {
         resulttext: params.endGame.showResultPage ? (success ? params.endGame.oldFeedback.successComment : params.endGame.oldFeedback.failComment) : undefined,
         finishButtonText: params.endGame.finishButtonText,
         solutionButtonText: params.endGame.solutionButtonText,
-        retryButtonText: params.endGame.retryButtonText
+        retryButtonText: params.endGame.retryButtonText,
+        submitButtonText: params.endGame.submitButtonText
       };
 
       // Show result page.
@@ -780,6 +806,10 @@ H5P.QuestionSet = function (options, contentId, contentData) {
             $('.questionset', $myDom).show();
             _showQuestion(params.initialQuestion);
           }
+        });
+        hookUpButton('.qs-submitbutton', function () {
+           self.triggerXAPIScored(self.getScore(), self.getMaxScore(), "submitted-curriki");
+           self.triggerXAPIScored(self.getScore(), self.getMaxScore(), "answered");
         });
 
         if (scoreBar === undefined) {
@@ -1238,6 +1268,18 @@ H5P.QuestionSet = function (options, contentId, contentData) {
     return {
       statement: xAPIEvent.data.statement,
       children: getXAPIDataFromChildren(this)
+    };
+  };
+
+  /**
+   * Get context data.
+   * Contract used for confusion report.
+   */
+  this.getContext = function () {
+    // Get question index and add 1, count starts from 0
+    return {
+      type: 'question',
+      value: (currentQuestion + 1)
     };
   };
 };

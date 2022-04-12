@@ -60,7 +60,7 @@ H5P.Column = (function (EventDispatcher) {
         max += event.getMaxScore();
       }
 
-      if(max === raw) {
+      if(max === 0) {
         max += 1;
       }
 
@@ -313,7 +313,7 @@ H5P.Column = (function (EventDispatcher) {
                       }
                       
                     }
-                    if(maxwa === rawwa) {
+                    if(maxwa === 0) {
                       maxwa += 1;
                     }
                     self.triggerXAPIScored(rawwa, maxwa, 'submitted-curriki');

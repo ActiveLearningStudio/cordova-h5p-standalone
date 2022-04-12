@@ -10,7 +10,7 @@ H5P.ArithmeticQuiz.ResultPage = (function ($, UI) {
    * @param  {Object} t Translation objects
    * @fires H5P.Event
    */
-  function ResultPage(maxScore, t){
+  function ResultPage(maxScore, t, options){
     H5P.EventDispatcher.call(this);
     var self = this;
 
@@ -22,7 +22,6 @@ H5P.ArithmeticQuiz.ResultPage = (function ($, UI) {
       'class': 'h5p-baq-result-page-feedback'
     }).appendTo(this.$resultPage);
 
-    this.finalwa = "";
     this.$scoreStatus = $('<div>', {
       'class': 'h5p-baq-result-page-score-status',
       'aria-live': 'assertive'
@@ -59,54 +58,72 @@ H5P.ArithmeticQuiz.ResultPage = (function ($, UI) {
       text: t.retryButton,
       'class': 'mq-control-button',
       click: function () {
+        $('.submit-button').show();
+        $('.custom-submit-message').hide();
         self.trigger('retry');
         self.update(0, '00:00');
         self.scoreBar.reset();
-        //localStorage.removeItem("quizzes");
-        localStorage.removeItem("userInputwa");
-        localStorage.removeItem("XAPIEventContext");
-        localStorage.removeItem("XAPIEventObject");
       }
     }).appendTo(this.$feedbackContainer);
-
-    
-
-
+    if (!options.currikisettings.disableSubmitButton) {
     UI.createButton({
-      text: t.viewSummaryButton,
-      'class': 'mq-control-button',
+      text: options.currikisettings.currikil10n.submitAnswer,
+      'class': 'mq-control-button submit-button',
       click: function () {
-        var confirmationDialog = new H5P.ConfirmationDialog({
-          headerText: 'Arithmatic Quiz Summary',
-          dialogText:showSummary(),
-          cancelText: 'Cancel',
-          confirmText: "Submit Answers"
-        });
-
-        confirmationDialog.on('confirmed', function () {
-          
-          const customProgressedEvent = self.createXAPIEventTemplate('submitted-curriki');
-          var XAPIEventObject =  JSON.parse(localStorage.getItem("XAPIEventObject"));
-          var XAPIEvenContext =  JSON.parse(localStorage.getItem("XAPIEventContext"));
-          
-          if (customProgressedEvent.data.statement.object) {
-            customProgressedEvent.data.statement.object = XAPIEventObject;
-            customProgressedEvent.data.statement.context = XAPIEvenContext;
-            customProgressedEvent.setScoredResult(self.finalwa, self.maxScore, self)
-            self.trigger(customProgressedEvent);  
-          }
-          
-
-          //confirmationDialog.hide();
-          H5P.jQuery('.mq-control-button').hide();
-          
-        });
+        H5P.jQuery('.h5p-baq-result-page-score-status').append($('<div>', {
+          'class': 'h5p-baq-result-page-header custom-submit-message',
+          'html':"Result has been submitted successfully"
+        }));
+        var score = Number($('.h5p-joubelui-score-number-counter').html());
         
-       
-        confirmationDialog.appendTo(parent.document.body);
-        confirmationDialog.show();
+        // trigger completed
+
+        var time_elem = H5P.jQuery('time').html();
+        var time_spent = time_elem.replace("Time: ", "");
+
+        let minutes = parseInt(time_spent.split(':')[0], 10);
+        let seconds = parseInt(time_spent.split(':')[1], 10);
+        
+        //const dateTimewa = 'PT' + minutes + 'M' + seconds + 'S'; //PT6.25S
+        //const dateTimewa = 'PT6.25S';
+        const customProgressedEvent = self.createXAPIEventTemplate('completed');
+        customProgressedEvent.data.statement.object = JSON.parse(localStorage.getItem("XAPIEventObject"));
+        customProgressedEvent.data.statement.context = JSON.parse(localStorage.getItem("XAPIEventContext"));
+        
+        
+      
+        if (customProgressedEvent.data.statement.object) {
+          customProgressedEvent.setScoredResult(
+            score,
+            maxScore
+          );
+
+          customProgressedEvent.data.statement.result["response"] = localStorage.getItem("userInputwa");
+          //customProgressedEvent.data.statement.result.duration = dateTimewa;
+          self.trigger(customProgressedEvent);
+        }
+
+        // trigger submitted-curriki
+
+        const customProgressedEventCompleted = self.createXAPIEventTemplate('submitted-curriki');
+        customProgressedEventCompleted.data.statement.object = JSON.parse(localStorage.getItem("XAPIEventObject"));
+        customProgressedEventCompleted.data.statement.context = JSON.parse(localStorage.getItem("XAPIEventContext"));;
+      
+      
+        if (customProgressedEventCompleted.data.statement.object) {
+          customProgressedEventCompleted.setScoredResult(
+            score,
+            maxScore
+          );
+
+          customProgressedEventCompleted.data.statement.result["response"] = localStorage.getItem("userInputwa");
+          self.trigger(customProgressedEventCompleted);
+        }
+
+        $(this).hide();
       }
     }).appendTo(this.$feedbackContainer);
+  }
 
     this.$resultAnnouncer = $('<div>', {
       'class': 'h5p-baq-live-feedback',
@@ -130,34 +147,6 @@ H5P.ArithmeticQuiz.ResultPage = (function ($, UI) {
     this.getReadableScore = function (score) {
       return t.score + ' ' + score + '/' + this.maxScore;
     };
-
-
-
-    /**
-     * Get score as a string
-     * @param {Number} score Current score
-     * @return {String} Score string
-     */
-     function showSummary() {
-      var quizzes = JSON.parse(localStorage.getItem("quizzes"));
-      var userInputwa = JSON.parse(localStorage.getItem("userInputwa"));
-      
-      var table_content = '<tbody>';
-      for (var m =0; m < quizzes.length; m++){
-        var quiz = quizzes[m];
-        console.log(quiz.textual);
-        
-        
-        table_content += '<tr>';
-        table_content += '<td>'+quiz.textual+'</td>';
-        table_content += '<td>'+userInputwa[m]+'</td>';
-        //table_content += '<td>True</td>';
-        table_content += '</tr>';
-        
-      }
-      var summary_html = '<div class="custom-summary-section"><div class="h5p-summary-table-pages"><table class="h5p-score-table-custom" style="min-height:100px;width:100%"><thead><tr><th>Question</th><th>Your Answer</th></tr></thead>'+table_content+'</table></div></div>';
-      return summary_html;
-    }
 
     /**
      * Get readable time
@@ -200,7 +189,7 @@ H5P.ArithmeticQuiz.ResultPage = (function ($, UI) {
       this.$ariaTime.html(this.getReadableTime(time));
       this.scoreBar.setScore(score);
       this.$ariaScoreBar.text(this.getReadableScore(score));
-      this.finalwa = score;
+
       this.announce(score, time);
     };
   }

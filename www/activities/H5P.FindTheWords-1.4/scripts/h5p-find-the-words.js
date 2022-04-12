@@ -25,10 +25,10 @@ H5P.FindTheWords = (function ($, UI) {
     const vocabulary = options.wordList
       .split(',')
       .map(function (word) {
-        return word.trim();
+        return word.trim().replace(/ +/g, '');
       })
       .filter(function (word, pos, self) {
-        return self.indexOf(word) === pos;
+        return self.indexOf(word) === pos && word.length > 0;
       });
 
     this.options = $.extend(true, {
@@ -39,6 +39,12 @@ H5P.FindTheWords = (function ($, UI) {
       maxAttempts: 5,
       l10n: {
         wordListHeader: 'Find the words'
+      },
+      currikisettings:{
+        disableSubmitButton: false,
+        currikil10n: {
+          submitAnswer: 'Submit'
+        }
       }
     }, options);
 
@@ -203,12 +209,15 @@ H5P.FindTheWords = (function ($, UI) {
     });
     */
 
-    that.$submitButton = that.createButton('submit', 'check', "Submit Answers", that.gameSubmitted);
+    that.$checkButton = that.createButton('check', 'check', "Check", that.gameSubmitted);
     if (this.options.behaviour.enableShowSolution) {
       this.$showSolutionButton = this.createButton('solution', 'eye', this.options.l10n.showSolution, that.showSolutions);
     }
     if (this.options.behaviour.enableRetry) {
       this.$retryButton = this.createButton('retry', 'undo', this.options.l10n.tryAgain, that.resetTask);
+    }
+    if(!that.options.currikisettings.disableSubmitButton && typeof this.parent == "undefined") {
+      that.$submitButton = that.createButton('submit', 'submit', that.options.currikisettings.currikil10n.submitAnswer, that.answersSubmitted);
     }
 
     // container elements
@@ -307,7 +316,7 @@ H5P.FindTheWords = (function ($, UI) {
     this.timer.stop();
     this.$progressBar.setScore(this.numFound);
     this.$feedback.html(scoreText);
-    this.$submitButton = this.$submitButton.detach();
+    this.$checkButton = this.$checkButton.detach();
     this.grid.disableGrid();
 
     if (totalScore !== this.numFound) {
@@ -320,6 +329,10 @@ H5P.FindTheWords = (function ($, UI) {
       this.$retryButton.appendTo(this.$buttonContainer);
     }
 
+    if(!this.options.currikisettings.disableSubmitButton && typeof this.parent == "undefined") {
+      this.$submitButton.appendTo(this.$buttonContainer);
+    }
+
     this.$feedbackContainer.addClass('feedback-show'); //show feedbackMessage
     this.$feedback.focus();
 
@@ -328,8 +341,13 @@ H5P.FindTheWords = (function ($, UI) {
     this.addResponseToXAPI(xAPIEvent);
     this.trigger(xAPIEvent);
 
+    // trigger completed XAPI
+    var completedEvent = this.createXAPIEventTemplate('completed');
+    completedEvent.setScoredResult(this.getScore(), this.getMaxScore(), this, true, this.getScore() === this.getMaxScore());
+    completedEvent.data.statement.result.duration = 'PT' + (Math.round(this.timer.getTime() / 10) / 100) + 'S';
+    this.trigger(completedEvent);
+
     this.trigger('resize');
-    this.triggerXAPIScored(this.getScore(),this.getMaxScore(), 'submitted-curriki');
   };
 
   /**
@@ -342,6 +360,10 @@ H5P.FindTheWords = (function ($, UI) {
     this.$showSolutionButton.detach();
     this.$vocabularyContainer.focus();
     this.trigger('resize');
+    if (!this.isSubmitted && !this.options.currikisettings.disableSubmitButton) {
+      this.$submitButton.appendTo(this.$buttonContainer);
+    }
+    this.removeSubmitAnswerFeedback();
   };
 
   /**
@@ -349,14 +371,19 @@ H5P.FindTheWords = (function ($, UI) {
    */
   FindTheWords.prototype.resetTask = function () {
     this.numFound = 0;
+    this.isSubmitted = false;
     this.timer.reset();
     this.counter.reset();
     this.$progressBar.reset();
     this.$puzzleContainer.empty();
     this.vocabulary.reset();
+    this.removeSubmitAnswerFeedback();
 
     if (this.$showSolutionButton) {
       this.$showSolutionButton.detach();
+    }
+    if(this.$submitButton) {
+      this.$submitButton.detach();
     }
 
     this.$retryButton.detach();
@@ -368,12 +395,29 @@ H5P.FindTheWords = (function ($, UI) {
     this.grid.enableGrid();
     this.registerGridEvents();
 
-    this.$submitButton.appendTo(this.$buttonContainer);
+    this.$checkButton.appendTo(this.$buttonContainer);
     //this.$viewSummaryButton.appendTo(this.$buttonContainer);
     this.$puzzleContainer.focus();
 
     this.trigger('resize');
   };
+
+  FindTheWords.prototype.answersSubmitted = function () {
+    this.isSubmitted = true;
+    this.$submitButton = this.$submitButton.detach();
+    // trigger submitted-curriki XAPI
+    this.triggerXAPIScored(this.getScore(), this.getMaxScore(), 'submitted-curriki');
+    var $submit_message = '<div class="submit-answer-feedback" style = "color: red">Result has been submitted successfully</div>';
+    this.$feedbackContainer.after($submit_message);
+  };
+
+  /**
+   * Remove submit answer feedback div
+   */
+  FindTheWords.prototype.removeSubmitAnswerFeedback = function () {
+    H5P.jQuery('.submit-answer-feedback').remove();
+  };
+
 
   /**
    * Check whether user is able to play the game.
@@ -429,6 +473,16 @@ H5P.FindTheWords = (function ($, UI) {
     definition.interactionType = 'choice';
     definition.correctResponsesPattern = [];
     definition.correctResponsesPattern[0] = this.vocabulary.words.join([',']);
+    definition.choices = [];
+    this.vocabulary.words.forEach((value, index) => {
+      definition.choices[index] = {
+        id: value.toString(),
+        description: {
+          'en-US': value.toString()
+        }
+      }
+    });
+
   };
 
   /**
@@ -443,6 +497,7 @@ H5P.FindTheWords = (function ($, UI) {
 
     xAPIEvent.setScoredResult(score, maxScore, this, true, success);
     xAPIEvent.data.statement.result.response = response;
+    xAPIEvent.data.statement.result.duration = 'PT' + (Math.round(this.timer.getTime() / 10) / 100) + 'S';
   };
 
   /**
@@ -498,7 +553,7 @@ H5P.FindTheWords = (function ($, UI) {
     this.$progressBar.appendTo(this.$feedbackContainer);
 
     //this.$viewSummaryButton.appendTo(this.$buttonContainer);
-    this.$submitButton.appendTo(this.$buttonContainer);
+    this.$checkButton.appendTo(this.$buttonContainer);
 
     //append status and feedback and button containers to footer
     this.$statusContainer.appendTo(this.$footerContainer);

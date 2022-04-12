@@ -61,7 +61,6 @@ H5P.opened = {};
  * @param {Object} target DOM Element
  */
 H5P.init = function (target) {
-  console.log('here', target);
   // Useful jQuery object.
   if (H5P.$body === undefined) {
     H5P.$body = H5P.jQuery(document.body);
@@ -92,7 +91,7 @@ H5P.init = function (target) {
 
   // H5Ps added in normal DIV.
   H5P.jQuery('.h5p-content:not(.h5p-initialized)', target).each(function () {
-    console.log('this--', this);
+    
     var $element = H5P.jQuery(this).addClass('h5p-initialized');
     var $container = H5P.jQuery('<div class="h5p-container"></div>').appendTo($element);
     var contentId = $element.data('content-id');
@@ -105,7 +104,7 @@ H5P.init = function (target) {
       params: JSON.parse(contentData.jsonContent),
       metadata: contentData.metadata
     };
-
+    
     H5P.getUserData(contentId, 'state', function (err, previousState) {
       if (previousState) {
         library.userDatas = {
@@ -138,7 +137,7 @@ H5P.init = function (target) {
     // Create new instance.
     var instance = H5P.newRunnable(library, contentId, $container, true, {standalone: true});
 
-    H5P.offlineRequestQueue = new H5P.OfflineRequestQueue({instance: instance});
+    // H5P.offlineRequestQueue = new H5P.OfflineRequestQueue({instance: instance});
 
     // Check if we should add and display a fullscreen button for this H5P.
     if (contentData.fullScreen == 1 && H5P.fullscreenSupported) {
@@ -180,30 +179,30 @@ H5P.init = function (target) {
       }
 
       // Create action bar
-      var actionBar = new H5P.ActionBar(displayOptions);
-      var $actions = actionBar.getDOMElement();
+      // var actionBar = new H5P.ActionBar(displayOptions);
+      // var $actions = actionBar.getDOMElement();
 
-      actionBar.on('reuse', function () {
-        H5P.openReuseDialog($actions, contentData, library, instance, contentId);
-        instance.triggerXAPI('accessed-reuse');
-      });
-      actionBar.on('copyrights', function () {
-        var dialog = new H5P.Dialog('copyrights', H5P.t('copyrightInformation'), copyrights, $container);
-        dialog.open(true);
-        instance.triggerXAPI('accessed-copyright');
-      });
-      actionBar.on('embed', function () {
-        H5P.openEmbedDialog($actions, contentData.embedCode, contentData.resizeCode, {
-          width: $element.width(),
-          height: $element.height()
-        }, instance);
-        instance.triggerXAPI('accessed-embed');
-      });
+      // actionBar.on('reuse', function () {
+      //   H5P.openReuseDialog($actions, contentData, library, instance, contentId);
+      //   instance.triggerXAPI('accessed-reuse');
+      // });
+      // actionBar.on('copyrights', function () {
+      //   var dialog = new H5P.Dialog('copyrights', H5P.t('copyrightInformation'), copyrights, $container);
+      //   dialog.open(true);
+      //   instance.triggerXAPI('accessed-copyright');
+      // });
+      // actionBar.on('embed', function () {
+      //   H5P.openEmbedDialog($actions, contentData.embedCode, contentData.resizeCode, {
+      //     width: $element.width(),
+      //     height: $element.height()
+      //   }, instance);
+      //   instance.triggerXAPI('accessed-embed');
+      // });
 
-      if (actionBar.hasActions()) {
-        displayFrame = true;
-        $actions.insertAfter($container);
-      }
+      // if (actionBar.hasActions()) {
+      //   displayFrame = true;
+      //   $actions.insertAfter($container);
+      // }
     }
 
     $element.addClass(displayFrame ? 'h5p-frame' : 'h5p-no-frame');
@@ -376,10 +375,8 @@ H5P.init = function (target) {
       H5P.externalDispatcher.trigger('initialized');
     }
   });
-  console.log('here 5', H5P.jQuery('iframe.h5p-iframe:not(.h5p-initialized)', target));
   // Insert H5Ps that should be in iframes.
   H5P.jQuery('iframe.h5p-iframe:not(.h5p-initialized)', target).each(function () {
-    console.log('here 2');
     var contentId = H5P.jQuery(this).addClass('h5p-initialized').data('content-id');
     this.contentDocument.open();
     this.contentDocument.write('<!doctype html><html class="h5p-iframe"><head>' + H5P.getHeadTags(contentId) + '</head><body><div class="h5p-content" data-content-id="' + contentId + '"/></body></html>');
@@ -888,6 +885,7 @@ H5P.newRunnable = function (library, contentId, $attachTo, skipResize, extras) {
 
   // Find constructor function
   var constructor;
+  // ab
   try {
     nameSplit = nameSplit[0].split('.');
     constructor = window;

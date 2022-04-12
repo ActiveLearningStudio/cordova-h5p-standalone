@@ -8,7 +8,7 @@ H5P.DocumentsUpload = (function ($) {
         // Extend defaults with provided options
         this.options = $.extend(true, {}, {
             title: 'Default title',
-            documentcontent: 'Documents LALA'
+            documentcontent: 'Documents'
         }, options);
         // Keep provided id.
         this.id = id;
@@ -21,16 +21,33 @@ H5P.DocumentsUpload = (function ($) {
      * @param {jQuery} $container
      */
     C.prototype.attach = function ($container) {
-        console.log('H5P: Rendering DocumentsUpload.');
-        console.log($.parseHTML(this.options.documentcontent));
+        //this.sendStatement('consume');
+        //this.sendStatement('complete');
         $container.addClass("h5p-document");
 
         $container.append('<h1 class="document-title" style="text-align: center;">' + this.options.title + '</h1>');
         $container.append('<div class="document-content" style="text-align: center;">' + decodeEntities(this.options.documentcontent) + '</div>');
 
         setTimeout(iframesCheck, 3000);
+        setTimeout(this.sendStatement('consume'), 3000);
     };
 
+
+    C.prototype.sendStatement = function (verb) {
+        console.log('sendStatement');
+        var xAPIEvent = this.createXAPIEventTemplate({
+            id: 'http://activitystrea.ms/schema/1.0/'+verb,
+            display: {
+              'en-US': verb+'d'
+            }
+          }, {
+            result: {
+              completion: true
+            }
+          });
+          this.trigger(xAPIEvent);
+          console.log(xAPIEvent);
+    }
     /**
      * Loop through each IFrame
      */

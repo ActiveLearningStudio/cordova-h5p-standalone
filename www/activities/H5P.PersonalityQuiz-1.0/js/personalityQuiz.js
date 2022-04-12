@@ -15,7 +15,7 @@ H5P.PersonalityQuiz = (function ($, EventDispatcher) {
     @constructor
   */
   function PersonalityQuiz(params, id) {
-    //console.log(params);
+    console.log(params);
     //console.log(id);
 
     var self = this;
@@ -27,6 +27,7 @@ H5P.PersonalityQuiz = (function ($, EventDispatcher) {
     self.progressText = params.progressText;
     self.personalities = params.personalities;
     self.numQuestions = params.questions.length;
+    
 
     self.slidePercentage = 100 / self.numQuestions;
 
@@ -210,7 +211,7 @@ H5P.PersonalityQuiz = (function ($, EventDispatcher) {
         $slides.append($canvas);
       }
 
-      $result = createResult(quiz, data.resultScreen, data.retakeText);
+      $result = createResult(quiz, data.resultScreen, data.retakeText, data.showSubmitAnswersButton, data.submitAnswers);
 
       $slides.append($result);
       $container.append($bar, $slides);
@@ -508,7 +509,7 @@ H5P.PersonalityQuiz = (function ($, EventDispatcher) {
       @param {string} retakeText The UI text for the button to retake the quiz
       @return {jQuery}
     */
-    function createResult(quiz, data, retakeText) {
+    function createResult(quiz, data, retakeText, showButton, submitButtontext) {
       var $result    = $('<div>', { 'class': classes('result', 'slide')       });
       var $wrapper   = $('<div>', { 'class': classes('personality-wrapper')   });
       var $container = $('<div>', { 'class': classes('retake-button-wrapper') });
@@ -517,15 +518,17 @@ H5P.PersonalityQuiz = (function ($, EventDispatcher) {
         'class': classes('button', 'retake-button'),
         'type': 'button'
       });
-      if(typeof self.parent =='undefined'){
+      if(typeof self.parent =='undefined' && showButton){
         var $button1    = createButton('button', {
-          'html': "Submit Results",
+          'html': submitButtontext,
           'class': classes('button', 'submit-result'),
           'type': 'button'
         });
         addButtonListener($button1, function () {
          
-            self.triggerXAPIScored(0, 1, 'submitted-curriki');
+            self.triggerXAPIScored(1, 1, 'submitted-curriki');
+            self.triggerXAPIScored(1, 1, 'answered');
+            self.triggerXAPIScored(1, 1, 'completed');
           
             H5P.jQuery('.h5p-personality-quiz-button').hide();
             var $submit_message= "<h1>Result has been submitted successfully</h1>";
@@ -1077,7 +1080,14 @@ H5P.PersonalityQuiz = (function ($, EventDispatcher) {
           'en-US':params.questions[self.answered].text,
         },
         type: 'http://adlnet.gov/expapi/activities/cmi.interaction'
-      })
+      });
+
+      // set user spent duration
+      if (self && self.activityStartTime) {
+        var duration = Math.round((Date.now() - self.activityStartTime) / 10) / 100;
+        // xAPI spec allows a precision of 0.01 seconds
+        completedEvent.data.statement.result.duration = 'PT' + duration + 'S';
+      }
       self.trigger(completedEvent);
       //self.triggerXAPI('interacted');
       //this.triggerXAPI('interacted');
@@ -1095,6 +1105,8 @@ H5P.PersonalityQuiz = (function ($, EventDispatcher) {
       self.index = 0;
       self.answered = 0;
       self.completed = false;
+      /* XAPI restart the activityStartTime */
+      self.activityStartTime = Date.now();
     };
 
     /**
@@ -1104,6 +1116,8 @@ H5P.PersonalityQuiz = (function ($, EventDispatcher) {
     self.on('personality-quiz-start', function () {
       self.$progressbar.show();
       self.next();
+      // for XAPI duration
+      self.activityStartTime = Date.now();
     });
 
     /**
@@ -1179,7 +1193,7 @@ H5P.PersonalityQuiz = (function ($, EventDispatcher) {
         }
         nnnn++;
       });
-      
+
       Object.assign(completedEvent.data.statement, {
         result: {
           response: String(final_index_response)
@@ -1214,7 +1228,15 @@ H5P.PersonalityQuiz = (function ($, EventDispatcher) {
         'en-US':self.$slides[0].innerText.replace('Start','')
       },
       type: 'http://adlnet.gov/expapi/activities/cmi.interaction'
-    })
+    });
+
+    // set user spent duration
+    if (self && self.activityStartTime) {
+      var duration = Math.round((Date.now() - self.activityStartTime) / 10) / 100;
+      // xAPI spec allows a precision of 0.01 seconds
+      completedEvent.data.statement.result.duration = 'PT' + duration + 'S';
+    }
+
     self.trigger(completedEvent);
     
 
@@ -1251,6 +1273,13 @@ H5P.PersonalityQuiz = (function ($, EventDispatcher) {
       self.$container.empty();
       attach(self.$container);
     });
+
+    /**
+     * Checks if an answer activity has been given.
+     */
+    self.getAnswerGiven = function () {
+      return (self.answered === self.numQuestions);
+    };
   }
 
   PersonalityQuiz.prototype = Object.create(EventDispatcher);
