@@ -10,7 +10,7 @@
  * @param int contentId
  *  The nodes vid
  */
- H5P.Timeline = (function ($) {
+H5P.Timeline = (function ($) {
 
   function C(options, contentId) {
     var self = this;
@@ -23,6 +23,8 @@
         height: 600
       }
     }, options);
+
+    C.counter = (C.counter === undefined ? 0 : C.counter + 1);
 
     // Need to create the URL for all H5P.Images
     if (this.options.timeline.date !== undefined) {
@@ -58,6 +60,7 @@
         else {
           self.setBackgroundImage(image);
         }
+
       }, 200);
     };
 
@@ -71,7 +74,7 @@
       $(window).trigger('resize');
     });
   }
-
+  
   /**
    * Check if data provided is valid.
    * @method validate
@@ -98,9 +101,14 @@
   C.prototype.attach = function ($container) {
     var self = this;
 
+    const id = 'h5p-timeline-' + C.counter;
+
     self.$container = $container;
     $container.addClass('h5p-timeline').css('height', self.options.timeline.height + 'px');
-    $container.append($('<div>', {id: 'h5p-timeline'}));
+    $container.append($('<div>', {
+      id: id,
+      class: 'h5p-timeline-container'
+    }));
 
     // Need to set this to make timeline behave correctly:
     window.jQuery = $;
@@ -115,7 +123,7 @@
           source: self.options,
           lang: self.options.timeline.language,
           start_zoom_adjust: self.options.timeline.defaultZoomLevel,
-          embed_id: 'h5p-timeline'
+          embed_id: id
         }, data.preloadedDependencies[0].majorVersion, data.preloadedDependencies[0].minorVersion);
 
         // Add background image if any:
@@ -123,6 +131,33 @@
           self.setBackgroundImage(self.options.timeline.backgroundImage);
         }
       });
+
+      const customEventInteract =H5P.externalDispatcher.createXAPIEventTemplate("interacted");
+      if (customEventInteract.data.statement.object) {
+        customEventInteract.data.statement.object.definition["description"] = {
+          "en-US":"Timeline", //  this.contentData.metadata.title
+        };
+        customEventInteract.data.statement.object.definition["name"] ={
+          "en-US":"Timeline Activity", //  this.contentData.metadata.title
+        };
+        customEventInteract.data.statement.object["objectType"] ="Activity";
+        customEventInteract.data.statement.object["id"] ="http://adlnet.gov/expapi/activities"
+        self.trigger(customEventInteract);
+      }
+
+      const customEventInteractComplete =H5P.externalDispatcher.createXAPIEventTemplate("completed");
+      if (customEventInteractComplete.data.statement.object) {
+        customEventInteractComplete.data.statement.object.definition["description"] = {
+          "en-US":"Timeline", //  this.contentData.metadata.title
+        };
+        customEventInteractComplete.data.statement.object.definition["name"] ={
+          "en-US":"Timeline Activity", //  this.contentData.metadata.title
+        };
+        customEventInteractComplete.data.statement.object["objectType"] ="Activity";
+        customEventInteractComplete.data.statement.object["id"] ="http://adlnet.gov/expapi/activities"
+        self.trigger(customEventInteractComplete);
+      }
+
     }
     else {
       $container.append($('<div>', {

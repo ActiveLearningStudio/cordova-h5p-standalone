@@ -15,7 +15,7 @@ H5P.MemoryGame = (function (EventDispatcher, $) {
    * @param {Object} parameters
    * @param {Number} id
    */
-  function MemoryGame(parameters, id) {
+  function MemoryGame(parameters, id, contentData) {
     /** @alias H5P.MemoryGame# */
     var self = this;
 
@@ -120,9 +120,26 @@ H5P.MemoryGame = (function (EventDispatcher, $) {
 
       // Create and trigger xAPI event 'completed'
       var completedEvent = self.createXAPIEventTemplate('completed');
+      if (completedEvent.data.statement.object) {
+        completedEvent.data.statement.object.definition["name"] = {
+          "en-US": contentData.metadata.title,
+        };
+      }
       completedEvent.setScoredResult(1, 1, self, true, true);
       completedEvent.data.statement.result.duration = 'PT' + (Math.round(timer.getTime() / 10) / 100) + 'S';
       self.trigger(completedEvent);
+
+       // Create and trigger xAPI event 'answered'
+
+       var answeredEvent = self.createXAPIEventTemplate('answered');
+      if (answeredEvent.data.statement.object) {
+        answeredEvent.data.statement.object.definition["name"] = {
+          "en-US": contentData.metadata.title,
+        };
+      }
+      answeredEvent.setScoredResult(1, 1, self, true, true);
+      answeredEvent.data.statement.result.duration = 'PT' + (Math.round(timer.getTime() / 10) / 100) + 'S';
+      self.trigger(answeredEvent);
 
       if (parameters.behaviour && parameters.behaviour.allowRetry) {
         // Create retry button

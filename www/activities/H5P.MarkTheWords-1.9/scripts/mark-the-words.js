@@ -51,6 +51,12 @@
       a11yCheck: 'Check the answers. The responses will be marked as correct, incorrect, or unanswered.',
       a11yShowSolution: 'Show the solution. The task will be marked with its correct solution.',
       a11yRetry: 'Retry the task. Reset all responses and start the task over again.',
+      currikisettings: {
+        disableSubmitButton: false,
+        currikil10n: {
+          submitAnswer: "Submit"
+        }
+      },
     }, params);
 
     this.contentData = contentData;
@@ -77,6 +83,9 @@
 
     // Set user state
     this.setH5PUserState();
+
+    // for XAPI duration
+    this.activityStartTime = Date.now();
   };
 
   /**
@@ -280,16 +289,11 @@
     });
 
     if (this.params.behaviour.enableCheckButton) {
-      this.addButton('check-answer', "Submit Answers", function () {
+      this.addButton('check-answer', "Check Answers", function () {
         self.isAnswered = true;
         var answers = self.calculateScore();
         self.feedbackSelectedWords();
         var txt = "";
-        if(typeof self.parent == "undefined") {
-          
-          self.triggerXAPIScored(self.getScore(), self.getMaxScore(), 'submitted-curriki');
-          
-        }
 
         if (!self.showEvaluation(answers)) {
           // Only show if a correct answer was not found.
@@ -301,12 +305,20 @@
           }
         }
 
+        if (!self.params.currikisettings.disableSubmitButton && typeof self.parent == "undefined") {
+          self.showButton('submit-answer');
+        }
+
         // Set focus to start of text
         self.$a11yClickableTextLabel.html(self.params.a11yCheckingHeader + ' - ' + self.params.a11yClickableTextLabel);
         self.$a11yClickableTextLabel.focus();
 
         self.hideButton('check-answer');
         self.trigger(self.XapiGenerator.generateAnsweredEvent());
+
+        if (typeof self.parent == "undefined") {
+          self.triggerXAPICompleted(self.getScore(), self.getMaxScore());
+        }
         self.toggleSelectable(true);
       }, true, {
         'aria-label': this.params.a11yCheck,
@@ -353,6 +365,7 @@
     this.addButton('show-solution', this.params.showSolutionButton, function () {
       self.setAllMarks();
 
+      self.solutionMode = true;
       self.$a11yClickableTextLabel.html(self.params.a11ySolutionModeHeader + ' - ' + self.params.a11yClickableTextLabel);
       self.$a11yClickableTextLabel.focus();
 
@@ -362,12 +375,37 @@
       self.hideButton('check-answer');
       self.hideButton('show-solution');
 
+      if(self.isSubmitted) {
+        self.hideButton('submit-answer');
+        self.removeSubmitAnswerFeedback();
+      }
+
       self.read(self.params.displaySolutionDescription);
       self.toggleSelectable(true);
     }, false, {
       'aria-label': this.params.a11yShowSolution,
     });
+
+    if (!this.params.currikisettings.disableSubmitButton && typeof self.parent == "undefined") {
+      this.addButton('submit-answer', this.params.currikisettings.currikil10n.submitAnswer, function () {
+        self.isSubmitted = true;
+        self.hideButton('submit-answer');
+        if(self.solutionMode) {
+          self.hideButton('show-solution');
+        }
+        self.triggerXAPIScored(self.getScore(), self.getMaxScore(), 'submitted-curriki');
+        var $submit_message = '<div class="submit-answer-feedback" style = "color: red">Result has been submitted successfully</div>';
+        H5P.jQuery('.h5p-question-buttons').after($submit_message);
+      }, false);
+    }
   };
+
+   /**
+    * Remove submit answer feedback div
+    */
+   MarkTheWords.prototype.removeSubmitAnswerFeedback = function () {
+     H5P.jQuery('.submit-answer-feedback').remove();
+   };
 
   /*started code by dev_ln */
   function showSummary(self,answers,total_score,scored_result,user_response,correct_response) {
@@ -456,6 +494,13 @@
         .attr('role', 'listbox');
     }
   };
+
+   /**
+    * Trigger xAPI completed event
+    */
+   MarkTheWords.prototype.triggerXAPICompleted = function (score, maxScore) {
+     this.triggerXAPIScored(score, maxScore, 'completed');
+   };
 
   /**
    * Get Xapi Data.
@@ -673,10 +718,16 @@
    */
   MarkTheWords.prototype.resetTask = function () {
     this.isAnswered = false;
+    this.isSubmitted = false;
+    this.solutionMode = false;
     this.clearAllMarks();
     this.hideEvaluation();
+    this.removeSubmitAnswerFeedback();
+    /* XAPI restart the activityStartTime */
+    this.activityStartTime = Date.now();
     this.hideButton('try-again');
     this.hideButton('show-solution');
+    this.hideButton('submit-answer');
     this.showButton('check-answer');
     this.$a11yClickableTextLabel.html(this.params.a11yClickableTextLabel);
 

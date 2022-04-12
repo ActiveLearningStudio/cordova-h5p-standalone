@@ -15,7 +15,7 @@ H5P.FreeTextQuestion = (function (EventDispatcher, $, CKEditor) {
     var self = this;
     var textAreaID = 'h5p-text-area-' + counter;
     counter++;
-    var isEditing = (window.H5PEditor == undefined);
+    var isEditing = (window.H5PEditor !== undefined);
     var attached;
     var textarea;
     var useCK = false;
@@ -67,6 +67,8 @@ H5P.FreeTextQuestion = (function (EventDispatcher, $, CKEditor) {
 
       var text = document.createElement('div');
       text.classList.add('h5p-free-text-question-text');
+      text.setAttribute('tabindex', 0);
+      text.setAttribute('aria-label', params.question);
       text.innerHTML = params.question;
 
       if (params.isRequired == true) {
@@ -89,7 +91,7 @@ H5P.FreeTextQuestion = (function (EventDispatcher, $, CKEditor) {
       self.$inputWrapper = $('<div/>', {
         'class': 'h5p-free-text-question-input-wrapper'
       });
-      console.log('92');
+
       textarea = document.createElement('div');
       textarea.classList.add('h5p-free-text-question-input');
       textarea.setAttribute('tabindex', 0);
@@ -101,11 +103,10 @@ H5P.FreeTextQuestion = (function (EventDispatcher, $, CKEditor) {
       var content;
       // Don't load CKEditor if in editor
       // (will break the ckeditor provided by the H5P editor)
-      console.log(isEditing);
       if (!isEditing) {
         textarea.addEventListener('click', function () {
           createXAPIEvent('interacted', true);
-          console.log(textarea.offsetHeight);
+
           useCK = (textarea.offsetHeight > 135);
 
           // Don't use CK if it is no room for it

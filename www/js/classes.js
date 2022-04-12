@@ -2,7 +2,16 @@ const imageBaseUrl = localStorage.getItem("CURRIKI_BASE_IMAGE_URL");
 class CourseHtml {
   constructor(allCourses) {
     this.courseWrapper = "";
+    var urls = [];
     allCourses.forEach((course) => {
+      course.playlists
+      course.playlists.forEach((data)=>{
+        data.activities.forEach((url)=>{
+          if(url.source_url){
+            urls.push(url.source_url);
+          }
+        })
+      })
       this.courseWrapper += `<div class="course-card">
             <div class="card-head-wrap">
               <img src="${
@@ -22,7 +31,7 @@ class CourseHtml {
                 </ul>
               </div>
               <div class="card-btn">
-                <button class="btn green-btn download-project" name="${course.name}" id="${
+                <button class="btn green-btn download-project" data-course='${urls}' name="${course.name}" id="${
                   course.id
                 }">
                   <img src="img/download-vector.svg" /> Download
@@ -280,7 +289,6 @@ class NetworkWarnings extends AlertHeader {
 }
 
 function createFile(dirEntry, fileName, isAppend, data) {
-  console.log('hiii',dirEntry, fileName, data);
   // Creates a new file or returns the file if it already exists.
   dirEntry.getFile(fileName, {create: true, exclusive: false}, function(fileEntry) {
       writeFile(fileEntry, data);
@@ -290,7 +298,6 @@ function createFile(dirEntry, fileName, isAppend, data) {
 }
 
 function writeFile(fileEntry, dataObj) {
-  console.log('fileEntry', fileEntry,dataObj);
   // Create a FileWriter object for our FileEntry (log.txt).
   fileEntry.createWriter(function (fileWriter) {
       fileWriter.onwriteend = function() {
@@ -335,7 +342,8 @@ const removeCourse = (projectPath) => {
   );
 }
 
-const updateAddCourse = (projectId, projectName, fileSystem) => {
+const updateAddCourse = (projectId, projectName,course, fileSystem) => {
+  console.log("videos", course);
   let getProjectPath, getFullProjectPath;
   window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(fs) {
     fs.root.getFile("all-downloads-activity.json", { create: false, exclusive: false }, function(fileEntry) {
@@ -377,6 +385,11 @@ const updateAddCourse = (projectId, projectName, fileSystem) => {
     })
   })
 }
+
+function downloadImage(data) {
+  console.log('data', data);
+}
+
 
 //store the activity score locally
 const storeActivityScore = (contentId, score, maxScore, opened, finished, email) => {

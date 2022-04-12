@@ -63,6 +63,7 @@ function onDeviceReady() {
                     fs.root.getFile("user-response-offline.json", { create: false, exclusive: false }, function(fileEntry) { 
                         readLoacalJsonFile(fileEntry, (file) => { 
                             activities = JSON.parse(file);
+                            
                             var activity = activities.filter(activities => activities.contentId == activity_id[0])
                             
                             if(activity.length > 0){
@@ -81,6 +82,15 @@ function onDeviceReady() {
                                 <script src="js/h5p/h5p-x-api.js"></script>
                                 <script src="js/h5p/h5p-x-api-event.js"></script>
                                 <script src="js/h5p/h5p-content-type.js"></script>
+                                <script src="js/h5p/video.js"></script>
+                                <script src="js/h5p/brightcove.js"></script>
+                                <script src="js/h5p/question.js"></script>
+                                <script src="js/h5p/ejs_production.js"></script>
+                                <script src="js/h5p/drag-n-drop.js"></script>
+                                <script src="js/h5p/drag-n-bar.js"></script>
+                                <script src="js/h5p/dialog.js"></script>
+                                <script src="js/h5p/h5p-action-bar.js"></script>
+                                <script src="js/h5p/h5p-confirmation-dialog.js"></script>
                                 <script src="js/handle-xapi.js"></script>`;
                                 $("body").append(scripts);
                             }
@@ -94,6 +104,16 @@ function onDeviceReady() {
                         <script src="js/h5p/h5p-x-api.js"></script>
                         <script src="js/h5p/h5p-x-api-event.js"></script>
                         <script src="js/h5p/h5p-content-type.js"></script>
+                        <script src="js/h5p/video.js"></script>
+                        <script src="js/h5p/brightcove.js"></script>
+                        <script src="js/h5p/h5p-interactive-video.js"></script>
+                        <script src="js/h5p/question.js"></script>
+                        <script src="js/h5p/ejs_production.js"></script>
+                        <script src="js/h5p/drag-n-drop.js"></script>
+                        <script src="js/h5p/drag-n-bar.js"></script>
+                        <script src="js/h5p/dialog.js"></script>
+                        <script src="js/h5p/h5p-action-bar.js"></script>
+                        <script src="js/h5p/h5p-confirmation-dialog.js"></script>
                         <script src="js/handle-xapi.js"></script>`;
                         $("body").append(scripts);
                     })    
@@ -165,32 +185,33 @@ function onOffline() {
     // Handle the offline event
     var data;
     var getOpenedTime = {};
-    H5P.externalDispatcher.on('xAPI', function(event) {
-        console.log("Api hit");
-        var contentId = event.getVerifiedStatementValue(['object', 'definition', 'extensions', 'http://h5p.org/x-api/h5p-local-content-id']);
-        
-        if (event.getVerb() === 'attempted') {
-            getOpenedTime[contentId] = new Date();
-            console.log('getOpenedTime[contentId]', getOpenedTime[contentId]);
-        }
-        if ((event.getVerb() === 'completed' || event.getVerb() === 'answered') && !event.getVerifiedStatementValue(['context', 'contextActivities', 'parent'])) {
-            var score = event.getScore(),
-            maxScore = event.getMaxScore(),
-            contentId = contentId
-            email = event.data.statement.actor.mbox,
-            toUnix = function (date) {
-                if(date){
-                    return Math.round(date.getTime() / 1000);
-                }else{
-                    return new Date()
-                }
-            };
-            console.log('maxScore', maxScore);
-            if(maxScore > 0) {
-                storeActivityScore(contentId, score, maxScore, toUnix(getOpenedTime[contentId]), toUnix(new Date()), email)
+    if (window.H5PIntegration) {
+        H5P.externalDispatcher.on('xAPI', function(event) {
+            var contentId = event.getVerifiedStatementValue(['object', 'definition', 'extensions', 'http://h5p.org/x-api/h5p-local-content-id']);
+            
+            if (event.getVerb() === 'attempted') {
+                getOpenedTime[contentId] = new Date();
+                console.log('getOpenedTime[contentId]', getOpenedTime[contentId]);
             }
-        }
-    });
+            if ((event.getVerb() === 'completed' || event.getVerb() === 'answered') && !event.getVerifiedStatementValue(['context', 'contextActivities', 'parent'])) {
+                var score = event.getScore(),
+                maxScore = event.getMaxScore(),
+                contentId = contentId
+                email = event.data.statement.actor.mbox,
+                toUnix = function (date) {
+                    if(date){
+                        return Math.round(date.getTime() / 1000);
+                    }else{
+                        return new Date()
+                    }
+                };
+                console.log('maxScore', maxScore);
+                if(maxScore > 0) {
+                    storeActivityScore(contentId, score, maxScore, toUnix(getOpenedTime[contentId]), toUnix(new Date()), email)
+                }
+            }
+        });
+    }
 }
 
 function createFile(dirEntry, fileName, isAppend, data) {
@@ -201,21 +222,6 @@ function createFile(dirEntry, fileName, isAppend, data) {
 
 }
 
-// function writeFile(fileEntry, dataObj) {
-//     // Create a FileWriter object for our FileEntry (log.txt).
-//     fileEntry.createWriter(function(fileWriter) {
-//         fileWriter.onwriteend = function() {
-//         };
-//         fileWriter.onerror = function(e) {
-//         };
-//         // If data object is not passed in,
-//         // create a new Blob instead.
-//         if (!dataObj) {
-//             dataObj = new Blob([stringData], { type: 'text/plain' });
-//         }
-//         fileWriter.write(dataObj);
-//     });
-// }
 
 function readFile(fileEntry) {
     const currikiToken = localStorage.getItem("CURRIKI_TOKEN"),

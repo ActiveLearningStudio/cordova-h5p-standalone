@@ -1690,7 +1690,8 @@
    * @returns {Boolean}
    */
   C.prototype.getAnswerGiven = function () {
-    return !this.options.behaviour.showSolutionsRequiresInput || this.answered || this.blankIsCorrect;
+    //return !this.options.behaviour.showSolutionsRequiresInput || this.answered || this.blankIsCorrect;
+    return this.answered || this.blankIsCorrect;
   };
   
   /**

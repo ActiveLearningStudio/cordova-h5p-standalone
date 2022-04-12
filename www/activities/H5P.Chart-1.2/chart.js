@@ -101,6 +101,13 @@ H5P.Chart = (function ($, EventDispatcher) {
   Chart.prototype.attach = function ($container) {
     var self = this;
 
+    if(self.isRoot()) {
+      // Mark as consumed
+      self.triggerConsumed();
+      // Mark as completed
+      self.triggerCompleted();
+    }
+
     // Create chart on first attach
     if (self.$wrapper === undefined) {
       self.$wrapper = $('<div/>', {
@@ -137,6 +144,34 @@ H5P.Chart = (function ($, EventDispatcher) {
       // Resize existing chart
       self.chart.resize();
     });
+  };
+
+  /**
+   * Trigger the 'consumed' xAPI event when this commences
+   *
+   * (Will be more sophisticated in future version)
+   */
+  Chart.prototype.triggerConsumed = function () {
+    var xAPIEvent = this.createXAPIEventTemplate({
+      id: 'http://activitystrea.ms/schema/1.0/consume',
+      display: {
+        'en-US': 'consumed'
+      }
+    });
+    this.trigger(xAPIEvent);
+  };
+
+  /**
+   * Trigger the 'completed' xAPI event when this commences
+   *
+   * (Will be more sophisticated in future version)
+   */
+  Chart.prototype.triggerCompleted = function () {
+    var xAPIEvent = this.createXAPIEventTemplate('completed');
+    xAPIEvent.data.statement.result = {
+      'completion': true
+    };
+    this.trigger(xAPIEvent);
   };
 
   return Chart;

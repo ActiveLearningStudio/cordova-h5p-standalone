@@ -32,6 +32,13 @@ H5P.IFrameEmbed = function (options, contentId) {
       }
     }
 
+    if(this.isRoot()) {
+      // Mark as consumed
+      this.triggerConsumed();
+      // Mark as completed
+      this.triggerCompleted();
+    }
+
     $iframe = $('<iframe/>', {
       src: iFrameSource,
       scrolling: 'no',
@@ -92,4 +99,32 @@ H5P.IFrameEmbed = function (options, contentId) {
   // like if the iframe is listening to touch events on the iframe's
   // window object. (like in PHET simulations)
   window.addEventListener("touchstart", function () {});
+
+  /**
+   * Trigger the 'consumed' xAPI event when this commences
+   *
+   * (Will be more sophisticated in future version)
+   */
+  this.triggerConsumed = function () {
+    var xAPIEvent = this.createXAPIEventTemplate({
+      id: 'http://activitystrea.ms/schema/1.0/consume',
+      display: {
+        'en-US': 'consumed'
+      }
+    });
+    this.trigger(xAPIEvent);
+  };
+
+  /**
+   * Trigger the 'completed' xAPI event when this commences
+   *
+   * (Will be more sophisticated in future version)
+   */
+  this.triggerCompleted = function () {
+    var xAPIEvent = this.createXAPIEventTemplate('completed');
+    xAPIEvent.data.statement.result = {
+      'completion': true
+    };
+    this.trigger(xAPIEvent);
+  };
 };

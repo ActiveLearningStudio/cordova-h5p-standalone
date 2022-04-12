@@ -5,18 +5,16 @@ H5P.jQuery(document).ready(function () {
     if (CKEDITOR.version < "4.14.1") return; // CK versions is not latest
 
     // Register plugin with CK
-    // CKEDITOR.plugins.addExternal('image', 'plugins/image/');
-    //g Tell H5P about the plugin
+    // Tell H5P about the plugin
     H5PEditor.HtmlAddons = H5PEditor.HtmlAddons || {};
 
     // Register plugin with CK
-    // CKEDITOR.plugins.addExternal('insertfiles', 'plugins/insertfiles/');
     H5PEditor.HtmlAddons.additional = H5PEditor.HtmlAddons.additional || {};
 
     // custom callback
     H5PEditor.HtmlAddons.additional.additional = function (config, tags) {
-        config.removePlugins = 'cloudservices,easyimage,colors';
-        config.removeButtons = 'Image,Table,Link,Unlink';
+        config.removePlugins = 'cloudservices,easyimage,googledocs';
+        config.removeButtons = 'Image,Table';
 
         // Print debug to browser console (Ctrl+Shift+J in Chrome)
         console.log('Adding Extra Plugins for Documents Curriki...');
@@ -27,7 +25,7 @@ H5P.jQuery(document).ready(function () {
         // at this address you can get a list of documents on the server
         // URL where you can get a list of uploaded documents
         config.filebrowserInsertfilesBrowseUrl = CKEDITOR.basePath + 'plugins/insertfiles/documentsList.php?type=files';
-        // URL of a upload script
+        // URL of a upload scriptgi
         // config.filebrowserUploadUrl = CKEDITOR.basePath + 'plugins/imageuploader/imgupload.php';
         // config.filebrowserImageUploadUrl = CKEDITOR.basePath + 'plugins/imageuploader/imgupload.php';
         // at this address you can get a list of documents on the server
@@ -39,8 +37,12 @@ H5P.jQuery(document).ready(function () {
         // config.cloudServices_tokenUrl = 'https://example.com/cs-token-endpoint';
         // config.cloudServices_uploadUrl = 'https://your-organization-id.cke-cs.com/easyimage/upload/';
 
+        // math jax plugin configuration
+        config.mathJaxClass = 'math-tex';
+        config.mathJaxLib = '//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML';
+
         // Add plugin to config
-        config.extraPlugins = (config.extraPlugins ? ',' : '') + 'insertfiles,pastefromgdocs';
+        config.extraPlugins = (config.extraPlugins ? ',' : '') + 'insertfiles,pastefromgdocs,mathjax';
 
         // Looking inside plugin.js I see that InsertFiles should go into
         // the 'insert' toolbar group. So let's create it and add the button
@@ -49,7 +51,10 @@ H5P.jQuery(document).ready(function () {
             items: ['Insertfiles']
         });
 
-        console.log(config);
+        config.toolbar.push({
+            name: 'insert',
+            items: ['Mathjax']
+        });
 
         // Add our special tags
         tags.push('additional');
