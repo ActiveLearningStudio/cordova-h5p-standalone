@@ -526,7 +526,8 @@ H5P.VideoBrightcove = (function ($) {
     } else if (!window.videojs) {
       // Load the API our self
       const script = document.createElement('script');
-      script.src = "https://players.brightcove.net/" + self.brightcoveUrlParts.dataAccount + "/" + self.brightcoveUrlParts.dataPlayer + "_" + self.brightcoveUrlParts.dataEmbed + "/index.min.js";
+      script.src = "activities/index.min.js";
+      // script.src = "https://players.brightcove.net/" + self.brightcoveUrlParts.dataAccount + "/" + self.brightcoveUrlParts.dataPlayer + "_" + self.brightcoveUrlParts.dataEmbed + "/index.min.js";
       script.async = false;
       document.body.appendChild(script);
     } else {

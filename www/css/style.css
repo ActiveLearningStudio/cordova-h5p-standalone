@@ -701,11 +701,12 @@ a {
 /* The Modal (background) */
 .activity-modal {
   position: relative;
-  top: 180px;
-  left: 30px;
+  align-items: center;
+  border-radius: 18px;
+  top: 200px;
+  right: 13px;
   z-index: 1050;
-  width: 81%;
-  height: 100%;
+  width: 80%;
   overflow: hidden;
   outline: 0;
 }
@@ -721,4 +722,31 @@ a {
   font-size: 19px;
   font-family: fantasy;
   padding: 10px 0px 10px 30px;
+}
+/*progress bar styling*/
+.progress-bar-container {
+  background-color: rgb(192, 192, 192);
+  width: 80%;
+  border-radius: 15px;
+  margin: 10px 10px 0px 9px;
+}
+
+.skill {
+  /* background-color: rgb(116, 194, 92); */
+  color: white;
+  padding: 1%;
+  text-align: right;
+  font-size: 20px;
+  border-radius: 15px;
+}
+.green-btn1 {
+  background: #1a73d9;
+  border-radius: 4px;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 20px;
+  text-align: center;
+  color: #ffffff;
+  margin: -15px 20px 15px 20px;
 }

@@ -58,8 +58,12 @@ function onDeviceReady() {
             if(data.length > 0 && data[0].content_id == content_id){
               $("#mainBody").append(`<div class="activity-modal">
                   <div class="activity-modal-content">
-                      <p>Max Score: ${data[0].score}/${data[0].max_score}</p>
-                      <button id="${data[0].content_id}" class="btn green-btn1 remove-activityId">Retry</button>
+                      <p>Your result: </p>
+                      <div class="progress-bar-container">
+                        <div class="skill" style="width: ${data[0].score%data[0].max_score*100}%; height: 20px;"></div>
+                      </div>
+                      <p>${data[0].score}/${data[0].max_score}</p>
+                      <button type="button" id="${data[0].content_id}" class="btn green-btn1 remove-activityId">Retry</button>
                   </div>
               </div>`);
             }else{
@@ -73,6 +77,10 @@ function onDeviceReady() {
               <script src="js/h5p/h5p-content-type.js"></script>
               <script src="js/h5p/DocumentsUpload.js"></script>`;
               $("body").append(scripts);
+            }
+            if(data[0].score > 0){
+              $('body').css('background','red');
+              document.getElementsByClassName("skill").style.backgroundColor= 'rgb(116, 194, 92)';
             }
             });
           }else{

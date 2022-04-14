@@ -2,13 +2,15 @@ const imageBaseUrl = localStorage.getItem("CURRIKI_BASE_IMAGE_URL");
 class CourseHtml {
   constructor(allCourses) {
     this.courseWrapper = "";
-    var urls = [];
+    var urls = [], contentId = [];
+    console.log('allCourses', allCourses);
     allCourses.forEach((course) => {
       course.playlists
       course.playlists.forEach((data)=>{
         data.activities.forEach((url)=>{
-          if(url.source_url){
+          if(url.source_url && url.source_url.includes('videos/files')){
             urls.push(url.source_url);
+            contentId.push(url.h5p_content_id);
           }
         })
       })
@@ -31,7 +33,7 @@ class CourseHtml {
                 </ul>
               </div>
               <div class="card-btn">
-                <button class="btn green-btn download-project" data-course='${urls}' name="${course.name}" id="${
+                <button class="btn green-btn download-project" data-content='${contentId}' data-course='${urls}' name="${course.name}" id="${
                   course.id
                 }">
                   <img src="img/download-vector.svg" /> Download
@@ -343,47 +345,57 @@ const removeCourse = (projectPath) => {
 }
 
 const updateAddCourse = (projectId, projectName,course, fileSystem) => {
-  console.log("videos", course);
+
   let getProjectPath, getFullProjectPath;
-  window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(fs) {
-    fs.root.getFile("all-downloads-activity.json", { create: false, exclusive: false }, function(fileEntry) {
-      readLoacalJsonFile(fileEntry, (file) => {
-        activities = JSON.parse(file);
-        const inArray = new Promise((resolve, reject) => {
-          activities.some((element,i) => {
-            if (element.projectId == projectId) {
-              getProjectPath = element.projectPath;
-              getFullProjectPath = `${fileSystem}projects/${getProjectPath}`;
-              resolve(getProjectPath);
-              activities.splice(i, 1);               
-            }
-          });
-        })
+  if(course.length > 0){
+      console.log('here', course);
+      for(var i = 0; i < course.length; i++){
+        let name = course[i].split('#')
+        let api = `https://dev.currikistudio.org/api/storage/h5p/content/${name[0]}`;
+        console.log('api', api);
+      }
+  }
+  var loading = $(".loading");
+  loading.delay(200).slideUp();
+  // window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(fs) {
+  //   fs.root.getFile("all-downloads-activity.json", { create: false, exclusive: false }, function(fileEntry) {
+  //     readLoacalJsonFile(fileEntry, (file) => {
+  //       activities = JSON.parse(file);
+  //       const inArray = new Promise((resolve, reject) => {
+  //         activities.some((element,i) => {
+  //           if (element.projectId == projectId) {
+  //             getProjectPath = element.projectPath;
+  //             getFullProjectPath = `${fileSystem}projects/${getProjectPath}`;
+  //             resolve(getProjectPath);
+  //             activities.splice(i, 1);               
+  //           }
+  //         });
+  //       })
         
-        handleDownloadProject(getFullProjectPath, projectId, fileSystem, (projectPath) => {
-          activities.push({
-            projectId: projectId, 
-            projectName: projectName,
-            projectPath: projectPath
-          })
-          writeFile(fileEntry, activities)
-        });
-      })
-    }, onErrorReadFile = (err) => {
-      console.log(err)
-      window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(fs) {
-        handleDownloadProject(getFullProjectPath, projectId, fileSystem, (projectPath) => {
+  //       handleDownloadProject(getFullProjectPath, projectId, fileSystem, (projectPath) => {
+  //         activities.push({
+  //           projectId: projectId, 
+  //           projectName: projectName,
+  //           projectPath: projectPath
+  //         })
+  //         writeFile(fileEntry, activities)
+  //       });
+  //     })
+  //   }, onErrorReadFile = (err) => {
+  //     console.log(err)
+  //     window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(fs) {
+  //       handleDownloadProject(getFullProjectPath, projectId, fileSystem, (projectPath) => {
           
-          let data = [{
-            projectId: projectId, 
-            projectName: projectName,
-            projectPath: projectPath
-          }];
-          createFile(fs.root, "all-downloads-activity.json", false, data);
-        });
-      }, onErrorLoadFs = (err) => { console.log(err) });
-    })
-  })
+  //         let data = [{
+  //           projectId: projectId, 
+  //           projectName: projectName,
+  //           projectPath: projectPath
+  //         }];
+  //         createFile(fs.root, "all-downloads-activity.json", false, data);
+  //       });
+  //     }, onErrorLoadFs = (err) => { console.log(err) });
+  //   })
+  // })
 }
 
 function downloadImage(data) {
@@ -485,3 +497,5 @@ const appendFile = (fileName, data, callback) => {
     });
 }, onErrorLoadFs = (err) => { console.log('err', err) });
 }
+
+// https://players.brightcove.net/6282550302001/default_default/index.min.js

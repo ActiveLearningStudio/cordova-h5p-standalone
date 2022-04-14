@@ -28,10 +28,18 @@ function onDeviceReady() {
 
   $(document).on("click", ".download-project", (evt) => {
     $(".main-wrap").append('<div class="loading"></div>')
+    console.log('file', $(evt.target).data('course'));
     let projectId = evt.target.id,
     projectName = evt.target.name,
-    course =  $(evt.target).data('course');
-    // downloadImage(course)
-    updateAddCourse(projectId, projectName,course, fileSystem);
+    course =  $(evt.target).data('course'),
+    contentId =  $(evt.target).data('content');
+    let mp4_file = course.split(',');
+    let mp4_id = contentId.split(',');
+    let filePath = [];
+    for(var i = 0; i < mp4_file.length; i++){
+      filePath.push(`${mp4_id[i]}/${mp4_file[i]}`)
+    }
+    console.log('filePath', filePath);
+    updateAddCourse(projectId, projectName,filePath, fileSystem); 
   });
 }

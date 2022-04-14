@@ -140,6 +140,15 @@ function onDeviceReady() {
     $(".main-wrap").append('<div class="loading"></div>')
     let projectId = evt.target.id,
     projectName = evt.target.name;
-    updateAddCourse(projectId, projectName, fileSystem);
+    course =  $(evt.target).data('course');
+    let brightcove_file = course.split(','),
+    ids = [];
+
+    for(var i=0;i < brightcove_file.length; i++){
+      if(!brightcove_file[i].includes('https')){
+        ids.push(brightcove_file[i])
+      }
+    }
+    updateAddCourse(projectId, projectName,ids, fileSystem);
   });
 }
