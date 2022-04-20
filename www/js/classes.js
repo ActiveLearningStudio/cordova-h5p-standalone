@@ -3,7 +3,6 @@ class CourseHtml {
   constructor(allCourses) {
     this.courseWrapper = "";
     var urls = [], contentId = [];
-    console.log('allCourses', allCourses);
     allCourses.forEach((course) => {
       course.playlists
       course.playlists.forEach((data)=>{
@@ -57,7 +56,7 @@ const downloadProjectZip = (path, fileSystem, filePath) => {
     error: DownloaderError,
   });
   dl.Get(path);
-
+  console.log('path', path);
   function DownloaderSuccess() {
     var fileName = path.split("exports/"),
       name = fileName[1].split(".").slice(0, -1).join(".");
@@ -119,14 +118,14 @@ function processZip(zipSource, destination, projectName, zipExtracted) {
         window.resolveLocalFileSystemURL(
           zipSource,
           function (fileEntry) {
-            fileEntry.remove(
-              function () {
-                console.log("File is removed.");
-              },
-              function (error) {
-                console.log("Unable to remove file.", error);
-              }
-            );
+            // fileEntry.remove(
+            //   function () {
+            //     console.log("File is removed.");
+            //   },
+            //   function (error) {
+            //     console.log("Unable to remove file.", error);
+            //   }
+            // );
           },
           function (error) {
             console.log(error);
@@ -344,58 +343,71 @@ const removeCourse = (projectPath) => {
   );
 }
 
-const updateAddCourse = (projectId, projectName,course, fileSystem) => {
+const updateAddCourse = async (projectId, projectName,course, content_id, fileSystem) => {
 
   let getProjectPath, getFullProjectPath;
   if(course.length > 0){
-      console.log('here', course);
       for(var i = 0; i < course.length; i++){
         let name = course[i].split('#')
         let api = `https://dev.currikistudio.org/api/storage/h5p/content/${name[0]}`;
-        console.log('api', api);
+        var dl = new download();
+        dl.Initialize({
+          fileSystem : 'file:///storage/emulated/0/Android/data/com.curriki.reader/cache/',
+          folder: content_id[i],
+          timeout: 0,
+          success: DownloaderSuccess,
+          error: DownloaderError,
+      });
+      dl.Get(`https://dev.currikistudio.org/api/storage/h5p/content/${name[0]}`);
+ 
+      function DownloaderError(err) {
+          console.log("download error: " + err);
+      }
+      
+      function DownloaderSuccess(success) {
+          console.log("yay!", success);
+      }
       }
   }
-  var loading = $(".loading");
-  loading.delay(200).slideUp();
-  // window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(fs) {
-  //   fs.root.getFile("all-downloads-activity.json", { create: false, exclusive: false }, function(fileEntry) {
-  //     readLoacalJsonFile(fileEntry, (file) => {
-  //       activities = JSON.parse(file);
-  //       const inArray = new Promise((resolve, reject) => {
-  //         activities.some((element,i) => {
-  //           if (element.projectId == projectId) {
-  //             getProjectPath = element.projectPath;
-  //             getFullProjectPath = `${fileSystem}projects/${getProjectPath}`;
-  //             resolve(getProjectPath);
-  //             activities.splice(i, 1);               
-  //           }
-  //         });
-  //       })
+  window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(fs) {
+    fs.root.getFile("all-downloads-activity.json", { create: false, exclusive: false }, function(fileEntry) {
+      readLoacalJsonFile(fileEntry, (file) => {
+        activities = JSON.parse(file);
+        const inArray = new Promise((resolve, reject) => {
+          activities.some((element,i) => {
+            if (element.projectId == projectId) {
+              getProjectPath = element.projectPath;
+              getFullProjectPath = `${fileSystem}projects/${getProjectPath}`;
+              resolve(getProjectPath);
+              activities.splice(i, 1);               
+            }
+          });
+        })
         
-  //       handleDownloadProject(getFullProjectPath, projectId, fileSystem, (projectPath) => {
-  //         activities.push({
-  //           projectId: projectId, 
-  //           projectName: projectName,
-  //           projectPath: projectPath
-  //         })
-  //         writeFile(fileEntry, activities)
-  //       });
-  //     })
-  //   }, onErrorReadFile = (err) => {
-  //     console.log(err)
-  //     window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(fs) {
-  //       handleDownloadProject(getFullProjectPath, projectId, fileSystem, (projectPath) => {
+        handleDownloadProject(getFullProjectPath, projectId, fileSystem, (projectPath) => {
+          activities.push({
+            projectId: projectId, 
+            projectName: projectName,
+            projectPath: projectPath
+          })
+          writeFile(fileEntry, activities)
+        });
+      })
+    }, onErrorReadFile = (err) => {
+      console.log(err)
+      window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(fs) {
+        handleDownloadProject(getFullProjectPath, projectId, fileSystem, (projectPath) => {
           
-  //         let data = [{
-  //           projectId: projectId, 
-  //           projectName: projectName,
-  //           projectPath: projectPath
-  //         }];
-  //         createFile(fs.root, "all-downloads-activity.json", false, data);
-  //       });
-  //     }, onErrorLoadFs = (err) => { console.log(err) });
-  //   })
-  // })
+          let data = [{
+            projectId: projectId, 
+            projectName: projectName,
+            projectPath: projectPath
+          }];
+          createFile(fs.root, "all-downloads-activity.json", false, data);
+        });
+      }, onErrorLoadFs = (err) => { console.log(err) });
+    })
+  })
 }
 
 function downloadImage(data) {

@@ -185,3 +185,19 @@ const getScore = (contentId, callback) => {
     },
   });
 }
+const downloadVideo = (url,content_id, callback) => {
+  console.log({url})
+
+  $.ajax({
+    url:  url,
+    method: 'GET',
+    success: (response) => {
+
+      console.log('response', response.blob());
+      callback(response, content_id);
+    },
+    error: (err) => {
+      callback(err)
+    },
+  });
+}

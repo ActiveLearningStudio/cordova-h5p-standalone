@@ -53,7 +53,6 @@ H5P.Video = (function ($, ContentCopyrights, MediaCopyright, handlers) {
     if (parameters.sources) {
       for (var i = 0; i < parameters.sources.length; i++) {
         // Clone to avoid changing of parameters.
-        console.log('parameters', parameters);
         var source = $.extend(true, {}, parameters.sources[i]);
 
         // Create working URL without html entities.

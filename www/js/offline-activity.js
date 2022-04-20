@@ -13,6 +13,8 @@ function onDeviceReady() {
     var getUrlParams = location.search.split("activityPath="), 
     activityPath = getUrlParams[1], 
     splitActivitypath = activityPath.split("/");
+
+    // console.log('getUrlParams', getUrlParams, activityPath, splitActivitypath);
     window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(fs) {
         fs.root.getFile("offlineActivitiesCount.json", { create: false, exclusive: false }, function(fileEntry) {
             readLoacalJsonFile(fileEntry, (file) => {
@@ -53,6 +55,7 @@ function onDeviceReady() {
     window.resolveLocalFileSystemURL(activityPath, function success(fileEntry) {
         console.log('activityPath', activityPath);
         fileEntry.file(function (file) {
+            console.log('file', file);
             var reader = new FileReader();
             reader.onloadend = function(evt) {
                 var playlistJSON = JSON.parse(evt.target.result);
@@ -61,45 +64,33 @@ function onDeviceReady() {
                 html = playlistJSON.embed_code,
                 width = 'width=100%',
                 splitHTML = html.split("<iframe"),
-                iframeHTML = splitHTML[0] + "<iframe " + width + splitHTML[1],
-                allJsFiles = setting.core.scripts,
-                allCssFiles = setting.core.styles;
-                
-                console.log('setting', setting);
-                // let CssfilesName = [];
-                // for(var i =0 ;i < allCssFiles.length; i++){
-                //     if(allJsFiles[i].includes('libraries')){
-                //         let file = allJsFiles[i].split('libraries');
-                //         CssfilesName.push(file[1]);
-                //     }
-                // }
-                // let styles ;
-                // for(var i =0 ;i < CssfilesName.length; i++){
-                //     styles += `<link href="activities${CssfilesName[i]}" type="text/css" rel="stylesheet">`
-                // };
-                // $("head").append(styles);
-                
-                // let filename = [];
-                // for(var i =0 ;i < allJsFiles.length; i++){
-                //     let file = allJsFiles[i].split('libraries');
-                //     filename.push(file[1]);
-                // }
-                // console.log('filename', filename);
-                console.log('iframeHTML', iframeHTML);
+                iframeHTML = splitHTML[0] + "<iframe " + width + splitHTML[1];
+            
                 window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(fs) { 
-                    setting.videoPath = `${fs.root.nativeURL}Video.mp4`
-                    console.log('fs.root', `${fs.root.nativeURL}Video.mp4`);
+                    console.log('path', `${fs.root.nativeURL}${activity_id[0]}`);
+                    window.resolveLocalFileSystemURL(`${fs.root.nativeURL}${activity_id[0]}` ,(entry) => { 
+                        var reader = entry.createReader();
+                            reader.readEntries((listProjects) => {
+                                setting.videoPath = listProjects[0].nativeURL;
+                        });
+                    })
+                    
                     fs.root.getFile("user-response-offline.json", { create: false, exclusive: false }, function(fileEntry) { 
                         readLoacalJsonFile(fileEntry, (file) => { 
                             activities = JSON.parse(file);
-                            
                             var activity = activities.filter(activities => activities.contentId == activity_id[0])
                             console.log('activity', activity);
                             if(activity.length > 0){
                                 $('#h5p-container').append(`<div class="activity-modal">
                                     <div class="activity-modal-content">
-                                        <p>Max Score: ${activity[0].score}/${activity[0].maxScore}</p>
-                                        <button id="${activity[0].contentId}" class="btn green-btn1 remove-activityId">Retry</button>
+                                        <p>Your result: </p>
+                                        <div class="progress-bar-container">
+                                        ${ activity[0].score/activity[0].maxScore*100 > 0 ? 
+                                            `<div class="skill" style="width: ${activity[0].score/activity[0].maxScore*100}%; background-color: rgb(116, 194, 92); height: 20px;"></div>`:
+                                            ` <div class="skill" style="width: ${activity[0].score/activity[0].maxScore*100}%; height: 20px;"></div>`}
+                                          </div>
+                                        <p>${activity[0].score}/${activity[0].maxScore}</p>
+                                        <button type="button" id="${activity[0].contentId}" class="btn green-btn1 remove-activityId">Retry</button>
                                     </div>
                                 </div>`);
                             }else{
@@ -115,9 +106,6 @@ function onDeviceReady() {
                                 <script src="js/h5p/h5p-action-bar.js"></script>
                                 <script src="js/h5p/h5p-confirmation-dialog.js"></script>
                                 <script src="js/handle-xapi.js"></script>`;
-                                // for(var i =0 ;i < filename.length; i++){
-                                //     scripts += `<script src="activities${filename[i]}"></script>`
-                                // }
                                 $("body").append(scripts);
                             }
                         })
@@ -134,10 +122,6 @@ function onDeviceReady() {
                         <script src="js/h5p/h5p-action-bar.js"></script>
                         <script src="js/h5p/h5p-confirmation-dialog.js"></script>
                         <script src="js/handle-xapi.js"></script>`;
-                        
-                        // for(var i =0 ;i < filename.length; i++){
-                        //     scripts += `<script src="activities${filename[i]}"></script>`
-                        // }
                         $("body").append(scripts);
                     })    
                 })
