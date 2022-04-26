@@ -13,7 +13,7 @@ class CourseHtml {
           }
         })
       })
-      this.courseWrapper += `<div class="course-card">
+      this.courseWrapper += `<div class="course-card mb-5">
             <div class="card-head-wrap">
               <img src="${
                 course.thumb_url.includes("http")
@@ -58,6 +58,7 @@ const downloadProjectZip = (path, fileSystem, filePath) => {
   dl.Get(path);
   console.log('path', path);
   function DownloaderSuccess() {
+    
     var fileName = path.split("exports/"),
       name = fileName[1].split(".").slice(0, -1).join(".");
     window.resolveLocalFileSystemURL(
@@ -118,14 +119,14 @@ function processZip(zipSource, destination, projectName, zipExtracted) {
         window.resolveLocalFileSystemURL(
           zipSource,
           function (fileEntry) {
-            // fileEntry.remove(
-            //   function () {
-            //     console.log("File is removed.");
-            //   },
-            //   function (error) {
-            //     console.log("Unable to remove file.", error);
-            //   }
-            // );
+            fileEntry.remove(
+              function () {
+                console.log("File is removed.");
+              },
+              function (error) {
+                console.log("Unable to remove file.", error);
+              }
+            );
           },
           function (error) {
             console.log(error);
@@ -510,4 +511,4 @@ const appendFile = (fileName, data, callback) => {
 }, onErrorLoadFs = (err) => { console.log('err', err) });
 }
 
-// https://players.brightcove.net/6282550302001/default_default/index.min.js
+// https://players.brightcove.net/6282550302001/default_defajsult/index.min.
