@@ -71,6 +71,7 @@ function onDeviceReady() {
                     window.resolveLocalFileSystemURL(`${fs.root.nativeURL}${activity_id[0]}` ,(entry) => { 
                         var reader = entry.createReader();
                             reader.readEntries((listProjects) => {
+                                console.log('listProjects[0].nativeURL', listProjects[0].nativeURL);
                                 setting.videoPath = listProjects[0].nativeURL;
                         });
                     })

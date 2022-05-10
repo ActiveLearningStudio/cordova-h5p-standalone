@@ -92,7 +92,6 @@ const downloadProjectZip = (path, fileSystem, filePath) => {
 
   function DownloaderError(err) {
     console.log("download error: " + err);
-    alert("download error: " + err);
   }
 };
 
@@ -118,14 +117,14 @@ function processZip(zipSource, destination, projectName, zipExtracted) {
         window.resolveLocalFileSystemURL(
           zipSource,
           function (fileEntry) {
-            // fileEntry.remove(
-            //   function () {
-            //     console.log("File is removed.");
-            //   },
-            //   function (error) {
-            //     console.log("Unable to remove file.", error);
-            //   }
-            // );
+            fileEntry.remove(
+              function () {
+                console.log("File is removed.");
+              },
+              function (error) {
+                console.log("Unable to remove file.", error);
+              }
+            );
           },
           function (error) {
             console.log(error);
@@ -333,8 +332,8 @@ const removeCourse = (projectPath) => {
     (entry) => {
       entry.removeRecursively(() => {
         $(".remove-course-alert").html("");
-        // return true;
-        // window.location.reload();
+        return true;
+        window.location.reload();
       });
     },
     (err) => {
@@ -343,32 +342,31 @@ const removeCourse = (projectPath) => {
   );
 }
 
-const updateAddCourse = async (projectId, projectName,course, content_id, fileSystem) => {
-
+const updateAddCourse = async (projectId, projectName,course, fileSystem) => {
   let getProjectPath, getFullProjectPath;
   if(course.length > 0){
       for(var i = 0; i < course.length; i++){
-        let name = course[i].split('#')
-        let api = `https://dev.currikistudio.org/api/storage/h5p/content/${name[0]}`;
+        let name = course[i].split('#'),
+        folderName = course[i].split('/')
         var dl = new download();
         dl.Initialize({
           fileSystem : 'file:///storage/emulated/0/Android/data/com.curriki.reader/cache/',
-          folder: content_id[i],
+          folder: folderName[0],
           timeout: 0,
           success: DownloaderSuccess,
           error: DownloaderError,
-      });
-      dl.Get(`https://dev.currikistudio.org/api/storage/h5p/content/${name[0]}`);
- 
-      function DownloaderError(err) {
-          console.log("download error: " + err);
-      }
-      
-      function DownloaderSuccess(success) {
-          console.log("yay!", success);
-      }
+        });
+        dl.Get(`https://dev.currikistudio.org/api/storage/h5p/content/${name[0]}`);
+        function DownloaderError(err) {
+            console.log("download error: " + err);
+        }
+        function DownloaderSuccess(success) {
+            console.log("yay!", success);
+        }
       }
   }
+  // var loading = $(".loading");
+  // loading.delay(200).slideUp();
   window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(fs) {
     fs.root.getFile("all-downloads-activity.json", { create: false, exclusive: false }, function(fileEntry) {
       readLoacalJsonFile(fileEntry, (file) => {

@@ -709,6 +709,7 @@ a {
   width: 80%;
   overflow: hidden;
   outline: 0;
+  left: 38px;
 }
 .activity-modal-content {
   position: relative;
@@ -749,4 +750,7 @@ a {
   text-align: center;
   color: #ffffff;
   margin: -15px 20px 15px 20px;
+}
+input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #495057;
 }

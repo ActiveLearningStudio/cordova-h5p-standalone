@@ -32,12 +32,18 @@ function onDeviceReady() {
     projectName = evt.target.name,
     course =  $(evt.target).data('course'),
     contentId =  $(evt.target).data('content');
-    let mp4_file = course.split(',');
-    let mp4_id = contentId.split(',');
-    let filePath = [];
-    for(var i = 0; i < mp4_file.length; i++){
-      filePath.push(`${mp4_id[i]}/${mp4_file[i]}`)
+    let mp4_file, mp4_id, filePath = [];
+    if(contentId.length > 0){
+      mp4_file = course.split(',');
+      mp4_id = contentId.split(',');
+      for(var i = 0; i < mp4_file.length; i++){
+        filePath.push(`${mp4_id[i]}/${mp4_file[i]}`)
+      }
+    }else{
+      mp4_file = course
+      mp4_id = contentId
+      filePath.push(`${mp4_id}/${mp4_file}`)
     }
-    updateAddCourse(projectId, projectName,filePath, mp4_id, fileSystem); 
+    updateAddCourse(projectId, projectName, filePath, fileSystem); 
   });
 }
