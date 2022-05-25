@@ -6,48 +6,108 @@ function onDeviceReady() {
     var networkState = navigator.connection.type;
     if (networkState != Connection.NONE) {
         var getOpenedTime = {};
+        let fileName, statements = [];
         H5P.externalDispatcher.on('xAPI', function (event) {
             console.log("thissss", event.getVerb());
+            console.log('event', event);
             var contentId = event.getVerifiedStatementValue(['object', 'definition', 'extensions', 'http://h5p.org/x-api/h5p-local-content-id']);
-        // console.log("contentID", contentId);
-            if (event.getVerb() === 'attempted') {
-                getOpenedTime[contentId] = new Date();
+            fileName = contentId
+            statements.push(event.data.statement)
+            if(event.getVerb() === 'submitted-curriki'){
+                $('#myModal').attr('style', `display: block !important`)
+                $('.h5p-iframe-wrapper').attr('style', `z-index: unset !important`);
+                var saveScore = document.getElementById('yes');
+                var retryActivity = document.getElementById('no');
+                saveScore.addEventListener('click', function() {
+                    $('#myModal').attr('style', `display: none !important`)
+                    $('.h5p-iframe-wrapper').attr('style', `z-index: 999 !important`);
+                }, false);
+                retryActivity.addEventListener('click', function() {
+                    window.location.reload();
+                }, false);
             }
-            if ((event.getVerb() === 'completed' || event.getVerb() === 'answered') && !event.getVerifiedStatementValue(['context', 'contextActivities', 'parent'])) {
-                console.log("im here");
-                var score = event.getScore(),
-                maxScore = event.getMaxScore(),
-                contentId = event.getVerifiedStatementValue(['object', 'definition', 'extensions', 'http://h5p.org/x-api/h5p-local-content-id']),
-                email = localStorage.getItem("LOGGED_USER_EMAIL"),
-                toUnix = function (date) {
-                    return Math.round(date.getTime() / 1000);
-                };
-                // Post the results
-                const data = {
-                    contentId: contentId,
-                    score: score,
-                    maxScore: maxScore,
-                    opened: toUnix(getOpenedTime[contentId]),
-                    finished: toUnix(new Date()),
-                    time: "",
-                    email: email
-                };
-                console.log("online", data);
-
-                if (data) {
-                    $.ajax({
-                        url: `${currikiBaseURL}h5p/ajax/reader/finish`,
-                        type: "POST",
-                        headers: {
-                            Authorization: "Bearer " + currikiToken,
-                        },
-                        data: data,
-                        success: function(result) {
-                            console.log(result)
-                        }
-                    });
-                }
-            }
+            window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(fs) { 
+                createFile(fs.root, `${contentId}.json`, true, statements);
+            })
+            // var score = event.getScore(),
+            // maxScore = event.getMaxScore(),
+            // contentId = event.getVerifiedStatementValue(['object', 'definition', 'extensions', 'http://h5p.org/x-api/h5p-local-content-id']),
+            // email = localStorage.getItem("LOGGED_USER_EMAIL"),
+            // toUnix = function (date) {
+            //     return Math.round(date.getTime() / 1000);
+            // };
+            // // Post the results
+            // const data = {
+            //     contentId: contentId,
+            //     score: score,
+            //     maxScore: maxScore,
+            //     opened: toUnix(getOpenedTime[contentId]),
+            //     finished: toUnix(new Date()),
+            //     time: "",
+            //     email: email
+            // };
+            // console.log("online---", data);
+            // let dd = {"actor":{"objectType":"Agent","account":{"homePage":"home page","name":"1133054333"}},"verb":{"id":"http://adlnet.gov/expapi/verbs/submitted-curriki","display":{"en-US":"submitted-curriki"}},"object":{"id":"http://dev.currikistudio.org/h5p/embed/53889","objectType":"Activity","definition":{"extensions":{"http://h5p.org/x-api/h5p-local-content-id":53889,"http://currikistudio.org/x-api/gclass-alternate-course-id":"https://classroom.google.com/c/NTIxMDQxMjEzMzYw","http://currikistudio.org/x-api/course-name":"Test 3277"},"name":{"en-US":"1758"}}},"context":{"contextActivities":{"category":[{"id":"http://h5p.org/libraries/H5P.Column-1.13","objectType":"Activity"}],"other":[{"objectType":"Activity","id":"https://dev.currikistudio.org/activity/61332/submission/Cg4I7bnYwusNEPX94IOVDw/1653384167030"},{"objectType":"Activity","id":"https://dev.currikistudio.org/activity/61332/submission/Cg4I7bnYwusNEPX94IOVDw"},{"objectType":"Activity","id":"https://dev.currikistudio.org/gclass/521041213360"},{"objectType":"Activity","id":"https://dev.currikistudio.org/lti/521041213360"}]},"platform":"Google Classroom"},"result":{"score":{"min":0,"max":5,"raw":5,"scaled":1},"completion":false,"duration":"PT917.17S"}}
+            // if (data) {
+            //     $.ajax({
+            //         url: `${currikiBaseURL}h5p/ajax/reader/finish`,
+            //         type: "POST",
+            //         headers: {
+            //             Authorization: "Bearer " + currikiToken,
+            //         },
+            //         data: data,
+            //         success: function(result) {
+            //             $('#myModal').attr('style', `display: block !important`)
+            //             $('.h5p-iframe-wrapper').attr('style', `z-index: unset !important`);
+            //             var saveScore = document.getElementById('yes');
+            //             var retryActivity = document.getElementById('no');
+            //             saveScore.addEventListener('click', function() {
+            //                 $('#myModal').attr('style', `display: none !important`)
+            //                 $('.h5p-iframe-wrapper').attr('style', `z-index: 999 !important`);
+            //             }, false);
+            //             retryActivity.addEventListener('click', function() {
+            //                 window.location.reload();
+            //             }, false);
+            //         }
+            //     });
+            // }
         });
+       
     }
+}
+
+function createFile(dirEntry, fileName, isAppend, data) {
+    // Creates a new file or returns the file if it already exists.
+    console.log('dirEntry', dirEntry, fileName, data);
+    dirEntry.getFile(fileName, {create: true, exclusive: false}, function(fileEntry) {
+        writeFile(fileEntry, data, isAppend);
+    }, onErrorCreateFile = (err) => {
+        console.log(err);
+    });
+}
+
+function writeFile(fileEntry, dataObj, isAppend) {
+// Create a FileWriter object for our FileEntry (log.txt).
+fileEntry.createWriter(function (fileWriter) {
+    fileWriter.onwriteend = function() {
+        console.log("Successful file write...");
+    };
+    fileWriter.onerror = function (e) {
+        console.log("Failed file write: ", e);
+    };
+    // If data object is not passed in,
+    // create a new Blob instead.
+    // if (isAppend) {
+    //     try {
+    //         fileWriter.seek(fileWriter.length);
+    //     }
+    //     catch (e) {
+    //         console.log("file doesn't exist!");
+    //     }
+    // }
+    if (!dataObj) {           
+        dataObj = new Blob([stringData], { type: 'application/json' });
+    }
+    fileWriter.write(dataObj);
+});
 }

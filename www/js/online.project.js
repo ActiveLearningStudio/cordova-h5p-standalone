@@ -27,7 +27,10 @@ function onDeviceReady() {
   });
 
   $(document).on("click", ".download-project", (evt) => {
-    $(".main-wrap").append('<div class="loading"></div>')
+    // $(".main-wrap").append('<div class="loading"></div>')
+    var modal = document.getElementById("myModal");
+    modal.style.display = "block";
+
     let projectId = evt.target.id,
     projectName = evt.target.name,
     course =  $(evt.target).data('course'),

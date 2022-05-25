@@ -91,7 +91,6 @@ H5P.init = function (target) {
 
   // H5Ps added in normal DIV.
   H5P.jQuery('.h5p-content:not(.h5p-initialized)', target).each(function () {
-    
     var $element = H5P.jQuery(this).addClass('h5p-initialized');
     var $container = H5P.jQuery('<div class="h5p-container"></div>').appendTo($element);
     var contentId = $element.data('content-id');
@@ -104,7 +103,7 @@ H5P.init = function (target) {
       params: JSON.parse(contentData.jsonContent),
       metadata: contentData.metadata
     };
-    
+
     H5P.getUserData(contentId, 'state', function (err, previousState) {
       if (previousState) {
         library.userDatas = {
@@ -137,7 +136,7 @@ H5P.init = function (target) {
     // Create new instance.
     var instance = H5P.newRunnable(library, contentId, $container, true, {standalone: true});
 
-    // H5P.offlineRequestQueue = new H5P.OfflineRequestQueue({instance: instance});
+    H5P.offlineRequestQueue = new H5P.OfflineRequestQueue({instance: instance});
 
     // Check if we should add and display a fullscreen button for this H5P.
     if (contentData.fullScreen == 1 && H5P.fullscreenSupported) {
@@ -179,30 +178,30 @@ H5P.init = function (target) {
       }
 
       // Create action bar
-      // var actionBar = new H5P.ActionBar(displayOptions);
-      // var $actions = actionBar.getDOMElement();
+      var actionBar = new H5P.ActionBar(displayOptions);
+      var $actions = actionBar.getDOMElement();
 
-      // actionBar.on('reuse', function () {
-      //   H5P.openReuseDialog($actions, contentData, library, instance, contentId);
-      //   instance.triggerXAPI('accessed-reuse');
-      // });
-      // actionBar.on('copyrights', function () {
-      //   var dialog = new H5P.Dialog('copyrights', H5P.t('copyrightInformation'), copyrights, $container);
-      //   dialog.open(true);
-      //   instance.triggerXAPI('accessed-copyright');
-      // });
-      // actionBar.on('embed', function () {
-      //   H5P.openEmbedDialog($actions, contentData.embedCode, contentData.resizeCode, {
-      //     width: $element.width(),
-      //     height: $element.height()
-      //   }, instance);
-      //   instance.triggerXAPI('accessed-embed');
-      // });
+      actionBar.on('reuse', function () {
+        H5P.openReuseDialog($actions, contentData, library, instance, contentId);
+        instance.triggerXAPI('accessed-reuse');
+      });
+      actionBar.on('copyrights', function () {
+        var dialog = new H5P.Dialog('copyrights', H5P.t('copyrightInformation'), copyrights, $container);
+        dialog.open(true);
+        instance.triggerXAPI('accessed-copyright');
+      });
+      actionBar.on('embed', function () {
+        H5P.openEmbedDialog($actions, contentData.embedCode, contentData.resizeCode, {
+          width: $element.width(),
+          height: $element.height()
+        }, instance);
+        instance.triggerXAPI('accessed-embed');
+      });
 
-      // if (actionBar.hasActions()) {
-      //   displayFrame = true;
-      //   $actions.insertAfter($container);
-      // }
+      if (actionBar.hasActions()) {
+        displayFrame = true;
+        $actions.insertAfter($container);
+      }
     }
 
     $element.addClass(displayFrame ? 'h5p-frame' : 'h5p-no-frame');
@@ -375,6 +374,7 @@ H5P.init = function (target) {
       H5P.externalDispatcher.trigger('initialized');
     }
   });
+
   // Insert H5Ps that should be in iframes.
   H5P.jQuery('iframe.h5p-iframe:not(.h5p-initialized)', target).each(function () {
     var contentId = H5P.jQuery(this).addClass('h5p-initialized').data('content-id');
@@ -391,7 +391,7 @@ H5P.init = function (target) {
  * @param {number} contentId
  * @returns {string} HTML
  */
-H5P.getHeadTags = function (contentId) {
+ H5P.getHeadTags = function (contentId) {
   var createStyleTags = function (styles) {
     var tags = '';
     for (var i = 0; i < styles.length; i++) {
@@ -885,7 +885,6 @@ H5P.newRunnable = function (library, contentId, $attachTo, skipResize, extras) {
 
   // Find constructor function
   var constructor;
-  // ab
   try {
     nameSplit = nameSplit[0].split('.');
     constructor = window;
@@ -2169,6 +2168,7 @@ H5P.shuffleArray = function (array) {
  * @param {number} [time]
  *   Reported time consumption/usage
  */
+
 H5P.setFinished = function (contentId, score, maxScore, time) {
   const currikiToken = localStorage.getItem("CURRIKI_TOKEN"),
   currikiBaseURL = localStorage.getItem("CURRIKI_BASE_API_URL");
@@ -2208,9 +2208,17 @@ H5P.setFinished = function (contentId, score, maxScore, time) {
           data: data,
           success: function(result) {
               console.log(result)
+              H5P.jQuery( ".qs-submitbutton" ).click(function() {
+                console.log('button clicked 1');
+                var $submit_message = '<div class="submit-answer-feedback" style = "color: red">Result has been submitted successfully</div>';
+                H5P.jQuery('.qs-submitbutton').after($submit_message);
+                H5P.jQuery('#myModal').css("display", "unset");
+                H5P.jQuery('#myModal').css("z-index", "999 !important;");
+                // H5P.jQuery('.h5p-iframe-wrapper').css("z-index", "unset !important");
+              });
           }
       });
-  }
+    }
     // H5P.jQuery.post(H5PIntegration.ajax.setFinished, data)
     //   .fail(function () {
     //     H5P.offlineRequestQueue.add(H5PIntegration.ajax.setFinished, data);

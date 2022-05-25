@@ -92,7 +92,9 @@ H5P.init = function (target) {
   }
 
   // H5Ps added in normal DIV.
+  console.log('target', target);
   H5P.jQuery('.h5p-content:not(.h5p-initialized)', target).each(function () {
+    console.log('target 11', target);
     var $element = H5P.jQuery(this).addClass('h5p-initialized');
     var $container = H5P.jQuery('<div class="h5p-container"></div>').appendTo($element);
     var contentId = $element.data('content-id');
@@ -212,6 +214,7 @@ H5P.init = function (target) {
     H5P.opened[contentId] = new Date();
     // Handle events when the user finishes the content. Useful for logging exercise results.
     H5P.on(instance, 'finish', function (event) {
+      console.log('inside finish instance');
       if (event.data !== undefined) {
         H5P.setFinished(contentId, event.data.score, event.data.maxScore, event.data.time);
       }
@@ -2224,6 +2227,8 @@ H5P.shuffleArray = function (array) {
  *   Reported time consumption/usage
  */
 H5P.setFinished = function (contentId, score, maxScore, time) {
+  const currikiToken = localStorage.getItem("CURRIKI_TOKEN"),
+  currikiBaseURL = localStorage.getItem("CURRIKI_BASE_API_URL");
   var validScore = typeof score === 'number' || score instanceof Number;
   if (validScore && H5PIntegration.postUserStatistics === true) {
     /**
@@ -2247,13 +2252,30 @@ H5P.setFinished = function (contentId, score, maxScore, time) {
       maxScore: maxScore,
       opened: toUnix(H5P.opened[contentId]),
       finished: toUnix(new Date()),
-      time: time
+      time: time,
+      email: 'electric@curriki.org'
     };
     console.log("data1", data);
-    // H5P.jQuery.post(H5PIntegration.ajax.setFinished, data)
-    //   .fail(function () {
-    //     H5P.offlineRequestQueue.add(H5PIntegration.ajax.setFinished, data);
-    //   });
+    if (data) {
+      H5P.jQuery.ajax({
+          url: `${currikiBaseURL}h5p/ajax/reader/finish`,
+          type: "POST",
+          headers: {
+              Authorization: "Bearer " + currikiToken,
+          },
+          data: data,
+          success: function(result) {
+              console.log(result)
+              H5P.jQuery( ".qs-submitbutton" ).click(function() {
+                console.log('button clicked 2');
+                var $submit_message = '<div class="submit-answer-feedback" style = "color: red">Result has been submitted successfully</div>';
+                H5P.jQuery('.qs-submitbutton').after($submit_message);
+                H5P.jQuery('#myModal').css("display", "unset");
+                H5P.jQuery('#myModal').css("z-index", "999 !important;");
+              });
+          }
+      });
+    }
   }
 };
 

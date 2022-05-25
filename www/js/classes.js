@@ -291,11 +291,12 @@ class NetworkWarnings extends AlertHeader {
 
 function createFile(dirEntry, fileName, isAppend, data) {
   // Creates a new file or returns the file if it already exists.
+  console.log('dirEntry', dirEntry, fileName, data);
   dirEntry.getFile(fileName, {create: true, exclusive: false}, function(fileEntry) {
       writeFile(fileEntry, data);
   }, onErrorCreateFile = (err) => {
       console.log(err);
-    });
+  });
 }
 
 function writeFile(fileEntry, dataObj) {
@@ -345,29 +346,8 @@ const removeCourse = (projectPath) => {
 
 const updateAddCourse = async (projectId, projectName,course, fileSystem) => {
   let getProjectPath, getFullProjectPath;
-  if(course.length > 0){
-      for(var i = 0; i < course.length; i++){
-        let name = course[i].split('#'),
-        folderName = course[i].split('/')
-        var dl = new download();
-        dl.Initialize({
-          fileSystem : 'file:///storage/emulated/0/Android/data/com.curriki.reader/cache/',
-          folder: folderName[0],
-          timeout: 0,
-          success: DownloaderSuccess,
-          error: DownloaderError,
-        });
-        dl.Get(`https://dev.currikistudio.org/api/storage/h5p/content/${name[0]}`);
-        function DownloaderError(err) {
-            console.log("download error: " + err);
-        }
-        function DownloaderSuccess(success) {
-            console.log("yay!", success);
-        }
-      }
-  }
-  // var loading = $(".loading");
-  // loading.delay(200).slideUp();
+  downloadMp4Video(course, (data)=>{
+  });
   window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(fs) {
     fs.root.getFile("all-downloads-activity.json", { create: false, exclusive: false }, function(fileEntry) {
       readLoacalJsonFile(fileEntry, (file) => {
@@ -408,7 +388,31 @@ const updateAddCourse = async (projectId, projectName,course, fileSystem) => {
     })
   })
 }
-
+function downloadMp4Video(course, callback){
+  if(course.length > 0){
+    for(var i = 0; i < course.length; i++){
+      let name = course[i].split('#'),
+      folderName = course[i].split('/')
+      var dl = new download();
+      dl.Initialize({
+        fileSystem : 'file:///storage/emulated/0/Android/data/com.curriki.reader/cache/',
+        folder: folderName[0],
+        timeout: 0,
+        success: DownloaderSuccess,
+        error: DownloaderError,
+      });
+      dl.Get(`https://dev.currikistudio.org/api/storage/h5p/content/${name[0]}`);
+      function DownloaderError(err) {
+          callback({'error': err})
+          console.log("download error: " + err);
+      }
+      function DownloaderSuccess(success) {
+          callback({'success': success})
+          console.log("yay!", success);
+      }
+    }
+  }
+}
 function downloadImage(data) {
   console.log('data', data);
 }
@@ -472,8 +476,10 @@ const handleDownloadProject = (getFullProjectPath,projectId, fileSystem, project
           if (response == 1) {
             let downloadMessage = new DownloadCourseAlertHtml()
             $(".remove-course-alert").html(downloadMessage.alertContent);
-            var loading = $(".loading");
-            loading.delay(200).slideUp();
+            var modal = document.getElementById("myModal");
+            modal.style.display = "none";
+            // var loading = $(".loading");
+            // loading.delay(200).slideUp();
             projectPath(filePath);
           }
           // window.location.reload();
@@ -508,5 +514,3 @@ const appendFile = (fileName, data, callback) => {
     });
 }, onErrorLoadFs = (err) => { console.log('err', err) });
 }
-
-// https://players.brightcove.net/6282550302001/default_defajsult/index.min.

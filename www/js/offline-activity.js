@@ -196,12 +196,15 @@ function onOffline() {
     if (window.H5PIntegration) {
         H5P.externalDispatcher.on('xAPI', function(event) {
             var contentId = event.getVerifiedStatementValue(['object', 'definition', 'extensions', 'http://h5p.org/x-api/h5p-local-content-id']);
-            
+            console.log('event.getVerb()', event.getVerb());
             if (event.getVerb() === 'attempted') {
                 getOpenedTime[contentId] = new Date();
                 console.log('getOpenedTime[contentId]', getOpenedTime[contentId]);
             }
-            if ((event.getVerb() === 'completed' || event.getVerb() === 'answered') && !event.getVerifiedStatementValue(['context', 'contextActivities', 'parent'])) {
+            if ((event.getVerb() === 'completed') && !event.getVerifiedStatementValue(['context', 'contextActivities', 'parent'])) {
+               
+            }
+            else if(event.getVerb() === 'answered'){
                 var score = event.getScore(),
                 maxScore = event.getMaxScore(),
                 contentId = contentId
@@ -215,7 +218,19 @@ function onOffline() {
                 };
                 console.log('maxScore', maxScore);
                 if(maxScore > 0) {
-                    storeActivityScore(contentId, score, maxScore, toUnix(getOpenedTime[contentId]), toUnix(new Date()), email)
+                    $('#myModal').attr('style', `display: block !important`)
+                    $('.h5p-iframe-wrapper').attr('style', `z-index: unset !important`);
+                    var saveScore = document.getElementById('yes');
+                    var retryActivity = document.getElementById('no');
+                    saveScore.addEventListener('click', function() {
+                        $('#myModal').attr('style', `display: none !important`)
+                        $('.h5p-iframe-wrapper').attr('style', `z-index: 999 !important`);
+                        storeActivityScore(contentId, score, maxScore, toUnix(getOpenedTime[contentId]), toUnix(new Date()), email)
+                    }, false);
+                    retryActivity.addEventListener('click', function() {
+                        window.location.reload();
+                    }, false);
+                    
                 }
             }
         });
@@ -246,6 +261,7 @@ function readFile(fileEntry) {
                 },
                 data: data,
                 success: function(result) {
+                    console.log('result ---', result);
                 }
             });
         };
