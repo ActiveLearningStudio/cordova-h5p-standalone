@@ -189,7 +189,7 @@ H5P.Essay = function ($, Question) {
           that.triggerXAPIScored(that.getScore(), that.getMaxScore(), 'completed');
           that.triggerXAPIScored(that.getScore(), that.getMaxScore(), 'submitted-curriki');
           that.hideButton('submit-answer');
-          var $submit_message = '<div class="submit-answer-feedback" style = "color: red">Result has been submitted successfully</div>';
+          var $submit_message = '<div class="submit-answer-feedback" style = "color: red">Result eassy has been submitted successfully</div>';
           H5P.jQuery('.h5p-question-content').append($submit_message);
           }, false
         );

@@ -25,6 +25,7 @@ function onDeviceReady() {
       let file = allJsFiles[i].split('libraries');
       filename.push(file[1]);
     }
+    console.log('cssss', activity.activity.h5p.settings);
     allCssFiles = activity.activity.h5p.settings.loadedCss;
     let styles ;
     for(var i =0 ;i < allCssFiles.length; i++){
@@ -67,16 +68,21 @@ function onDeviceReady() {
                 fileEntry.file(function (file) {
                   var reader = new FileReader();
                   reader.onloadend = function() {
+                    console.log('result', this.result);
                       let result = JSON.parse(this.result);
-                      console.log('result', result);
-                      if(result && result.length > 2){
+                      let resultData =  result[result.length - 1];
+                      console.log('resultData', resultData);
+                      if(resultData && resultData.result){
                         $("#mainBody").append(`<div class="activity-modal">
                           <div class="activity-modal-content">
                               <p>Your result: </p>
-                                <div class="progress-bar-container">
-                                   <div class="skill" style="width: ${result[2].result.score.scaled*100}%; background-color: rgb(116, 194, 92); height: 20px;"></div>
-                                </div>
-                              <p>${result[2].result.score.raw}/${result[2].result.score.max}</p>
+                              <div class="progress-bar-container">
+                                  <div class="skill" style="width: ${resultData.result.score.scaled*100}%; background-color: ${resultData.result.score.scaled*100 === 0 ? "unset;" : "rgb(116, 194, 92);"} height: 20px;"></div>
+                              </div>
+                              <div class="result-data">
+                                ${resultData.result.score ? `<p>${resultData.result.score.raw}/${resultData.result.score.max}</p>` : "N/A"}
+                              </div>
+                              <button type="button" id="${resultData.object.definition.extensions['http://h5p.org/x-api/h5p-local-content-id']}" class="btn green-btn1 remove-activityId">Retry</button>
                           </div>
                         </div>`);
                       }else{

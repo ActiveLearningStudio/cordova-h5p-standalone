@@ -945,7 +945,7 @@ H5P.SingleChoiceSet = (function ($, UI, Question, SingleChoice, SolutionView, Re
     this.submitted = true;
     this.hideButton('submit-answer');
     this.triggerXAPIScored(this.getScore(), this.getMaxScore(), 'submitted-curriki');
-    var $submit_message = '<div class="submit-answer-feedback" style = "color: red">Result has been submitted successfully</div>';
+    var $submit_message = '<div class="submit-answer-feedback" style = "color: red">Result choice has been submitted successfully</div>';
     this.resultSlide.$feedbackContainer.after($submit_message);
   };
 

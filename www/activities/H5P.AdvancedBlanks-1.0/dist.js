@@ -2549,7 +2549,7 @@ var AdvancedBlanks = /** @class */ (function (_super) {
          * Add submit answer feedback div
          */
         _this.addSubmitAnswerFeedback = function () {
-            var $submit_message = '<div class="submit-answer-feedback" style = "color: red">Result has been submitted successfully</div>';
+            var $submit_message = '<div class="submit-answer-feedback" style = "color: red">Result advance has been submitted successfully</div>';
             H5P.jQuery('.h5p-question-buttons').after($submit_message);
         };
         /**

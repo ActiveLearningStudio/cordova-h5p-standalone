@@ -7,14 +7,13 @@ var getUrlParams = location.search.split("activityPath="),
     let id = splitActivitypath[16];
     let activity_id = id.split('-');
 function onDeviceReady() {
-    let activities = [];
+    let iframeHTML,setting, activities = [];
     let current;
     let buttons = `<div class="prv-next-btn mt-5">`;
     var getUrlParams = location.search.split("activityPath="), 
     activityPath = getUrlParams[1], 
     splitActivitypath = activityPath.split("/");
 
-    // console.log('getUrlParams', getUrlParams, activityPath, splitActivitypath);
     window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(fs) {
         fs.root.getFile("offlineActivitiesCount.json", { create: false, exclusive: false }, function(fileEntry) {
             readLoacalJsonFile(fileEntry, (file) => {
@@ -60,14 +59,14 @@ function onDeviceReady() {
             reader.onloadend = function(evt) {
                 var playlistJSON = JSON.parse(evt.target.result);
                 console.log('playlistJSON', playlistJSON);
-                var setting = playlistJSON.settings,
-                html = playlistJSON.embed_code,
+                setting = playlistJSON.settings
+                var html = playlistJSON.embed_code,
                 width = 'width=100%',
-                splitHTML = html.split("<iframe"),
+                splitHTML = html.split("<iframe");
                 iframeHTML = splitHTML[0] + "<iframe " + width + splitHTML[1];
-            
+                console.log('activity_id', activity_id[0]);
+
                 window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(fs) { 
-                    console.log('path', `${fs.root.nativeURL}${activity_id[0]}`);
                     window.resolveLocalFileSystemURL(`${fs.root.nativeURL}${activity_id[0]}` ,(entry) => { 
                         var reader = entry.createReader();
                             reader.readEntries((listProjects) => {
@@ -76,22 +75,22 @@ function onDeviceReady() {
                         });
                     })
                     
-                    fs.root.getFile("user-response-offline.json", { create: false, exclusive: false }, function(fileEntry) { 
+                    fs.root.getFile(`${activity_id[0]}-Offline.json`, { create: false, exclusive: false }, function(fileEntry) { 
                         readLoacalJsonFile(fileEntry, (file) => { 
                             activities = JSON.parse(file);
-                            var activity = activities.filter(activities => activities.contentId == activity_id[0])
-                            console.log('activity', activity);
-                            if(activity.length > 0){
+                            console.log('activities', activities);
+                            let resultData =  activities[activities.length - 1]
+                            if(resultData && resultData.result){
                                 $('#h5p-container').append(`<div class="activity-modal">
                                     <div class="activity-modal-content">
                                         <p>Your result: </p>
                                         <div class="progress-bar-container">
-                                        ${ activity[0].score/activity[0].maxScore*100 > 0 ? 
-                                            `<div class="skill" style="width: ${activity[0].score/activity[0].maxScore*100}%; background-color: rgb(116, 194, 92); height: 20px;"></div>`:
-                                            ` <div class="skill" style="width: ${activity[0].score/activity[0].maxScore*100}%; height: 20px;"></div>`}
-                                          </div>
-                                        <p>${activity[0].score}/${activity[0].maxScore}</p>
-                                        <button type="button" id="${activity[0].contentId}" class="btn green-btn1 remove-activityId">Retry</button>
+                                            <div class="skill" style="width: ${resultData.result.score && resultData.result.score.scaled*100}%; background-color: ${resultData.result.score.scaled*100 === 0 ? "unset;" : "rgb(116, 194, 92);"} height: 20px;"></div>
+                                        </div>
+                                        <div class="result-data">
+                                            ${resultData.result.score ? `<p>${resultData.result.score.raw}/${resultData.result.score.max}</p>` : "N/A"}
+                                        </div>
+                                        <button type="button" id="${resultData.object.definition.extensions['http://h5p.org/x-api/h5p-local-content-id']}" class="btn green-btn1 remove-activityId">Retry</button>
                                     </div>
                                 </div>`);
                             }else{
@@ -109,6 +108,34 @@ function onDeviceReady() {
                                 <script src="js/handle-xapi.js"></script>`;
                                 $("body").append(scripts);
                             }
+                            // if(activity.length > 0){
+                            //     $('#h5p-container').append(`<div class="activity-modal">
+                            //         <div class="activity-modal-content">
+                            //             <p>Your result: </p>
+                            //             <div class="progress-bar-container">
+                            //             ${ activity[0].score/activity[0].maxScore*100 > 0 ? 
+                            //                 `<div class="skill" style="width: ${activity[0].score/activity[0].maxScore*100}%; background-color: rgb(116, 194, 92); height: 20px;"></div>`:
+                            //                 ` <div class="skill" style="width: ${activity[0].score/activity[0].maxScore*100}%; height: 20px;"></div>`}
+                            //               </div>
+                            //             <p>${activity[0].score}/${activity[0].maxScore}</p>
+                            //             <button type="button" id="${activity[0].contentId}" class="btn green-btn1 remove-activityId">Retry</button>
+                            //         </div>
+                            //     </div>`);
+                            // }else{
+                            //     $('#h5p-container').append(iframeHTML);
+                            //     window.H5PIntegration = {...setting}
+                            //     let scripts = `<script src="js/h5p/jquery.js"></script>
+                            //     <script src="js/h5p/offline-h5p.js"></script>
+                            //     <script src="js/h5p/h5p-event-dispatcher.js"></script>
+                            //     <script src="js/h5p/h5p-x-api.js"></script>
+                            //     <script src="js/h5p/h5p-x-api-event.js"></script>
+                            //     <script src="js/h5p/h5p-content-type.js"></script>
+                            //     <script src="js/h5p/ejs_production.js"></script>
+                            //     <script src="js/h5p/h5p-action-bar.js"></script>
+                            //     <script src="js/h5p/h5p-confirmation-dialog.js"></script>
+                            //     <script src="js/handle-xapi.js"></script>`;
+                            //     $("body").append(scripts);
+                            // }
                         })
                     }, onErrorReadFile = (err) =>{
                         $('#h5p-container').append(iframeHTML);
@@ -149,26 +176,35 @@ function onDeviceReady() {
     });
 
     $(document).on("click", ".remove-activityId", (evt) => {
-        window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(fs) { 
-            fs.root.getFile("user-response-offline.json", { create: false, exclusive: false }, function(fileEntry) { 
-                readLoacalJsonFile(fileEntry, (file) => { 
-                    activities = JSON.parse(file);
-                    var activity = activities.filter(activities => activities.contentId == activity_id[0])
-                    if(activity.length > 0){
-                        activities = activities.filter(item => item.contentId != activity[0].contentId);
-                        if(activities.length > 0){
-                            appendFile("user-response-offline.json", activities, (res)=> {
-                                window.location.reload();
-                            });
-                        }else{
-                            deleteFile("user-response-offline.json", (res)=> {
-                                window.location.reload();
-                            });
-                        }
-                    }else{ }
-                })
-            }, onErrorReadFile = (err) =>{ })
-        })
+
+        window.resolveLocalFileSystemURL(`file:///storage/emulated/0/Android/data/com.curriki.reader/cache/${activity_id[0]}-Offline.json`,function (fileEntry) {
+            fileEntry.remove(
+              function () {console.log("File is removed.");},
+              function (error) { console.log("Unable to remove file. " + error); }
+            );
+        },function (error) { console.log('error', error);});
+        window.location.reload();
+
+        // window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(fs) { 
+        //     fs.root.getFile(`${activity_id[0]}-Offline.json`, { create: false, exclusive: false }, function(fileEntry) { 
+        //         readLoacalJsonFile(fileEntry, (file) => { 
+        //             activities = JSON.parse(file);
+        //             var activity = activities.filter(activities => activities.contentId == activity_id[0])
+        //             if(activity.length > 0){
+        //                 activities = activities.filter(item => item.contentId != activity[0].contentId);
+        //                 if(activities.length > 0){
+        //                     appendFile("user-response-offline.json", activities, (res)=> {
+        //                         window.location.reload();
+        //                     });
+        //                 }else{
+        //                     deleteFile("user-response-offline.json", (res)=> {
+        //                         window.location.reload();
+        //                     });
+        //                 }
+        //             }else{ }
+        //         })
+        //     }, onErrorReadFile = (err) =>{ })
+        // })
     });
 
     function getKeyByValue(object, value) {
@@ -182,11 +218,12 @@ var dataFileEntry;
 function onOnline() {
     // Handle the online event
     var networkState = navigator.connection.type;
-    window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(fs) {
-        fs.root.getFile("user-response-offline.json", { create: false, exclusive: false }, function(fileEntry) {
-            readFile(fileEntry);
-        }, onErrorCreateFile = (err) => { console.log(err) });
-    }, onErrorLoadFs = (err) => { console.log(err) })
+    console.log('networkState', networkState);
+    // window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(fs) {
+    //     fs.root.getFile("user-response-offline.json", { create: false, exclusive: false }, function(fileEntry) {
+    //         readFile(fileEntry);
+    //     }, onErrorCreateFile = (err) => { console.log(err) });
+    // }, onErrorLoadFs = (err) => { console.log(err) })
 }
 
 function onOffline() {
@@ -194,45 +231,71 @@ function onOffline() {
     var data;
     var getOpenedTime = {};
     if (window.H5PIntegration) {
+        let statements = [];
         H5P.externalDispatcher.on('xAPI', function(event) {
             var contentId = event.getVerifiedStatementValue(['object', 'definition', 'extensions', 'http://h5p.org/x-api/h5p-local-content-id']);
             console.log('event.getVerb()', event.getVerb());
-            if (event.getVerb() === 'attempted') {
-                getOpenedTime[contentId] = new Date();
-                console.log('getOpenedTime[contentId]', getOpenedTime[contentId]);
-            }
-            if ((event.getVerb() === 'completed') && !event.getVerifiedStatementValue(['context', 'contextActivities', 'parent'])) {
-               
-            }
-            else if(event.getVerb() === 'answered'){
-                var score = event.getScore(),
-                maxScore = event.getMaxScore(),
-                contentId = contentId
-                email = event.data.statement.actor.mbox,
-                toUnix = function (date) {
-                    if(date){
-                        return Math.round(date.getTime() / 1000);
-                    }else{
-                        return new Date()
-                    }
-                };
-                console.log('maxScore', maxScore);
-                if(maxScore > 0) {
-                    $('#myModal').attr('style', `display: block !important`)
-                    $('.h5p-iframe-wrapper').attr('style', `z-index: unset !important`);
-                    var saveScore = document.getElementById('yes');
-                    var retryActivity = document.getElementById('no');
-                    saveScore.addEventListener('click', function() {
-                        $('#myModal').attr('style', `display: none !important`)
-                        $('.h5p-iframe-wrapper').attr('style', `z-index: 999 !important`);
-                        storeActivityScore(contentId, score, maxScore, toUnix(getOpenedTime[contentId]), toUnix(new Date()), email)
-                    }, false);
-                    retryActivity.addEventListener('click', function() {
-                        window.location.reload();
-                    }, false);
+            statements.push(event.data.statement)
+            if(event.getVerb() === 'answered'){
+                $('#myModal').attr('style', `display: block !important`)
+                $('.h5p-iframe-wrapper').attr('style', `z-index: unset !important`);
+                var saveScore = document.getElementById('yes');
+                var retryActivity = document.getElementById('no');
+                saveScore.addEventListener('click', function() {
+                    $('#myModal').attr('style', `display: none !important`)
+                    $('.h5p-iframe-wrapper').attr('style', `z-index: 999 !important`);
+                    window.location.reload();
+                }, false);
+                retryActivity.addEventListener('click', function() {
+                    window.resolveLocalFileSystemURL(`file:///storage/emulated/0/Android/data/com.curriki.reader/cache/${contentId}-Offline.json`,function (fileEntry) {
+                          fileEntry.remove(
+                            function () {console.log("File is removed.");},
+                            function (error) { console.log("Unable to remove file. " + error); }
+                          );
+                    },function (error) { console.log('error', error);});
+                      window.location.reload();
+                }, false);
                     
-                }
             }
+            window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(fs) { 
+                createFile(fs.root, `${contentId}-Offline.json`, true, statements);
+            })
+            // if (event.getVerb() === 'attempted') {
+            //     getOpenedTime[contentId] = new Date();
+            //     console.log('getOpenedTime[contentId]', getOpenedTime[contentId]);
+            // }
+            // if ((event.getVerb() === 'completed') && !event.getVerifiedStatementValue(['context', 'contextActivities', 'parent'])) {
+               
+            // }
+            // else if(event.getVerb() === 'answered'){
+            //     var score = event.getScore(),
+            //     maxScore = event.getMaxScore(),
+            //     contentId = contentId
+            //     email = event.data.statement.actor.mbox,
+            //     toUnix = function (date) {
+            //         if(date){
+            //             return Math.round(date.getTime() / 1000);
+            //         }else{
+            //             return new Date()
+            //         }
+            //     };
+            //     console.log('maxScore', maxScore);
+            //     if(maxScore > 0) {
+            //         $('#myModal').attr('style', `display: block !important`)
+            //         $('.h5p-iframe-wrapper').attr('style', `z-index: unset !important`);
+            //         var saveScore = document.getElementById('yes');
+            //         var retryActivity = document.getElementById('no');
+            //         saveScore.addEventListener('click', function() {
+            //             $('#myModal').attr('style', `display: none !important`)
+            //             $('.h5p-iframe-wrapper').attr('style', `z-index: 999 !important`);
+            //             storeActivityScore(contentId, score, maxScore, toUnix(getOpenedTime[contentId]), toUnix(new Date()), email)
+            //         }, false);
+            //         retryActivity.addEventListener('click', function() {
+            //             window.location.reload();
+            //         }, false);
+                    
+            //     }
+            // }
         });
     }
 }
@@ -269,4 +332,3 @@ function readFile(fileEntry) {
 
     }, onErrorReadFile = (err) => { console.log(err) });
 }
-

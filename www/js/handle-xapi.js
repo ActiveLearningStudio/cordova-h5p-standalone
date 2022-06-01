@@ -6,14 +6,12 @@ function onDeviceReady() {
     var networkState = navigator.connection.type;
     if (networkState != Connection.NONE) {
         var getOpenedTime = {};
-        let fileName, statements = [];
+        let statements = [];
         H5P.externalDispatcher.on('xAPI', function (event) {
-            console.log("thissss", event.getVerb());
-            console.log('event', event);
+            console.log('event.getVerb()', event.getVerb());
             var contentId = event.getVerifiedStatementValue(['object', 'definition', 'extensions', 'http://h5p.org/x-api/h5p-local-content-id']);
-            fileName = contentId
-            statements.push(event.data.statement)
-            if(event.getVerb() === 'submitted-curriki'){
+            statements.push(event.data.statement);
+            if(event.getVerb() === 'submitted-curriki' || event.getVerb() === 'completed'){
                 $('#myModal').attr('style', `display: block !important`)
                 $('.h5p-iframe-wrapper').attr('style', `z-index: unset !important`);
                 var saveScore = document.getElementById('yes');
@@ -21,11 +19,22 @@ function onDeviceReady() {
                 saveScore.addEventListener('click', function() {
                     $('#myModal').attr('style', `display: none !important`)
                     $('.h5p-iframe-wrapper').attr('style', `z-index: 999 !important`);
-                }, false);
-                retryActivity.addEventListener('click', function() {
                     window.location.reload();
                 }, false);
+                retryActivity.addEventListener('click', function() {
+                    window.resolveLocalFileSystemURL(`file:///storage/emulated/0/Android/data/com.curriki.reader/cache/${contentId}.json`,function (fileEntry) {
+                          fileEntry.remove(
+                            function () {console.log("File is removed.");},
+                            function (error) { console.log("Unable to remove file. " + error); }
+                          );
+                        },
+                        function (error) { console.log('error', error);}
+                      );
+                      window.location.reload();
+                    }, false);
+                    
             }
+            console.log('statements', statements);
             window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(fs) { 
                 createFile(fs.root, `${contentId}.json`, true, statements);
             })
@@ -78,7 +87,6 @@ function onDeviceReady() {
 
 function createFile(dirEntry, fileName, isAppend, data) {
     // Creates a new file or returns the file if it already exists.
-    console.log('dirEntry', dirEntry, fileName, data);
     dirEntry.getFile(fileName, {create: true, exclusive: false}, function(fileEntry) {
         writeFile(fileEntry, data, isAppend);
     }, onErrorCreateFile = (err) => {
@@ -95,16 +103,6 @@ fileEntry.createWriter(function (fileWriter) {
     fileWriter.onerror = function (e) {
         console.log("Failed file write: ", e);
     };
-    // If data object is not passed in,
-    // create a new Blob instead.
-    // if (isAppend) {
-    //     try {
-    //         fileWriter.seek(fileWriter.length);
-    //     }
-    //     catch (e) {
-    //         console.log("file doesn't exist!");
-    //     }
-    // }
     if (!dataObj) {           
         dataObj = new Blob([stringData], { type: 'application/json' });
     }

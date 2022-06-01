@@ -709,7 +709,7 @@ a {
   width: 80%;
   overflow: hidden;
   outline: 0;
-  left: 38px;
+  /* left: 38px; */
 }
 .activity-modal-content {
   position: relative;

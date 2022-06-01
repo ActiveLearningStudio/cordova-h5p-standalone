@@ -510,7 +510,7 @@ H5P.ImagePair = (function(EventDispatcher, $, UI, StopWatch) {
       }
       // trigger submitted-curriki XAPI
       self.triggerXAPIScored(getScore(), getMaxScore(), 'submitted-curriki');
-      var $submit_message = '<div class="submit-answer-feedback" style = "color: red">Result has been submitted successfully</div>';
+      var $submit_message = '<div class="submit-answer-feedback" style = "color: red">Result image pair has been submitted successfully</div>';
       self.$footer.append($submit_message);
     };
 
