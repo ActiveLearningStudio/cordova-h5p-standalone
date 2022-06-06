@@ -11,7 +11,15 @@ function onDeviceReady() {
             console.log('event.getVerb()', event.getVerb());
             var contentId = event.getVerifiedStatementValue(['object', 'definition', 'extensions', 'http://h5p.org/x-api/h5p-local-content-id']);
             statements.push(event.data.statement);
-            if(event.getVerb() === 'submitted-curriki' || event.getVerb() === 'completed'){
+            let childeren = []
+            if(event.data.statement.result && event.data.statement.object.definition.description){
+               let summary = {
+                    answer: event.data.statement.result,
+                    title: event.data.statement.object.definition.description
+                };
+                statements.push(event.data.statement, summary);
+            }
+            if(event.getVerb() === 'submitted-curriki'){
                 $('#myModal').attr('style', `display: block !important`)
                 $('.h5p-iframe-wrapper').attr('style', `z-index: unset !important`);
                 var saveScore = document.getElementById('yes');
@@ -19,7 +27,7 @@ function onDeviceReady() {
                 saveScore.addEventListener('click', function() {
                     $('#myModal').attr('style', `display: none !important`)
                     $('.h5p-iframe-wrapper').attr('style', `z-index: 999 !important`);
-                    window.location.reload();
+                    // window.location.reload();
                 }, false);
                 retryActivity.addEventListener('click', function() {
                     window.resolveLocalFileSystemURL(`file:///storage/emulated/0/Android/data/com.curriki.reader/cache/${contentId}.json`,function (fileEntry) {
@@ -31,7 +39,7 @@ function onDeviceReady() {
                         function (error) { console.log('error', error);}
                       );
                       window.location.reload();
-                    }, false);
+                }, false);
                     
             }
             console.log('statements', statements);

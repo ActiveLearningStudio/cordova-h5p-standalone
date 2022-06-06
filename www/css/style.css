@@ -704,9 +704,9 @@ a {
   align-items: center;
   border-radius: 18px;
   top: 200px;
-  right: 13px;
+  /* right: 13px; */
   z-index: 1050;
-  width: 80%;
+  width: 100%;
   overflow: hidden;
   outline: 0;
   /* left: 38px; */
@@ -856,4 +856,15 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
     text-shadow: none;
     text-decoration: none;
     vertical-align: baseline;
+  }
+  .result-data:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+  .column {
+    float: left;
+    width: 33.33%;
+    padding: 10px;
+    height: auto; /* Should be removed. Only for demonstration */
   }

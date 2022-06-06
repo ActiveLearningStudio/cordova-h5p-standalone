@@ -33,23 +33,18 @@ function onDeviceReady() {
     }
     $("head").append(styles);
 
-      let script = `<script src="js/h5p/jquery.js"></script>
+      let script = `<script src="js/h5p/h5p-core/js/jquery.js"></script>
       <script src="js/h5p/h5p-core/js/h5p.js"></script>
       <script src="js/h5p/h5p-event-dispatcher.js"></script>
       <script src="js/h5p/h5p-x-api.js"></script>
       <script src="js/h5p/h5p-x-api-event.js"></script>
       <script src="js/h5p/h5p-content-type.js"></script>
       <script src="js/h5p/DocumentsUpload.js"></script>
-      <script src="js/h5p/ejs_production.js"></script>
-      <script src="js/h5p/h5p-action-bar.js"></script>
-      <script src="js/h5p/h5p-confirmation-dialog.js"></script>
       <script src="js/handle-xapi.js"></script>` ;
       for(var i =0 ;i < filename.length; i++){
         script += `<script src="activities${filename[i]}"></script>`
       }
       $("body").append(script);
-
-    
 
     let allActivitites = activity.playlist.activities;
 
@@ -62,42 +57,58 @@ function onDeviceReady() {
         if(allActivitites[i].id == activityId){
           console.log('allActivitites', allActivitites[i]);
           fileName = `${allActivitites[i].h5p_content.id}.json`;
-          if(allActivitites[i].source_url === null){
+          // if(allActivitites[i].source_url === null){
             window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function(fs) {
               fs.root.getFile(fileName, { create: false, exclusive: false }, function(fileEntry) {
                 fileEntry.file(function (file) {
                   var reader = new FileReader();
                   reader.onloadend = function() {
-                    console.log('result', this.result);
+                    
                       let result = JSON.parse(this.result);
-                      let resultData =  result[result.length - 1];
-                      console.log('resultData', resultData);
-                      if(resultData && resultData.result){
-                        $("#mainBody").append(`<div class="activity-modal">
-                          <div class="activity-modal-content">
-                              <p>Your result: </p>
-                              <div class="progress-bar-container">
-                                  <div class="skill" style="width: ${resultData.result.score.scaled*100}%; background-color: ${resultData.result.score.scaled*100 === 0 ? "unset;" : "rgb(116, 194, 92);"} height: 20px;"></div>
-                              </div>
-                              <div class="result-data">
-                                ${resultData.result.score ? `<p>${resultData.result.score.raw}/${resultData.result.score.max}</p>` : "N/A"}
-                              </div>
-                              <button type="button" id="${resultData.object.definition.extensions['http://h5p.org/x-api/h5p-local-content-id']}" class="btn green-btn1 remove-activityId">Retry</button>
-                          </div>
-                        </div>`);
+                      console.log('result', result);
+                      let filterData = result.filter(function(value){
+                        if(value.answer) 
+                          return value
+                      })
+                    console.log('filter data', filterData);
+                      if(filterData && filterData.length > 0){
+                      
+                        var html = `<div class="activity-modal">
+                                      <div class="activity-modal-content">
+                                        <p>Your result: </p>`;
+                        for(var i = 0; i < filterData.length; i++){
+                          console.log('filterData[i]', filterData[i]);
+                          if(filterData[i] && filterData[i].title){
+                            let newTitle ;
+                            if(filterData[i].title && filterData[i].title['en-US'] && filterData[i].title['en-US'].includes('\n')){
+                              newTitle = filterData[i].title['en-US'].split('\n');
+                              newTitle.length === 2 ? newTitle : newTitle.shift();
+                            }else{
+                              newTitle = filterData[i].title['en-US']
+                            }
+                            html += `<div class="result-data">
+                                  <div class="column"><p>${newTitle ? newTitle : filterData[i].title['en-US']}</p></div>
+                                  <div class="column"><p>${filterData[i].answer && filterData[i].answer.response}</p></div>
+                                  <div class="column">
+                                    ${filterData[i].answer.score && ` <p>${ filterData[i].answer.score.raw}/${ filterData[i].answer.score.max}</p>`}
+                                    ${filterData[i].answer.duration && `<p>${ filterData[0].answer.duration}</p>`} 
+                                  </div>
+                                </div>`
+                          }
+                        }
+                        html += `<button type="button" id="${result[0].object.definition.extensions['http://h5p.org/x-api/h5p-local-content-id']}" class="btn green-btn1 remove-activityId">Retry</button>
+                        </div> </div>`
+                        $("#mainBody").append(html);
                       }else{
                           $("#mainBody").append(embededCode);
                           window.H5PIntegration = {...activity.activity.h5p.settings}
-                          const scripts = `<script src="js/h5p/jquery.js"></script>
+                          const scripts = `<script src="js/h5p/h5p-core/js/jquery.js"></script>
                           <script src="js/h5p/h5p-core/js/h5p.js"></script>
                           <script src="js/h5p/h5p-event-dispatcher.js"></script>
                           <script src="js/h5p/h5p-x-api.js"></script>
                           <script src="js/h5p/h5p-x-api-event.js"></script>
                           <script src="js/h5p/h5p-content-type.js"></script>
                           <script src="js/h5p/DocumentsUpload.js"></script>
-                          <script src="js/h5p/ejs_production.js"></script>
-                          <script src="js/h5p/h5p-action-bar.js"></script>
-                          <script src="js/h5p/h5p-confirmation-dialog.js"></script>
                           <script src="js/handle-xapi.js"></script>`;
                           $("body").append(scripts);
                       }
@@ -107,54 +118,20 @@ function onDeviceReady() {
                 }, onErrorCreateFile = (err) => { 
                     $("#mainBody").append(embededCode);
                     window.H5PIntegration = {...activity.activity.h5p.settings}
-                    const scripts = `<script src="js/h5p/jquery.js"></script>
+                    const scripts = `<script src="js/h5p/h5p-core/js/jquery.js"></script>
                     <script src="js/h5p/h5p-core/js/h5p.js"></script>
                     <script src="js/h5p/h5p-event-dispatcher.js"></script>
                     <script src="js/h5p/h5p-x-api.js"></script>
                     <script src="js/h5p/h5p-x-api-event.js"></script>
                     <script src="js/h5p/h5p-content-type.js"></script>
                     <script src="js/h5p/DocumentsUpload.js"></script>
-                    <script src="js/h5p/ejs_production.js"></script>
-                    <script src="js/h5p/h5p-action-bar.js"></script>
-                    <script src="js/h5p/h5p-confirmation-dialog.js"></script>
                     <script src="js/handle-xapi.js"></script>`;
                     $("body").append(scripts);
                     });
               }, onErrorLoadFs = (err) => { console.log('err 1', err) })
-            // getScore(content_id, (data) => {
-            //   if(data.length > 0 && data[0].content_id == content_id){ 
-            //     $("#mainBody").append(`<div class="activity-modal">
-            //       <div class="activity-modal-content">
-            //           <p>Your result: </p>
-            //           <div class="progress-bar-container">
-            //           ${ data[0].score/data[0].max_score*100 > 0 ? 
-            //             `<div class="skill" style="width: ${data[0].score/data[0].max_score*100}%; background-color: rgb(116, 194, 92); height: 20px;"></div>`:
-            //             ` <div class="skill" style="width: ${data[0].score/data[0].max_score*100}%; height: 20px;"></div>`}
-            //           </div>
-            //           <p>${data[0].score}/${data[0].max_score}</p>
-            //           <button type="button" id="${data[0].content_id}" class="btn green-btn1 remove-activityId">Retry</button>
-            //       </div>
-            //     </div>`);
-            //   }else{
-            //     $("#mainBody").append(embededCode);
-            //     window.H5PIntegration = {...activity.activity.h5p.settings}
-            //     const scripts = `<script src="js/h5p/jquery.js"></script>
-            //     <script src="js/h5p/h5p-core/js/h5p.js"></script>
-            //     <script src="js/h5p/h5p-event-dispatcher.js"></script>
-            //     <script src="js/h5p/h5p-x-api.js"></script>
-            //     <script src="js/h5p/h5p-x-api-event.js"></script>
-            //     <script src="js/h5p/h5p-content-type.js"></script>
-            //     <script src="js/h5p/DocumentsUpload.js"></script>
-            //     <script src="js/h5p/ejs_production.js"></script>
-            //     <script src="js/h5p/h5p-action-bar.js"></script>
-            //     <script src="js/h5p/h5p-confirmation-dialog.js"></script>
-            //     <script src="js/handle-xapi.js"></script>`;
-            //     $("body").append(scripts);
-            //   }
-            // })
-          }else{
-            $("#mainBody").append(embededCode);
-          }
+          // }else{
+          //   $("#mainBody").append(embededCode);
+          // }
         }else{}
       }
     }
@@ -195,16 +172,13 @@ function onDeviceReady() {
       $(".activity-modal").remove();
       $("#mainBody").append(embededCode);
         window.H5PIntegration = {...settings}
-        const scripts = `<script src="js/h5p/jquery.js"></script>
+        const scripts = `<script src="js/h5p/h5p-core/js/jquery.js"></script>
         <script src="js/h5p/h5p-core/js/h5p.js"></script>
         <script src="js/h5p/h5p-event-dispatcher.js"></script>
         <script src="js/h5p/h5p-x-api.js"></script>
         <script src="js/h5p/h5p-x-api-event.js"></script>
         <script src="js/h5p/h5p-content-type.js"></script>
         <script src="js/h5p/DocumentsUpload.js"></script>
-        <script src="js/h5p/ejs_production.js"></script>
-        <script src="js/h5p/h5p-action-bar.js"></script>
-        <script src="js/h5p/h5p-confirmation-dialog.js"></script>
         <script src="js/handle-xapi.js"></script>`;
         $("body").append(scripts);
     });
