@@ -19,104 +19,97 @@
 
 // Wait for the deviceready event before using any of Cordova's device APIs.
 // See https://cordova.apache.org/docs/en/latest/cordova/events/events.html#deviceready
-document.addEventListener('deviceready', onDeviceReady, false);
+document.addEventListener("deviceready", onDeviceReady, false);
 function onDeviceReady() {
-    // Cordova is now initialized. Have fun!
+  // Cordova is now initialized. Have fun!
+  /**
+   * Additional Token contains function
+   * core_user_create_users
+   * core_user_get_users
+   */
+  const aditionalToken = "70ddd315152670b64cd39138c1999e79",
     /**
-     * Additional Token contains function
-     * core_user_create_users
-     * core_user_get_users
-     */
-    const 
-    aditionalToken =  "70ddd315152670b64cd39138c1999e79",
-
-    /**
-     * Admin Token Contains Moodle default functions 
+     * Admin Token Contains Moodle default functions
      * Moodle mobile web service
      */
     adminToken = "46bb3c71c49b1a1bac300dce505fa193",
-
     /**
      * Custom Api Token for Moodle's Custom API's
      * The APIs are
-     * 
+     *
      * local_curriki_moodle_plugin_create_playlist
      * CurrikiStudio - Create a playlist under Playlists topic.
-     * 
+     *
      * local_curriki_moodle_plugin_fetch_course
      * CurrikiStudio - Fetch a course for playlists.
-     * 
+     *
      * local_curriki_moodle_plugin_fetch_project
      * CurrikiStudio - Fetch a project ID using Moodle course ID.
      */
-    customApiToken = "817376de1406b8d64988a1cfefcc9d83",
-
+    customApiToken = "f209acdf751f44dfa405db4de68c1e54",
     /**
      * Set Base URL of Currki Studio for API
      */
     baseURL = "https://dev.currikistudio.org/api/api/v1/",
-
     /**
      * Moodle App base URL for API
      */
     moodleBaseURL = "https://map-lms.curriki.org/webservice/rest/server.php",
-
     /**
      * Moodle Login API URL
      */
     moodleLoginURL = "https://map-lms.curriki.org/login/token.php",
-
     /**
-     * 
+     *
      * Curriki Studio Auth Token to get data from studio
      */
-    currikiToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxMzQzIiwianRpIjoiNzc2OWEwMjdiMTc5MWU1MDJhMjRmZDgzYmNlOGY0MzI5MWRhZDc0NDlkYWU0MDQxOTVmNjZjYWQ1ZWE3Y2I2ZGQyYWIxMDljNjlhMWRlZTkiLCJpYXQiOjE2MzI5OTc1MzksIm5iZiI6MTYzMjk5NzUzOSwiZXhwIjoxNjY0NTMzNTM4LCJzdWIiOiIyIiwic2NvcGVzIjpbXX0.TnhPLCJBupzV0c81wywUhoviCjyETzb8kpPokPXNEn6hDFkGqud3cgCWnf4-_8AHCfD10tK6hm9qfZD2g6K6nAfHfwdblBWu_kqeohXHdJsc-4NRKmQYlMcdOiDRt3gLqj656vCo09tFi6Ui5fb9w_FBPgWLuJRuR319hOWt0L5lZ82tnZsoCw8pvBQyqX4MbkXxBDzd7Z3rQfF5-L8YRH8dinguFYpr08-JLV7ZhDsAdRzYtpnPUiAPPQvKBPCosbJ-JJWXUwvRhKGy71ttIzKQ4bbZknWNxRJC4a6d9lU_wcXokeal5EP3H9nqpBtGu9gTqubycVXBHzXQi3pl03QhFtDncgSVie32QQdGKm74WouzUiYoBqSG-oCSfP2AaKNz9RGcTIeG8cSaQfgyzUSKZId-cbcazbplkbXiH25LW8FYrcDtxpO7x7jB3a1kJU1MPs-bv0w5KvHRl5-mIn1BQES_tbNpaFRfBGTO2h-yPWdmGiEuP3yz_0JLfbFt8HgkqL_ATLhSUE9q0IN1-dXGa33Mz22bQHA_tvh9vVygpICPCxM6sXlA3v0WNHhMF6YZIwjir1k-qhlfYuO9fWmudEGzrbhdez1aG-QQAUlGO8NDlEDC3d-6pSH8NiIc0_gNJfGgs4Db0IFe1BVu_OvXoPJs_Up1XK0l2GGRXTA",
-
+    currikiToken =
+      "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI0MTE3IiwianRpIjoiOWU0ODhhNDc1MjVhNThlZjgzN2EwODViZDJhZDc0ZTI1YjIwODE5YzhhMmY3Nzg5MWM1YTAwOTljNWM4ZGY2ZTkxMWNhYzY0M2RiYzdmYzQiLCJpYXQiOjE2NjMwNjgyMjYsIm5iZiI6MTY2MzA2ODIyNiwiZXhwIjoxNjk0NjA0MjI2LCJzdWIiOiIyIiwic2NvcGVzIjpbXX0.igxfgxtEBmrKWvr16MX_U6vY8weYWpmicCJ0i35S-379kKaUsZbAWDjUlQOlQUQ3uRr0WifHh_iE-NHdwkWySnB3dWujewN6PozUd15YfLtid3ARMzWrJmz2OOWFJC2u2-uSO-gp1Cx-Cv4sR6Px5bSdSw6DLWsxjwZ5cCH4YlQGyGY-oRj7lssai1OQgR5L1z5-v0-L_hLhGTKTyjTZPinG5zRZAmhtxlMYy_pk5fVKnTgAN235yWhnQsb3UhDGxipvvnDSJRwqbGs9CYcOvnAluUWjpkifEHp74ddHQGHFXpoCxx2_HKLJzFVtFG54thJboNj1kpMBhOvGBAjumJ65W5-V6tERIpSSyuuuqgcdgGvHtwtV65PHYnNJA49JtknzIyviVaL2cqaLs6-YiYMtR7I83TSqTs-ZMECrxu_xbCbLu1XaE1_-Kd7InbZ_OGSMljhxu0WRg1E5KEbgfiVXIwRHjV64ipNU-cJGZIOdSlg5FeTSwxmvtxbyl5DmkctejlQOA8FOVK6k87hURByTOrJEwR-PDMD2mc6Nj4h9PEV-5F1xaG77VYWjOpqzfkPyZghjfyKBWRQHaGFOVOU3bQKFZC4ODo7cXdjq_-I9CzqqFj6OdMD43e-JifFfhgEgtxkpSD68s01UxiUJeQ0gpNzo76-EdcppfCjekQc",
     /*image url */
     imageUrl = "https://dev.currikistudio.org/api",
     /**
      *
      * Saving all Variables into the local storage
-     * 
-     * Initialize local storage 
+     *
+     * Initialize local storage
      */
     localStorage = window.localStorage;
 
-    /**
-     * Saving Additonal Token
-     */
-    localStorage.setItem("ADITIONAL_TOKEN", aditionalToken);
+  /**
+   * Saving Additonal Token
+   */
+  localStorage.setItem("ADITIONAL_TOKEN", aditionalToken);
 
-    /**
-     * Saving Admin Token
-     */
-    localStorage.setItem("ADMIN_TOKEN", adminToken);
+  /**
+   * Saving Admin Token
+   */
+  localStorage.setItem("ADMIN_TOKEN", adminToken);
 
-    /**
-     * Saving Custom API Token
-     */
-    localStorage.setItem("CUSTOM_API_TOKEN", customApiToken);
+  /**
+   * Saving Custom API Token
+   */
+  localStorage.setItem("CUSTOM_API_TOKEN", customApiToken);
 
-    /**
-     * Saving Base URL for the API
-     */
-    localStorage.setItem("CURRIKI_BASE_API_URL", baseURL);
+  /**
+   * Saving Base URL for the API
+   */
+  localStorage.setItem("CURRIKI_BASE_API_URL", baseURL);
 
-    /**
-     * Saving Curriki Token into the Local Storage
-     */
-    localStorage.setItem("CURRIKI_TOKEN", currikiToken);
+  /**
+   * Saving Curriki Token into the Local Storage
+   */
+  localStorage.setItem("CURRIKI_TOKEN", currikiToken);
 
-    /**
-     * Saving Moodle Base URL for API
-     */
-    localStorage.setItem("MOODLE_BASE_API_URL", moodleBaseURL);
+  /**
+   * Saving Moodle Base URL for API
+   */
+  localStorage.setItem("MOODLE_BASE_API_URL", moodleBaseURL);
 
-    /**
-     * Saving Moodle Login URL
-     */
-    localStorage.setItem("MOODLE_LOGIN_URL", moodleLoginURL);
+  /**
+   * Saving Moodle Login URL
+   */
+  localStorage.setItem("MOODLE_LOGIN_URL", moodleLoginURL);
 
-    /* save image url */
-    localStorage.setItem("CURRIKI_BASE_IMAGE_URL", imageUrl)
+  /* save image url */
+  localStorage.setItem("CURRIKI_BASE_IMAGE_URL", imageUrl);
 }
