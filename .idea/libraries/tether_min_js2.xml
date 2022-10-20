@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="tether.min.js">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/platforms/android/app/build/intermediates/compressed_assets/debug/out/assets/www/plugins/quiz/Tether-1.0/scripts/tether.min.js.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

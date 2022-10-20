@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="h5p-disable-hub.js">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/platforms/android/app/build/intermediates/compressed_assets/debug/out/assets/www/plugins/h5p-standalone/vendor/h5p/js/settings/h5p-disable-hub.js.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

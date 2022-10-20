@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="question-set-textual-editor.js">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/platforms/android/app/build/intermediates/compressed_assets/debug/out/assets/www/plugins/quiz/H5PEditor.QuestionSetTextualEditor-1.3/dist/question-set-textual-editor.js.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>
